@@ -28,12 +28,13 @@ const iconMap: Record<FieldType, React.ElementType> = {
 
 interface Props {
   field: FormField;
+  index: number;
   onUpdate: (field: FormField) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
 }
 
-export default function FormFieldCard({ field, onUpdate, onDelete, onDuplicate }: Props) {
+export default function FormFieldCard({ field, index, onUpdate, onDelete, onDuplicate }: Props) {
   const [expanded, setExpanded] = useState(true);
   const Icon = iconMap[field.type];
 
@@ -58,10 +59,16 @@ export default function FormFieldCard({ field, onUpdate, onDelete, onDuplicate }
   const hasOptions = ["single_choice", "multiple_choice", "dropdown"].includes(field.type);
 
   return (
-    <div className="group rounded-lg border border-border bg-card shadow-sm transition-shadow hover:shadow-md animate-fade-in">
+    <div className={`group rounded-lg border border-border bg-card shadow-sm transition-all hover:shadow-md animate-fade-in ${!field.enabled ? "opacity-50" : ""}`}>
       {/* Header */}
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border/50">
         <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab" />
+        <span className="text-xs font-bold text-muted-foreground min-w-[20px]">{index}.</span>
+        <Switch
+          checked={field.enabled}
+          onCheckedChange={(v) => updateField({ enabled: v })}
+          className="scale-75"
+        />
         <div className="flex items-center gap-2 rounded-md bg-accent/60 px-2.5 py-1">
           <Icon className="h-3.5 w-3.5 text-accent-foreground" />
           <span className="text-xs font-medium text-accent-foreground">

@@ -22,6 +22,7 @@ export interface FormField {
   description?: string;
   placeholder?: string;
   required: boolean;
+  enabled: boolean;
   options?: FieldOption[];
 }
 
