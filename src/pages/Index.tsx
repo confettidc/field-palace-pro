@@ -13,6 +13,7 @@ const createField = (type: FieldType): FormField => {
     type,
     label: "",
     required: false,
+    enabled: true,
     options: needsOptions
       ? [{ id: crypto.randomUUID(), label: "選項 1" }]
       : undefined,
@@ -77,10 +78,11 @@ export default function Index() {
 
         {/* Fields */}
         <div className="space-y-3">
-          {fields.map((field) => (
+          {fields.map((field, index) => (
             <FormFieldCard
               key={field.id}
               field={field}
+              index={index + 1}
               onUpdate={updateField}
               onDelete={deleteField}
               onDuplicate={duplicateField}
