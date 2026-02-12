@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import { FormField, FieldType } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
-import { Button } from "@/components/ui/button";
+import "@/styles/form-builder.css";
 import { toast } from "sonner";
 
 const createField = (type: FieldType): FormField => {
@@ -61,23 +60,21 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen py-8 px-4">
-      <div className="mx-auto max-w-2xl space-y-6">
+    <div className="x-page">
+      <div className="x-container">
         {/* Title */}
-        <div className="flex items-center justify-between">
+        <div className="x-header">
           <div>
-            <h1 className="text-xl font-bold tracking-tight">表單欄位設定</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              新增與編輯表單欄位，拖曳調整順序
-            </p>
+            <h1 className="x-header-title">表單欄位設定</h1>
+            <p className="x-header-desc">新增與編輯表單欄位，拖曳調整順序</p>
           </div>
-          <Button onClick={handleSave} disabled={fields.length === 0}>
+          <button className="btn btn-primary" onClick={handleSave} disabled={fields.length === 0}>
             儲存
-          </Button>
+          </button>
         </div>
 
         {/* Fields */}
-        <div className="space-y-3">
+        <div>
           {fields.map((field, index) => (
             <FormFieldCard
               key={field.id}
@@ -92,23 +89,23 @@ export default function Index() {
 
         {/* Empty state */}
         {fields.length === 0 && !showPanel && (
-          <div className="rounded-lg border-2 border-dashed border-border py-16 text-center">
-            <p className="text-sm text-muted-foreground mb-3">尚未新增任何欄位</p>
-            <Button variant="outline" onClick={() => setShowPanel(true)}>
-              <Plus className="h-4 w-4 mr-1.5" />
+          <div className="x-empty-state">
+            <p className="x-empty-text">尚未新增任何欄位</p>
+            <button className="btn btn-outline-primary" onClick={() => setShowPanel(true)}>
+              <i className="bi bi-plus me-1" />
               新增欄位
-            </Button>
+            </button>
           </div>
         )}
 
         {/* Add field panel */}
         {showPanel && (
-          <div className="space-y-3 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-medium">選擇欄位類型</h2>
-              <Button variant="ghost" size="sm" onClick={() => setShowPanel(false)}>
+          <div className="mt-3">
+            <div className="d-flex align-items-center justify-content-between mb-2">
+              <h2 style={{ fontSize: "0.9rem", fontWeight: 500, margin: 0 }}>選擇欄位類型</h2>
+              <button className="btn btn-sm btn-light" onClick={() => setShowPanel(false)}>
                 取消
-              </Button>
+              </button>
             </div>
             <AddFieldPanel onAdd={addField} />
           </div>
@@ -116,14 +113,14 @@ export default function Index() {
 
         {/* Add more button */}
         {fields.length > 0 && !showPanel && (
-          <Button
-            variant="outline"
-            className="w-full border-dashed"
+          <button
+            className="btn btn-outline-secondary w-100 mt-2"
+            style={{ borderStyle: "dashed" }}
             onClick={() => setShowPanel(true)}
           >
-            <Plus className="h-4 w-4 mr-1.5" />
+            <i className="bi bi-plus me-1" />
             新增欄位
-          </Button>
+          </button>
         )}
       </div>
     </div>

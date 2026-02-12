@@ -1,0 +1,193 @@
+/* ===== Form Builder – x- prefixed custom styles ===== */
+
+.x-page {
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  background: #f8f9fa;
+}
+
+.x-container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.x-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.x-header-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.x-header-desc {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0.15rem 0 0;
+}
+
+/* ===== Field Card ===== */
+.x-field-card {
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  background: #fff;
+  margin-bottom: 0.75rem;
+  transition: box-shadow 0.2s, opacity 0.2s;
+}
+
+.x-field-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.x-field-card.x-field-disabled {
+  opacity: 0.5;
+}
+
+.x-field-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+}
+
+.x-field-index {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6c757d;
+  min-width: 22px;
+}
+
+.x-field-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #e8ecf4;
+  color: #3b5998;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.3rem;
+}
+
+.x-field-spacer {
+  flex: 1;
+}
+
+.x-field-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.x-field-body {
+  padding: 1rem;
+}
+
+.x-field-body .x-form-group {
+  margin-bottom: 0.85rem;
+}
+
+.x-form-group:last-child {
+  margin-bottom: 0;
+}
+
+.x-form-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #6c757d;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+/* ===== Option row ===== */
+.x-option-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.x-option-num {
+  font-size: 0.78rem;
+  color: #adb5bd;
+  min-width: 18px;
+  text-align: right;
+}
+
+/* ===== Required footer ===== */
+.x-field-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.65rem;
+  border-top: 1px solid #eee;
+}
+
+/* ===== Add Field Panel ===== */
+.x-add-panel {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+@media (max-width: 576px) {
+  .x-add-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.x-add-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  background: #fff;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #212529;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.x-add-btn:hover {
+  border-color: #86b7fe;
+  background: #f0f4ff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.x-add-btn:active {
+  transform: scale(0.97);
+}
+
+.x-add-btn i {
+  font-size: 1.15rem;
+  color: #3b5998;
+}
+
+/* ===== Empty state ===== */
+.x-empty-state {
+  border: 2px dashed #dee2e6;
+  border-radius: 0.5rem;
+  padding: 4rem 1rem;
+  text-align: center;
+}
+
+.x-empty-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+}
+
+/* ===== Toggle switch custom ===== */
+.x-toggle {
+  cursor: pointer;
+}
