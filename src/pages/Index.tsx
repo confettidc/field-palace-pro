@@ -15,6 +15,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -97,12 +98,60 @@ export default function Index() {
     toast("已刪除");
   };
 
+  // Handle drag over to detect cross-group movement
+  const handleDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeItem = items.find((i) => i.id === active.id);
+    if (!activeItem) return;
+
+    // Check if dragging over a group drop zone
+    const overId = String(over.id);
+    if (overId.startsWith("group-drop-")) {
+      const targetGroupId = overId.replace("group-drop-", "");
+      const currentGroupId = isContentBlock(activeItem) ? activeItem.groupId : (activeItem as FormField).groupId;
+      if (currentGroupId !== targetGroupId) {
+        setItems((prev) =>
+          prev.map((item) => {
+            if (item.id !== active.id) return item;
+            if (isContentBlock(item)) return { ...item, groupId: targetGroupId };
+            return { ...item, groupId: targetGroupId };
+          })
+        );
+      }
+      return;
+    }
+
+    // Check if dragging over an item in a different group
+    const overItem = items.find((i) => i.id === over.id);
+    if (!overItem) return;
+
+    const activeGroupId2 = isContentBlock(activeItem) ? activeItem.groupId : (activeItem as FormField).groupId;
+    const overGroupId = isContentBlock(overItem) ? overItem.groupId : (overItem as FormField).groupId;
+
+    if (activeGroupId2 !== overGroupId) {
+      setItems((prev) =>
+        prev.map((item) => {
+          if (item.id !== active.id) return item;
+          if (isContentBlock(item)) return { ...item, groupId: overGroupId };
+          return { ...item, groupId: overGroupId };
+        })
+      );
+    }
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
+      // Only reorder if both are actual items (not group drop zones)
+      const overId = String(over.id);
+      if (overId.startsWith("group-drop-")) return;
+
       setItems((prev) => {
         const oldIndex = prev.findIndex((i) => i.id === active.id);
         const newIndex = prev.findIndex((i) => i.id === over.id);
+        if (oldIndex === -1 || newIndex === -1) return prev;
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
@@ -129,7 +178,7 @@ export default function Index() {
     groupCounter++;
     const newGroup: FormGroup = {
       id: crypto.randomUUID(),
-      name: `分組 ${groupCounter}`,
+      name: `表單第 ${groupCounter} 頁`,
     };
 
     if (groups.length === 0 && items.length > 0) {
@@ -149,14 +198,17 @@ export default function Index() {
   };
 
   const deleteGroup = (groupId: string) => {
-    // Remove group but keep items (ungroup them)
+    // Remove group but keep items (ungroup them or move to another group)
+    const remainingGroups = groups.filter((g) => g.id !== groupId);
+    const fallbackGroupId = remainingGroups.length > 0 ? remainingGroups[0].id : undefined;
+
     setItems((prev) => prev.map((item) => {
-      if (isContentBlock(item) && item.groupId === groupId) return { ...item, groupId: undefined };
-      if (isFormField(item) && item.groupId === groupId) return { ...item, groupId: undefined };
+      if (isContentBlock(item) && item.groupId === groupId) return { ...item, groupId: fallbackGroupId };
+      if (isFormField(item) && item.groupId === groupId) return { ...item, groupId: fallbackGroupId };
       return item;
     }));
-    setGroups((prev) => prev.filter((g) => g.id !== groupId));
-    toast("已解散分組（欄位已保留）");
+    setGroups(remainingGroups);
+    toast("已刪除分頁（欄位已保留）");
   };
 
   const disabledCount = items.filter((i) => !i.enabled).length;
@@ -175,6 +227,9 @@ export default function Index() {
       if (isFormField(i)) return i.groupId === groupId;
       return false;
     });
+
+  // Collect all sortable IDs for the DndContext
+  const allSortableIds = visibleItems.map((i) => i.id);
 
   return (
     <div className="xform-page">
@@ -202,7 +257,7 @@ export default function Index() {
               onClick={handleCreateGroup}
             >
               <i className="bi bi-folder-plus me-1" />
-              新增分組
+              新增分頁
             </button>
             <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
               <span className="xform-filter-toggle-text">
@@ -217,25 +272,30 @@ export default function Index() {
           </div>
         )}
 
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          {/* Render groups */}
-          {groups.map((group) => (
-            <GroupCard
-              key={group.id}
-              group={group}
-              items={getGroupItems(group.id)}
-              expandedId={expandedId}
-              onToggleExpand={toggleExpand}
-              onUpdateGroup={updateGroup}
-              onDeleteGroup={deleteGroup}
-              onUpdateItem={updateItem}
-              onDeleteItem={deleteItem}
-            />
-          ))}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
+            {/* Render groups */}
+            {groups.map((group) => (
+              <GroupCard
+                key={group.id}
+                group={group}
+                items={getGroupItems(group.id)}
+                expandedId={expandedId}
+                onToggleExpand={toggleExpand}
+                onUpdateGroup={updateGroup}
+                onDeleteGroup={deleteGroup}
+                onUpdateItem={updateItem}
+                onDeleteItem={deleteItem}
+              />
+            ))}
 
-          {/* Render ungrouped items */}
-          {ungroupedItems.length > 0 && (
-            <SortableContext items={ungroupedItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            {/* Render ungrouped items */}
+            {ungroupedItems.length > 0 && (
               <div>
                 {ungroupedItems.map((item) =>
                   isContentBlock(item) ? (
@@ -259,8 +319,8 @@ export default function Index() {
                   )
                 )}
               </div>
-            </SortableContext>
-          )}
+            )}
+          </SortableContext>
         </DndContext>
 
         {items.length === 0 && !showPanel && (
