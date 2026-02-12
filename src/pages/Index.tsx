@@ -24,7 +24,6 @@ import {
 } from "@dnd-kit/sortable";
 
 let fieldCounter = 0;
-let groupCounter = 0;
 
 const createField = (type: FieldType, groupId?: string): FormField => {
   fieldCounter++;
@@ -174,15 +173,16 @@ export default function Index() {
   };
 
   // Group management
+  const renameGroupsByOrder = (groupList: FormGroup[]): FormGroup[] =>
+    groupList.map((g, i) => ({ ...g, name: `第 ${i + 1} 頁` }));
+
   const handleCreateGroup = () => {
-    groupCounter++;
     const newGroup: FormGroup = {
       id: crypto.randomUUID(),
-      name: `表單第 ${groupCounter} 頁`,
+      name: `第 ${groups.length + 1} 頁`,
     };
 
     if (groups.length === 0 && items.length > 0) {
-      // First group: move all existing ungrouped items into this group
       setItems((prev) => prev.map((item) => {
         if (isContentBlock(item)) return { ...item, groupId: newGroup.id };
         return { ...item, groupId: newGroup.id };
@@ -198,7 +198,6 @@ export default function Index() {
   };
 
   const deleteGroup = (groupId: string) => {
-    // Remove group but keep items (ungroup them or move to another group)
     const remainingGroups = groups.filter((g) => g.id !== groupId);
     const fallbackGroupId = remainingGroups.length > 0 ? remainingGroups[0].id : undefined;
 
@@ -207,8 +206,20 @@ export default function Index() {
       if (isFormField(item) && item.groupId === groupId) return { ...item, groupId: fallbackGroupId };
       return item;
     }));
-    setGroups(remainingGroups);
+    setGroups(renameGroupsByOrder(remainingGroups));
     toast("已刪除分頁（欄位已保留）");
+  };
+
+  const moveGroup = (groupId: string, direction: "up" | "down") => {
+    setGroups((prev) => {
+      const idx = prev.findIndex((g) => g.id === groupId);
+      if (idx === -1) return prev;
+      const newIdx = direction === "up" ? idx - 1 : idx + 1;
+      if (newIdx < 0 || newIdx >= prev.length) return prev;
+      const reordered = [...prev];
+      [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
+      return renameGroupsByOrder(reordered);
+    });
   };
 
   const disabledCount = items.filter((i) => !i.enabled).length;
@@ -287,9 +298,13 @@ export default function Index() {
                 items={getGroupItems(group.id)}
                 expandedId={expandedId}
                 isLastGroup={idx === groups.length - 1}
+                isFirstGroup={idx === 0}
+                groupIndex={idx}
+                totalGroups={groups.length}
                 onToggleExpand={toggleExpand}
                 onUpdateGroup={updateGroup}
                 onDeleteGroup={deleteGroup}
+                onMoveGroup={moveGroup}
                 onUpdateItem={updateItem}
                 onDeleteItem={deleteItem}
               >

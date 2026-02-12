@@ -1565,3 +1565,42 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
 }
+
+/* ===== Field delete confirm ===== */
+.xform-field-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.xform-field-delete-msg {
+  font-size: 0.75rem;
+  color: #dc3545;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.xform-field-delete-confirm .btn-sm {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+}
+
+/* ===== Group reorder buttons ===== */
+.xform-group-reorder-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-right: 0.5rem;
+}
+
+.xform-group-move-btn {
+  padding: 0 0.3rem !important;
+  line-height: 1;
+  font-size: 0.7rem !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+.xform-group-move-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

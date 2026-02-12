@@ -14,9 +14,13 @@ interface Props {
   items: FormItem[];
   expandedId: string | null;
   isLastGroup?: boolean;
+  isFirstGroup?: boolean;
+  groupIndex: number;
+  totalGroups: number;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
   onDeleteGroup: (groupId: string) => void;
+  onMoveGroup: (groupId: string, direction: "up" | "down") => void;
   onUpdateItem: (item: FormItem) => void;
   onDeleteItem: (id: string) => void;
   children?: React.ReactNode;
@@ -27,9 +31,13 @@ export default function GroupCard({
   items,
   expandedId,
   isLastGroup,
+  isFirstGroup,
+  groupIndex,
+  totalGroups,
   onToggleExpand,
   onUpdateGroup,
   onDeleteGroup,
+  onMoveGroup,
   onUpdateItem,
   onDeleteItem,
   children,
@@ -58,6 +66,24 @@ export default function GroupCard({
     >
       <div className="xform-group-header">
         <div className="xform-group-header-left">
+          <div className="xform-group-reorder-btns">
+            <button
+              className="btn btn-sm btn-light xform-group-move-btn"
+              disabled={groupIndex === 0}
+              title="上移分頁"
+              onClick={() => onMoveGroup(group.id, "up")}
+            >
+              <i className="bi bi-chevron-up" />
+            </button>
+            <button
+              className="btn btn-sm btn-light xform-group-move-btn"
+              disabled={groupIndex === totalGroups - 1}
+              title="下移分頁"
+              onClick={() => onMoveGroup(group.id, "down")}
+            >
+              <i className="bi bi-chevron-down" />
+            </button>
+          </div>
           {editingName ? (
             <input
               ref={nameRef}

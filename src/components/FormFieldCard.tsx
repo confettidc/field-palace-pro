@@ -40,6 +40,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
     field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
@@ -172,9 +173,17 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
             />
           </div>
 
-          <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => onDelete(field.id)}>
-            <i className="bi bi-trash" />
-          </button>
+          {showDeleteConfirm ? (
+            <div className="xform-field-delete-confirm">
+              <span className="xform-field-delete-msg">確定刪除？</span>
+              <button className="btn btn-sm btn-danger" onClick={() => { onDelete(field.id); setShowDeleteConfirm(false); }}>確定</button>
+              <button className="btn btn-sm btn-light" onClick={() => setShowDeleteConfirm(false)}>取消</button>
+            </div>
+          ) : (
+            <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
+              <i className="bi bi-trash" />
+            </button>
+          )}
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
