@@ -4,8 +4,10 @@ import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import Highlight from "@tiptap/extension-highlight";
 import { Extension } from "@tiptap/core";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 // Custom FontSize extension
 const FontSize = Extension.create({
@@ -44,6 +46,9 @@ const FontSize = Extension.create({
   },
 });
 
+const FONT_COLORS = ["#000000", "#e03131", "#2f9e44", "#1971c2", "#f08c00", "#9c36b5", "#868e96"];
+const HIGHLIGHT_COLORS = ["#fff3bf", "#d3f9d8", "#d0ebff", "#ffe3e3", "#e8d0ff", "#ffe8cc"];
+
 interface Props {
   content: string;
   onChange: (html: string) => void;
@@ -51,6 +56,8 @@ interface Props {
 
 export default function RichTextEditor({ content, onChange }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showFontColor, setShowFontColor] = useState(false);
+  const [showHighlight, setShowHighlight] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -58,6 +65,8 @@ export default function RichTextEditor({ content, onChange }: Props) {
       Underline,
       TextStyle,
       FontSize,
+      Color,
+      Highlight.configure({ multicolor: true }),
       Image.configure({ inline: true }),
       Link.configure({
         openOnClick: false,
@@ -124,6 +133,14 @@ export default function RichTextEditor({ content, onChange }: Props) {
         >
           <i className="bi bi-type-underline" />
         </button>
+        <button
+          type="button"
+          className={`xform-rte-btn ${editor.isActive("strike") ? "active" : ""}`}
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          title="刪除線"
+        >
+          <i className="bi bi-type-strikethrough" />
+        </button>
 
         <span className="xform-rte-divider" />
 
@@ -145,6 +162,86 @@ export default function RichTextEditor({ content, onChange }: Props) {
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
+
+        <span className="xform-rte-divider" />
+
+        {/* Font Color */}
+        <div className="xform-rte-dropdown-wrap">
+          <button
+            type="button"
+            className="xform-rte-btn"
+            onClick={() => { setShowFontColor(!showFontColor); setShowHighlight(false); }}
+            title="字體顏色"
+          >
+            <i className="bi bi-palette" />
+          </button>
+          {showFontColor && (
+            <div className="xform-rte-color-dropdown">
+              {FONT_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className="xform-rte-color-swatch"
+                  style={{ background: c }}
+                  onClick={() => {
+                    editor.chain().focus().setColor(c).run();
+                    setShowFontColor(false);
+                  }}
+                />
+              ))}
+              <button
+                type="button"
+                className="xform-rte-color-swatch xform-rte-color-reset"
+                title="重設"
+                onClick={() => {
+                  editor.chain().focus().unsetColor().run();
+                  setShowFontColor(false);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Highlight Color */}
+        <div className="xform-rte-dropdown-wrap">
+          <button
+            type="button"
+            className={`xform-rte-btn ${editor.isActive("highlight") ? "active" : ""}`}
+            onClick={() => { setShowHighlight(!showHighlight); setShowFontColor(false); }}
+            title="螢光標記"
+          >
+            <i className="bi bi-highlighter" />
+          </button>
+          {showHighlight && (
+            <div className="xform-rte-color-dropdown">
+              {HIGHLIGHT_COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className="xform-rte-color-swatch"
+                  style={{ background: c }}
+                  onClick={() => {
+                    editor.chain().focus().toggleHighlight({ color: c }).run();
+                    setShowHighlight(false);
+                  }}
+                />
+              ))}
+              <button
+                type="button"
+                className="xform-rte-color-swatch xform-rte-color-reset"
+                title="移除標記"
+                onClick={() => {
+                  editor.chain().focus().unsetHighlight().run();
+                  setShowHighlight(false);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
 
         <span className="xform-rte-divider" />
 
