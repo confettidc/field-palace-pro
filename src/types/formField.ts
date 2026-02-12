@@ -36,12 +36,15 @@ export interface FormField {
   options?: FieldOption[];
 }
 
+export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
+
 export interface ContentBlock {
   id: string;
   kind: "content_block";
   style: ContentBlockStyle;
   content: string;
   enabled: boolean;
+  dividerStyle?: DividerLineStyle;
 }
 
 export type FormItem = FormField | ContentBlock;

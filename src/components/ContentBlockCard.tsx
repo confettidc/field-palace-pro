@@ -1,7 +1,14 @@
-import { ContentBlock, CONTENT_BLOCK_META } from "@/types/formField";
+import { ContentBlock, ContentBlockStyle, CONTENT_BLOCK_META, DividerLineStyle } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+const DIVIDER_STYLES: { value: DividerLineStyle; label: string }[] = [
+  { value: "solid", label: "實線" },
+  { value: "dashed", label: "虛線" },
+  { value: "dotted", label: "點線" },
+  { value: "double", label: "雙線" },
+];
 
 interface Props {
   block: ContentBlock;
@@ -23,13 +30,15 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
   const meta = CONTENT_BLOCK_META[block.style];
   const displayLabel = block.style === "divider" || block.style === "spacer"
     ? meta.label
-    : (block.content ? "圖文方塊" : "未輸入內容");
+    : (block.content ? "內容區塊" : "未輸入內容");
+
+  const isDivider = block.style === "divider";
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`xform-field-card ${!block.enabled ? "xform-field-disabled" : ""}`}
+      className={`xform-field-card ${!block.enabled ? "xform-field-dimmed" : ""}`}
     >
       <div className="xform-field-header" onClick={onToggleExpand} style={{ cursor: "pointer" }}>
         <div className="xform-drag-handle" {...attributes} {...listeners} onClick={(e) => e.stopPropagation()}>
@@ -47,16 +56,13 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
 
         <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
           <span className="xform-toggle-label">啟用</span>
-          <div className="form-check form-switch mb-0">
+          <div className="form-check form-switch xform-switch-green mb-0">
             <input
               className="form-check-input"
               type="checkbox"
               role="switch"
               checked={block.enabled}
-              onChange={(e) => {
-                onUpdate({ ...block, enabled: e.target.checked });
-                if (!e.target.checked && expanded) onToggleExpand();
-              }}
+              onChange={(e) => onUpdate({ ...block, enabled: e.target.checked })}
             />
           </div>
 
@@ -70,13 +76,31 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
 
       {expanded && (
         <div className="xform-field-body">
-          <div className="xform-form-group">
-            <label className="xform-form-label">內容</label>
-            <RichTextEditor
-              content={block.content || ""}
-              onChange={(html) => onUpdate({ ...block, content: html })}
-            />
-          </div>
+          {isDivider ? (
+            <div className="xform-form-group">
+              <label className="xform-form-label">線條樣式</label>
+              <div className="xform-divider-styles">
+                {DIVIDER_STYLES.map((ds) => (
+                  <button
+                    key={ds.value}
+                    className={`xform-divider-style-btn ${(block.dividerStyle || "solid") === ds.value ? "active" : ""}`}
+                    onClick={() => onUpdate({ ...block, dividerStyle: ds.value })}
+                  >
+                    <hr className={`xform-divider-preview xform-divider-${ds.value}`} />
+                    <span>{ds.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="xform-form-group">
+              <label className="xform-form-label">內容</label>
+              <RichTextEditor
+                content={block.content || ""}
+                onChange={(html) => onUpdate({ ...block, content: html })}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
