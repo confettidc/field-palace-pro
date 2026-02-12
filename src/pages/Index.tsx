@@ -16,6 +16,7 @@ import {
   useSensors,
   DragEndEvent,
   DragOverEvent,
+  DragStartEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -59,6 +60,7 @@ export default function Index() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [hideDisabled, setHideDisabled] = useState(false);
+  const [isDraggingGroup, setIsDraggingGroup] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -97,10 +99,22 @@ export default function Index() {
     toast("已刪除");
   };
 
+  // Handle drag start to detect if a group is being dragged
+  const handleDragStart = (event: DragStartEvent) => {
+    const activeId = String(event.active.id);
+    if (activeId.startsWith("group-sort-")) {
+      setIsDraggingGroup(true);
+    }
+  };
+
   // Handle drag over to detect cross-group movement
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
+
+    // Skip if dragging a group
+    const activeId = String(active.id);
+    if (activeId.startsWith("group-sort-")) return;
 
     const activeItem = items.find((i) => i.id === active.id);
     if (!activeItem) return;
@@ -142,10 +156,34 @@ export default function Index() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (over && active.id !== over.id) {
-      // Only reorder if both are actual items (not group drop zones)
+
+    // Handle group reorder
+    const activeId = String(active.id);
+    if (activeId.startsWith("group-sort-")) {
+      setIsDraggingGroup(false);
+      if (!over) return;
       const overId = String(over.id);
-      if (overId.startsWith("group-drop-")) return;
+      if (!overId.startsWith("group-sort-")) return;
+
+      const activeGroupId2 = activeId.replace("group-sort-", "");
+      const overGroupId = overId.replace("group-sort-", "");
+
+      if (activeGroupId2 !== overGroupId) {
+        setGroups((prev) => {
+          const oldIndex = prev.findIndex((g) => g.id === activeGroupId2);
+          const newIndex = prev.findIndex((g) => g.id === overGroupId);
+          if (oldIndex === -1 || newIndex === -1) return prev;
+          const reordered = arrayMove(prev, oldIndex, newIndex);
+          return renameGroupsByOrder(reordered);
+        });
+      }
+      return;
+    }
+
+    // Handle item reorder
+    if (over && active.id !== over.id) {
+      const overId = String(over.id);
+      if (overId.startsWith("group-drop-") || overId.startsWith("group-sort-")) return;
 
       setItems((prev) => {
         const oldIndex = prev.findIndex((i) => i.id === active.id);
@@ -154,6 +192,10 @@ export default function Index() {
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
+  };
+
+  const handleDragCancel = () => {
+    setIsDraggingGroup(false);
   };
 
   const handleSave = () => {
@@ -210,18 +252,6 @@ export default function Index() {
     toast("已刪除分頁（欄位已保留）");
   };
 
-  const moveGroup = (groupId: string, direction: "up" | "down") => {
-    setGroups((prev) => {
-      const idx = prev.findIndex((g) => g.id === groupId);
-      if (idx === -1) return prev;
-      const newIdx = direction === "up" ? idx - 1 : idx + 1;
-      if (newIdx < 0 || newIdx >= prev.length) return prev;
-      const reordered = [...prev];
-      [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
-      return renameGroupsByOrder(reordered);
-    });
-  };
-
   const disabledCount = items.filter((i) => !i.enabled).length;
   const visibleItems = hideDisabled ? items.filter((i) => i.enabled) : items;
 
@@ -239,8 +269,11 @@ export default function Index() {
       return false;
     });
 
-  // Collect all sortable IDs for the DndContext
-  const allSortableIds = visibleItems.map((i) => i.id);
+  // Collect all sortable IDs: items + group sort IDs
+  const allSortableIds = [
+    ...visibleItems.map((i) => i.id),
+    ...groups.map((g) => `group-sort-${g.id}`),
+  ];
 
   return (
     <div className="xform-page">
@@ -286,8 +319,10 @@ export default function Index() {
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
+          onDragCancel={handleDragCancel}
         >
           <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
             {/* Render groups */}
@@ -298,13 +333,10 @@ export default function Index() {
                 items={getGroupItems(group.id)}
                 expandedId={expandedId}
                 isLastGroup={idx === groups.length - 1}
-                isFirstGroup={idx === 0}
-                groupIndex={idx}
-                totalGroups={groups.length}
+                isDraggingGroup={isDraggingGroup}
                 onToggleExpand={toggleExpand}
                 onUpdateGroup={updateGroup}
                 onDeleteGroup={deleteGroup}
-                onMoveGroup={moveGroup}
                 onUpdateItem={updateItem}
                 onDeleteItem={deleteItem}
               >
