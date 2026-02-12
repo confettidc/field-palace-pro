@@ -248,6 +248,25 @@
   font-weight: 500;
 }
 
+.xform-required-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: #8892a4;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.xform-required-checkbox-label input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #5b8af0;
+  cursor: pointer;
+}
+
 .xform-expand-icon {
   font-size: 0.75rem;
   color: #8892a4;
@@ -327,12 +346,16 @@
 }
 
 /* ===== Option row ===== */
+.xform-option-item {
+  margin-bottom: 0.5rem;
+}
+
 .xform-option-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.4rem;
 }
+
 
 .xform-option-num {
   font-size: 0.88rem;
@@ -370,13 +393,13 @@
 }
 
 .xform-advanced-toggle-inline.has-active {
-  color: #7c6bc4;
+  color: #5a6070;
   font-weight: 600;
-  background: #f0ecfa;
+  background: #ebedf2;
 }
 
 .xform-advanced-toggle-inline.has-active:hover {
-  background: #e8e0f6;
+  background: #e0e3ea;
 }
 
 .xform-advanced-toggle-inline i:first-child {
@@ -387,9 +410,9 @@
   padding: 0.65rem 0.75rem;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-  background: #f5f2fc;
+  background: #f3f4f7;
   border-radius: 0.45rem;
-  border: 1px solid #e4dcf3;
+  border: 1px solid #e0e3ea;
 }
 
 .xform-choice-toolbar {
@@ -404,24 +427,24 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.82rem;
-  color: #7c6bc4;
+  color: #5a6070;
   cursor: pointer;
   user-select: none;
   padding: 0.3rem 0.6rem;
   border-radius: 0.35rem;
-  border: 1px solid #e4dcf3;
+  border: 1px solid #dce0ea;
   background: #fff;
   transition: all 0.15s;
 }
 
 .xform-choice-toggle:hover {
-  background: #f5f2fc;
+  background: #f0f2f6;
 }
 
 .xform-choice-toggle.active {
-  background: #ece6f8;
-  border-color: #c4b5e3;
-  color: #5a4b9a;
+  background: #e8eaef;
+  border-color: #b8bcc8;
+  color: #3d4355;
   font-weight: 600;
 }
 
@@ -494,6 +517,7 @@
   gap: 0.3rem;
   flex-wrap: wrap;
   margin-top: 0.3rem;
+  margin-bottom: 0.5rem;
   padding-left: 1.6rem;
 }
 
