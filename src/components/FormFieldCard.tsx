@@ -148,14 +148,16 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
         <span className="xform-field-spacer" />
 
         <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
-          <label className="xform-required-checkbox-label">
+          <span className="xform-toggle-label">必填</span>
+          <div className="form-check form-switch mb-0">
             <input
+              className="form-check-input"
               type="checkbox"
+              role="switch"
               checked={field.required}
               onChange={(e) => updateField({ required: e.target.checked })}
             />
-            <span>必填</span>
-          </label>
+          </div>
 
           <span className="xform-toggle-label">啟用</span>
           <div className="form-check form-switch xform-switch-green mb-0">
@@ -181,23 +183,30 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
         <div className="xform-field-body">
           <div className="xform-form-group">
             <label className="xform-form-label">題目</label>
-            <input
-              type="text"
-              className="form-control form-control-sm"
+            <textarea
+              className="form-control form-control-sm xform-auto-resize"
               value={field.label}
-              onChange={(e) => updateField({ label: e.target.value })}
+              onChange={(e) => {
+                updateField({ label: e.target.value });
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+              }}
+              onFocus={(e) => {
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+              }}
               placeholder="例如：您的職位"
+              rows={1}
             />
           </div>
 
           {!showDesc ? (
             <div className="xform-form-group">
-              <button
-                className="btn btn-sm btn-outline-secondary"
+               <button
+                className="btn btn-sm xform-add-desc-btn"
                 onClick={() => setShowDesc(true)}
               >
-                <i className="bi bi-plus me-1" />
-                補充說明
+                + 補充說明
               </button>
             </div>
           ) : (
@@ -215,10 +224,13 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   <i className="bi bi-x" />
                 </button>
               </div>
-              <RichTextEditor
-                content={field.description || ""}
-                onChange={(html) => updateField({ description: html })}
-              />
+              <div className="xform-desc-editor-wrap">
+                <RichTextEditor
+                  content={field.description || ""}
+                  onChange={(html) => updateField({ description: html })}
+                />
+                <div className="xform-desc-hint">Shift + Enter = 下一行</div>
+              </div>
             </div>
           )}
 
@@ -478,7 +490,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                 </div>
               )}
 
-              <button className="btn btn-outline-secondary btn-sm mt-1" onClick={addOption}>
+              <button className="btn btn-sm xform-add-option-btn mt-1" onClick={addOption}>
                 + 選項
               </button>
             </div>
