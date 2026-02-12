@@ -8,7 +8,7 @@ interface Props {
 
 export default function FormSettingsPanel({ settings, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"numbering" | "submit">("numbering");
+  const [activeTab, setActiveTab] = useState<"numbering" | "submit">("submit");
   const panelRef = useRef<HTMLDivElement>(null);
 
   const update = (patch: Partial<FormSettings>) => onChange({ ...settings, ...patch });
@@ -44,16 +44,16 @@ export default function FormSettingsPanel({ settings, onChange }: Props) {
           {/* Tabs */}
           <div className="xform-settings-tabs">
             <button
-              className={`xform-settings-tab ${activeTab === "numbering" ? "active" : ""}`}
-              onClick={() => setActiveTab("numbering")}
-            >
-              編號
-            </button>
-            <button
               className={`xform-settings-tab ${activeTab === "submit" ? "active" : ""}`}
               onClick={() => setActiveTab("submit")}
             >
               送出按鈕
+            </button>
+            <button
+              className={`xform-settings-tab ${activeTab === "numbering" ? "active" : ""}`}
+              onClick={() => setActiveTab("numbering")}
+            >
+              編號
             </button>
           </div>
 

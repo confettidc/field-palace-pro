@@ -27,7 +27,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
-let fieldCounter = 0;
+let fieldCounter = 1;
 
 const DEFAULT_SETTINGS: FormSettings = {
   submitButtonText: "立即登記",
@@ -40,12 +40,12 @@ const DEFAULT_SETTINGS: FormSettings = {
 };
 
 const createField = (type: FieldType, groupId?: string): FormField => {
-  fieldCounter++;
+  const num = fieldCounter++;
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
   return {
     id: crypto.randomUUID(),
     type,
-    label: `欄位 ${fieldCounter}`,
+    label: `欄位 ${num}`,
     required: false,
     enabled: true,
     groupId,
@@ -74,6 +74,7 @@ export default function Index() {
   const [showPreview, setShowPreview] = useState(false);
   const [hideDisabled, setHideDisabled] = useState(false);
   const [isDraggingGroup, setIsDraggingGroup] = useState(false);
+  const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
   const [formSettings, setFormSettings] = useState<FormSettings>(DEFAULT_SETTINGS);
 
   const sensors = useSensors(
@@ -411,6 +412,13 @@ export default function Index() {
                 isDraggingGroup={isDraggingGroup}
                 showQuestionNumbers={formSettings.showQuestionNumbers}
                 questionNumberMap={questionNumberMap}
+                collapsed={collapsedGroups.has(group.id)}
+                onToggleCollapse={() => setCollapsedGroups(prev => {
+                  const next = new Set(prev);
+                  if (next.has(group.id)) next.delete(group.id);
+                  else next.add(group.id);
+                  return next;
+                })}
                 onToggleExpand={toggleExpand}
                 onUpdateGroup={updateGroup}
                 onDeleteGroup={deleteGroup}
