@@ -13,22 +13,26 @@ interface Props {
   group: FormGroup;
   items: FormItem[];
   expandedId: string | null;
+  isLastGroup?: boolean;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
   onDeleteGroup: (groupId: string) => void;
   onUpdateItem: (item: FormItem) => void;
   onDeleteItem: (id: string) => void;
+  children?: React.ReactNode;
 }
 
 export default function GroupCard({
   group,
   items,
   expandedId,
+  isLastGroup,
   onToggleExpand,
   onUpdateGroup,
   onDeleteGroup,
   onUpdateItem,
   onDeleteItem,
+  children,
 }: Props) {
   const [editingName, setEditingName] = useState(false);
   const [showDesc, setShowDesc] = useState(!!group.description);
@@ -165,11 +169,12 @@ export default function GroupCard({
             )
           )}
         </SortableContext>
-        {items.length === 0 && (
+      {items.length === 0 && !isLastGroup && (
           <div className="xform-group-empty">
-            <span>此分頁尚無欄位，新增欄位時會自動加入</span>
+            <span>此分頁尚無欄位</span>
           </div>
         )}
+        {children}
       </div>
     </div>
   );

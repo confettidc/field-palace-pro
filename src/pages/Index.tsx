@@ -280,18 +280,38 @@ export default function Index() {
         >
           <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
             {/* Render groups */}
-            {groups.map((group) => (
+            {groups.map((group, idx) => (
               <GroupCard
                 key={group.id}
                 group={group}
                 items={getGroupItems(group.id)}
                 expandedId={expandedId}
+                isLastGroup={idx === groups.length - 1}
                 onToggleExpand={toggleExpand}
                 onUpdateGroup={updateGroup}
                 onDeleteGroup={deleteGroup}
                 onUpdateItem={updateItem}
                 onDeleteItem={deleteItem}
-              />
+              >
+                {idx === groups.length - 1 && !showPanel && items.length > 0 && (
+                  <button
+                    className="xform-add-more-btn"
+                    onClick={handleShowPanel}
+                  >
+                    <i className="bi bi-plus me-1" />
+                    新增欄位 / 內容區塊
+                  </button>
+                )}
+                {idx === groups.length - 1 && showPanel && (
+                  <div className="mt-3">
+                    <AddFieldPanel
+                      onAddField={addField}
+                      onAddContentBlock={addContentBlock}
+                      onCancel={() => setShowPanel(false)}
+                    />
+                  </div>
+                )}
+              </GroupCard>
             ))}
 
             {/* Render ungrouped items */}
@@ -334,7 +354,7 @@ export default function Index() {
           </div>
         )}
 
-        {showPanel && (
+        {showPanel && groups.length === 0 && (
           <div className="mt-3">
             <AddFieldPanel
               onAddField={addField}
@@ -344,7 +364,7 @@ export default function Index() {
           </div>
         )}
 
-        {items.length > 0 && !showPanel && (
+        {items.length > 0 && !showPanel && groups.length === 0 && (
           <button
             className="xform-add-more-btn"
             onClick={handleShowPanel}
