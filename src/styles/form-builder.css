@@ -1539,3 +1539,29 @@
 .xform-preview-group-items .xform-preview-field:last-child {
   margin-bottom: 0;
 }
+
+/* ===== Group drop highlight ===== */
+.xform-group-card.xform-group-drop-over {
+  border-color: #4a5da8;
+  background: #eef1f9;
+  box-shadow: 0 0 0 3px rgba(74, 93, 168, 0.15);
+}
+
+/* ===== Group delete confirm ===== */
+.xform-group-delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.xform-group-delete-msg {
+  font-size: 0.8rem;
+  color: #dc3545;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.xform-group-delete-confirm .btn-sm {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+}

@@ -7,6 +7,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 
 interface Props {
   group: FormGroup;
@@ -31,7 +32,13 @@ export default function GroupCard({
 }: Props) {
   const [editingName, setEditingName] = useState(false);
   const [showDesc, setShowDesc] = useState(!!group.description);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
+
+  const { setNodeRef: setDropRef, isOver } = useDroppable({
+    id: `group-drop-${group.id}`,
+    data: { groupId: group.id },
+  });
 
   useEffect(() => {
     if (editingName && nameRef.current) {
@@ -41,7 +48,10 @@ export default function GroupCard({
   }, [editingName]);
 
   return (
-    <div className="xform-group-card">
+    <div
+      ref={setDropRef}
+      className={`xform-group-card ${isOver ? "xform-group-drop-over" : ""}`}
+    >
       <div className="xform-group-header">
         <div className="xform-group-header-left">
           {editingName ? (
@@ -59,21 +69,42 @@ export default function GroupCard({
             <h3
               className="xform-group-name"
               onClick={() => setEditingName(true)}
-              title="點擊編輯分組名稱"
+              title="點擊編輯分頁名稱"
             >
-              {group.name || "未命名分組"}
+              {group.name || "未命名分頁"}
               <i className="bi bi-pencil xform-group-edit-icon" />
             </h3>
           )}
         </div>
         <div className="xform-group-header-right">
-          <button
-            className="btn btn-sm btn-light text-muted"
-            title="刪除分組（保留欄位）"
-            onClick={() => onDeleteGroup(group.id)}
-          >
-            <i className="bi bi-folder-minus" />
-          </button>
+          {showDeleteConfirm ? (
+            <div className="xform-group-delete-confirm">
+              <span className="xform-group-delete-msg">確定刪除此分頁？</span>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => {
+                  onDeleteGroup(group.id);
+                  setShowDeleteConfirm(false);
+                }}
+              >
+                確定
+              </button>
+              <button
+                className="btn btn-sm btn-light"
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                取消
+              </button>
+            </div>
+          ) : (
+            <button
+              className="btn btn-sm btn-light text-muted"
+              title="刪除分頁（保留欄位）"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <i className="bi bi-folder-minus" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -82,12 +113,12 @@ export default function GroupCard({
           className="btn btn-sm xform-add-desc-btn xform-group-add-desc"
           onClick={() => setShowDesc(true)}
         >
-          + 分組說明
+          + 分頁說明
         </button>
       ) : (
         <div className="xform-group-desc-section">
           <div className="d-flex align-items-center justify-content-between mb-1">
-            <label className="xform-form-label mb-0" style={{ fontSize: '0.8rem' }}>分組說明</label>
+            <label className="xform-form-label mb-0" style={{ fontSize: '0.8rem' }}>分頁說明</label>
             <button
               className="btn btn-sm btn-light text-muted"
               onClick={() => {
@@ -136,7 +167,7 @@ export default function GroupCard({
         </SortableContext>
         {items.length === 0 && (
           <div className="xform-group-empty">
-            <span>此分組尚無欄位，新增欄位時會自動加入</span>
+            <span>此分頁尚無欄位，新增欄位時會自動加入</span>
           </div>
         )}
       </div>
