@@ -142,26 +142,29 @@
   padding: 0.65rem 0.85rem;
 }
 
-/* ===== Drag Handle ===== */
-.xform-drag-handle {
+.xform-field-header-draggable {
+  cursor: grab;
+}
+
+.xform-field-header-draggable:active {
+  cursor: grabbing;
+}
+
+/* Clickable label + badge area */
+.xform-field-header-main {
   display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: grab;
-  color: #b0b8cc;
-  font-size: 1.1rem;
-  padding: 0.15rem;
-  border-radius: 0.25rem;
-  transition: color 0.15s, background 0.15s;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  border-radius: 0.35rem;
+  padding: 0.15rem 0.25rem;
+  transition: background 0.12s;
 }
 
-.xform-drag-handle:hover {
-  color: #5a6580;
-  background: #eef1f9;
-}
-
-.xform-drag-handle:active {
-  cursor: grabbing;
+.xform-field-header-main:hover {
+  background: #f0f2f8;
 }
 
 .xform-field-label-text {
@@ -1550,40 +1553,65 @@
   box-shadow: 0 0 0 3px rgba(74, 93, 168, 0.15);
 }
 
-/* ===== Delete confirm modal ===== */
-.xform-delete-modal {
+/* ===== Delete confirm modal (mild) ===== */
+.xform-delete-modal-mild {
   background: #fff;
   border-radius: 0.85rem;
-  padding: 1.75rem 2rem;
-  max-width: 360px;
+  padding: 1.5rem 1.75rem;
+  max-width: 340px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
   animation: xform-slide-up 0.2s ease;
 }
 
-.xform-delete-modal-icon {
-  font-size: 2.2rem;
-  color: #ef4444;
-  margin-bottom: 0.75rem;
+.xform-delete-modal-mild .xform-delete-modal-icon {
+  font-size: 1.8rem;
+  color: #8892a4;
+  margin-bottom: 0.5rem;
 }
 
-.xform-delete-modal-msg {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1a1f36;
-  margin-bottom: 1.25rem;
+.xform-delete-modal-mild .xform-delete-modal-msg {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #3a3f50;
+  margin-bottom: 1rem;
 }
 
-.xform-delete-modal-actions {
+.xform-delete-modal-mild .xform-delete-modal-actions {
   display: flex;
   justify-content: center;
-  gap: 0.65rem;
+  gap: 0.5rem;
 }
 
-.xform-delete-modal-actions .btn {
-  min-width: 80px;
+.xform-btn-cancel {
+  background: #f0f2f6;
+  color: #5a6580;
+  border: none;
+  font-weight: 500;
+  min-width: 72px;
+  border-radius: 0.4rem;
+  padding: 0.35rem 1rem;
+  transition: background 0.15s;
+}
+
+.xform-btn-cancel:hover {
+  background: #e4e7ed;
+}
+
+.xform-btn-confirm-delete {
+  background: #ef4444;
+  color: #fff;
+  border: none;
   font-weight: 600;
+  min-width: 80px;
+  border-radius: 0.4rem;
+  padding: 0.35rem 1rem;
+  transition: background 0.15s;
+}
+
+.xform-btn-confirm-delete:hover {
+  background: #dc2626;
 }
 
 /* ===== Group drag handle (removed icon, entire header is handle) ===== */
@@ -1665,24 +1693,76 @@
 }
 
 .xform-settings-body {
-  padding: 0 1.15rem 1.15rem;
+  padding: 0.75rem 1.15rem 1.15rem;
   border-top: 1px solid #e2e6ef;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
 }
 
-.xform-settings-section {
-  padding: 0.85rem 0;
-  border-bottom: 1px solid #f0f2f6;
+/* Settings card group */
+.xform-settings-card {
+  background: #f8f9fc;
+  border: 1px solid #eef0f5;
+  border-radius: 0.6rem;
+  overflow: hidden;
 }
 
-.xform-settings-section:last-child {
-  border-bottom: none;
+.xform-settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #4a5da8;
+  background: #eef1f9;
+  border-bottom: 1px solid #e2e6ef;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.xform-settings-section-header {
+.xform-settings-card-body {
+  padding: 0.75rem 0.85rem;
+}
+
+/* Settings row */
+.xform-settings-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.xform-settings-row + .xform-settings-row {
+  border-top: 1px solid #f0f2f6;
+}
+
+.xform-settings-row-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a6580;
+  min-width: 70px;
+  padding-top: 0.3rem;
+  flex-shrink: 0;
+}
+
+.xform-settings-row-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.xform-settings-row-inline {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  gap: 0.5rem;
+}
+
+.xform-settings-desc {
+  font-size: 0.85rem;
+  color: #3a3f50;
+  font-weight: 500;
 }
 
 .xform-settings-hint {
@@ -1706,61 +1786,52 @@
   color: #1a1f36;
 }
 
-/* ===== Color picker grid ===== */
-.xform-color-grid {
+/* ===== Settings color section ===== */
+.xform-settings-color-section {
   margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f2f6;
 }
 
-.xform-color-group {
-  margin-bottom: 0.85rem;
-}
-
-.xform-color-group-label {
-  display: block;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #5a6580;
+.xform-color-pair-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 0.5rem;
 }
 
-.xform-color-group-sub {
-  font-weight: 400;
-  color: #8892a4;
-  font-size: 0.78rem;
-  margin-left: 0.25rem;
-}
-
-.xform-color-row {
-  display: flex;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.xform-color-item {
+.xform-color-pair {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.2rem;
 }
 
-.xform-color-item label {
-  font-size: 0.78rem;
+.xform-color-pair label {
+  font-size: 0.75rem;
   color: #6b7590;
   font-weight: 500;
+}
+
+.xform-color-hover-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8892a4;
+  margin: 0.35rem 0 0.25rem;
 }
 
 .xform-color-input-wrap {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: #f8f9fc;
+  background: #fff;
   border: 1px solid #e2e6ef;
   border-radius: 0.4rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.45rem;
 }
 
 .xform-color-input-wrap input[type="color"] {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border: 1px solid #dee2e6;
   border-radius: 4px;
   padding: 0;
@@ -1780,21 +1851,18 @@
 }
 
 .xform-color-input-wrap span {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: #5a6580;
   font-family: monospace;
 }
 
 .xform-btn-preview {
-  background: #f6f7fb;
+  background: #f0f2f8;
   border: 1px solid #e2e6ef;
-  border-radius: 0.5rem;
-  padding: 0.75rem;
+  border-radius: 0.45rem;
+  padding: 0.6rem;
   text-align: center;
-}
-
-.xform-btn-preview .xform-form-label {
-  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* ===== Preview submit button ===== */

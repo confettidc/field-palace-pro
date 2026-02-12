@@ -50,19 +50,20 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
       style={style}
       className={`xform-field-card ${!block.enabled ? "xform-field-dimmed" : ""}`}
     >
-      <div className="xform-field-header" onClick={onToggleExpand} style={{ cursor: "pointer" }}>
-        <div className="xform-drag-handle" {...attributes} {...listeners} onClick={(e) => e.stopPropagation()}>
-          <i className="bi bi-grip-vertical" />
+      <div
+        className="xform-field-header xform-field-header-draggable"
+        {...attributes}
+        {...listeners}
+      >
+
+        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
+          <span className="xform-field-label-text">{displayLabel}</span>
+
+          <span className="xform-field-type-badge xform-badge-content">
+            <i className={`bi ${meta.icon}`} />
+            {meta.label}
+          </span>
         </div>
-
-        <span className="xform-field-label-text">{displayLabel}</span>
-
-        <span className="xform-field-type-badge xform-badge-content">
-          <i className={`bi ${meta.icon}`} />
-          {meta.label}
-        </span>
-
-        <span className="xform-field-spacer" />
 
         <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
           <span className="xform-toggle-label">啟用</span>

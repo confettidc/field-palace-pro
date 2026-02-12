@@ -136,10 +136,18 @@ export default function Index() {
     toast("已刪除");
   };
 
+  // Track which item was expanded before drag to restore after
+  const [preDragExpandedId, setPreDragExpandedId] = useState<string | null>(null);
+
   const handleDragStart = (event: DragStartEvent) => {
     const activeId = String(event.active.id);
     if (activeId.startsWith("group-sort-")) {
       setIsDraggingGroup(true);
+    }
+    // Collapse expanded item during drag, remember it
+    if (expandedId) {
+      setPreDragExpandedId(expandedId);
+      setExpandedId(null);
     }
   };
 
@@ -192,6 +200,11 @@ export default function Index() {
     const activeId = String(active.id);
     if (activeId.startsWith("group-sort-")) {
       setIsDraggingGroup(false);
+      // Restore expanded item after group drag
+      if (preDragExpandedId) {
+        setExpandedId(preDragExpandedId);
+        setPreDragExpandedId(null);
+      }
       if (!over) return;
       const overId = String(over.id);
       if (!overId.startsWith("group-sort-")) return;
@@ -222,10 +235,20 @@ export default function Index() {
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
+
+    // Restore expanded item after item drag
+    if (preDragExpandedId) {
+      setExpandedId(preDragExpandedId);
+      setPreDragExpandedId(null);
+    }
   };
 
   const handleDragCancel = () => {
     setIsDraggingGroup(false);
+    if (preDragExpandedId) {
+      setExpandedId(preDragExpandedId);
+      setPreDragExpandedId(null);
+    }
   };
 
   const handleSave = () => {
@@ -327,16 +350,18 @@ export default function Index() {
               <i className="bi bi-folder-plus me-1" />
               新增分頁
             </button>
-            <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
-              <span className="xform-filter-toggle-text">
-                {hideDisabled && disabledCount > 0
-                  ? `隱藏關閉項目 (${disabledCount})`
-                  : "隱藏關閉項目"}
-              </span>
-              <span className={`xform-toggle-switch ${hideDisabled ? "active" : ""}`}>
-                <span className="xform-toggle-knob" />
-              </span>
-            </label>
+            {disabledCount > 0 && (
+              <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
+                <span className="xform-filter-toggle-text">
+                  {hideDisabled
+                    ? "顯示所有項目"
+                    : `隱藏關閉項目 (${disabledCount})`}
+                </span>
+                <span className={`xform-toggle-switch ${hideDisabled ? "active" : ""}`}>
+                  <span className="xform-toggle-knob" />
+                </span>
+              </label>
+            )}
           </div>
         )}
 
