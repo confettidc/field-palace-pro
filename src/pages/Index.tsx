@@ -142,8 +142,8 @@ export default function Index() {
             <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
               <span className="xform-filter-toggle-text">
                 {hideDisabled && disabledCount > 0
-                  ? `隱藏停用項目 (${disabledCount})`
-                  : "隱藏停用項目"}
+                  ? `隱藏關閉項目 (${disabledCount})`
+                  : "隱藏關閉項目"}
               </span>
               <span className={`xform-toggle-switch ${hideDisabled ? "active" : ""}`}>
                 <span className="xform-toggle-knob" />
