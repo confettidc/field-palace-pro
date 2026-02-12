@@ -6,21 +6,20 @@ import RichTextEditor from "./RichTextEditor";
 import {
   SortableContext,
   verticalListSortingStrategy,
+  useSortable,
 } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   group: FormGroup;
   items: FormItem[];
   expandedId: string | null;
   isLastGroup?: boolean;
-  isFirstGroup?: boolean;
-  groupIndex: number;
-  totalGroups: number;
+  isDraggingGroup?: boolean;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
   onDeleteGroup: (groupId: string) => void;
-  onMoveGroup: (groupId: string, direction: "up" | "down") => void;
   onUpdateItem: (item: FormItem) => void;
   onDeleteItem: (id: string) => void;
   children?: React.ReactNode;
@@ -31,13 +30,10 @@ export default function GroupCard({
   items,
   expandedId,
   isLastGroup,
-  isFirstGroup,
-  groupIndex,
-  totalGroups,
+  isDraggingGroup,
   onToggleExpand,
   onUpdateGroup,
   onDeleteGroup,
-  onMoveGroup,
   onUpdateItem,
   onDeleteItem,
   children,
@@ -52,6 +48,24 @@ export default function GroupCard({
     data: { groupId: group.id },
   });
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef: setSortRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: `group-sort-${group.id}`,
+    data: { type: "group", groupId: group.id },
+  });
+
+  const sortStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   useEffect(() => {
     if (editingName && nameRef.current) {
       nameRef.current.focus();
@@ -59,30 +73,26 @@ export default function GroupCard({
     }
   }, [editingName]);
 
+  // When any group is being dragged, collapse to compact mode
+  const isCollapsed = isDraggingGroup && !isDragging;
+
   return (
     <div
-      ref={setDropRef}
-      className={`xform-group-card ${isOver ? "xform-group-drop-over" : ""}`}
+      ref={(node) => {
+        setSortRef(node);
+        setDropRef(node);
+      }}
+      style={sortStyle}
+      className={`xform-group-card ${isOver ? "xform-group-drop-over" : ""} ${isDragging ? "xform-group-dragging" : ""} ${isCollapsed ? "xform-group-collapsed" : ""}`}
     >
       <div className="xform-group-header">
         <div className="xform-group-header-left">
-          <div className="xform-group-reorder-btns">
-            <button
-              className="btn btn-sm btn-light xform-group-move-btn"
-              disabled={groupIndex === 0}
-              title="上移分頁"
-              onClick={() => onMoveGroup(group.id, "up")}
-            >
-              <i className="bi bi-chevron-up" />
-            </button>
-            <button
-              className="btn btn-sm btn-light xform-group-move-btn"
-              disabled={groupIndex === totalGroups - 1}
-              title="下移分頁"
-              onClick={() => onMoveGroup(group.id, "down")}
-            >
-              <i className="bi bi-chevron-down" />
-            </button>
+          <div
+            className="xform-group-drag-handle"
+            {...attributes}
+            {...listeners}
+          >
+            <i className="bi bi-grip-vertical" />
           </div>
           {editingName ? (
             <input
@@ -105,103 +115,116 @@ export default function GroupCard({
               <i className="bi bi-pencil xform-group-edit-icon" />
             </h3>
           )}
+          {isDraggingGroup && !isDragging && (
+            <span className="xform-group-item-count">
+              {items.length} 個欄位
+            </span>
+          )}
         </div>
         <div className="xform-group-header-right">
-          {showDeleteConfirm ? (
-            <div className="xform-group-delete-confirm">
-              <span className="xform-group-delete-msg">確定刪除此分頁？</span>
-              <button
-                className="btn btn-sm btn-danger"
-                onClick={() => {
-                  onDeleteGroup(group.id);
-                  setShowDeleteConfirm(false);
-                }}
-              >
-                確定
-              </button>
-              <button
-                className="btn btn-sm btn-light"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                取消
-              </button>
-            </div>
+          {!isDraggingGroup && (
+            <>
+              {showDeleteConfirm ? (
+                <div className="xform-group-delete-confirm">
+                  <span className="xform-group-delete-msg">確定刪除此分頁？</span>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => {
+                      onDeleteGroup(group.id);
+                      setShowDeleteConfirm(false);
+                    }}
+                  >
+                    確定
+                  </button>
+                  <button
+                    className="btn btn-sm btn-light"
+                    onClick={() => setShowDeleteConfirm(false)}
+                  >
+                    取消
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className="btn btn-sm btn-light text-muted"
+                  title="刪除分頁（保留欄位）"
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <i className="bi bi-folder-minus" />
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+
+      {!isDraggingGroup && (
+        <>
+          {!showDesc ? (
+            <button
+              className="btn btn-sm xform-add-desc-btn xform-group-add-desc"
+              onClick={() => setShowDesc(true)}
+            >
+              + 分頁說明
+            </button>
           ) : (
-            <button
-              className="btn btn-sm btn-light text-muted"
-              title="刪除分頁（保留欄位）"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <i className="bi bi-folder-minus" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {!showDesc ? (
-        <button
-          className="btn btn-sm xform-add-desc-btn xform-group-add-desc"
-          onClick={() => setShowDesc(true)}
-        >
-          + 分頁說明
-        </button>
-      ) : (
-        <div className="xform-group-desc-section">
-          <div className="d-flex align-items-center justify-content-between mb-1">
-            <label className="xform-form-label mb-0" style={{ fontSize: '0.8rem' }}>分頁說明</label>
-            <button
-              className="btn btn-sm btn-light text-muted"
-              onClick={() => {
-                onUpdateGroup({ ...group, description: "" });
-                setShowDesc(false);
-              }}
-            >
-              <i className="bi bi-x" />
-            </button>
-          </div>
-          <div className="xform-desc-editor-wrap">
-            <RichTextEditor
-              content={group.description || ""}
-              onChange={(html) => onUpdateGroup({ ...group, description: html })}
-            />
-            <div className="xform-desc-hint" style={{ borderTop: '1px solid #dee2e6' }}>
-              Shift + Enter = 下一行
+            <div className="xform-group-desc-section">
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <label className="xform-form-label mb-0" style={{ fontSize: '0.8rem' }}>分頁說明</label>
+                <button
+                  className="btn btn-sm btn-light text-muted"
+                  onClick={() => {
+                    onUpdateGroup({ ...group, description: "" });
+                    setShowDesc(false);
+                  }}
+                >
+                  <i className="bi bi-x" />
+                </button>
+              </div>
+              <div className="xform-desc-editor-wrap">
+                <RichTextEditor
+                  content={group.description || ""}
+                  onChange={(html) => onUpdateGroup({ ...group, description: html })}
+                />
+                <div className="xform-desc-hint" style={{ borderTop: '1px solid #dee2e6' }}>
+                  Shift + Enter = 下一行
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      <div className="xform-group-items">
-        <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
-          {items.map((item) =>
-            isContentBlock(item) ? (
-              <ContentBlockCard
-                key={item.id}
-                block={item}
-                expanded={expandedId === item.id}
-                onToggleExpand={() => onToggleExpand(item.id)}
-                onUpdate={(b) => onUpdateItem(b)}
-                onDelete={onDeleteItem}
-              />
-            ) : (
-              <FormFieldCard
-                key={item.id}
-                field={item}
-                expanded={expandedId === item.id}
-                onToggleExpand={() => onToggleExpand(item.id)}
-                onUpdate={(f) => onUpdateItem(f)}
-                onDelete={onDeleteItem}
-              />
-            )
           )}
-        </SortableContext>
-      {items.length === 0 && !isLastGroup && (
-          <div className="xform-group-empty">
-            <span>此分頁尚無欄位</span>
+
+          <div className="xform-group-items">
+            <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+              {items.map((item) =>
+                isContentBlock(item) ? (
+                  <ContentBlockCard
+                    key={item.id}
+                    block={item}
+                    expanded={expandedId === item.id}
+                    onToggleExpand={() => onToggleExpand(item.id)}
+                    onUpdate={(b) => onUpdateItem(b)}
+                    onDelete={onDeleteItem}
+                  />
+                ) : (
+                  <FormFieldCard
+                    key={item.id}
+                    field={item}
+                    expanded={expandedId === item.id}
+                    onToggleExpand={() => onToggleExpand(item.id)}
+                    onUpdate={(f) => onUpdateItem(f)}
+                    onDelete={onDeleteItem}
+                  />
+                )
+              )}
+            </SortableContext>
+            {items.length === 0 && !isLastGroup && (
+              <div className="xform-group-empty">
+                <span>此分頁尚無欄位</span>
+              </div>
+            )}
+            {children}
           </div>
-        )}
-        {children}
-      </div>
+        </>
+      )}
     </div>
   );
 }
