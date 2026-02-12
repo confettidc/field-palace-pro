@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META, DEFAULT_DATE_CONFIG } from "@/types/formField";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
@@ -36,6 +36,7 @@ const createField = (type: FieldType): FormField => {
       ? [{ id: crypto.randomUUID(), label: "選項 1" }]
       : undefined,
     dateConfig: type === "date" ? { ...DEFAULT_DATE_CONFIG } : undefined,
+    phoneConfig: type === "phone" ? { ...DEFAULT_PHONE_CONFIG } : undefined,
   };
 };
 

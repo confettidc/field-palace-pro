@@ -1,4 +1,4 @@
-import { FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META, DEFAULT_DATE_CONFIG } from "@/types/formField";
+import { FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 
 interface Props {
   open: boolean;
@@ -13,14 +13,14 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
 
   return (
     <div className="xform-modal-overlay" onClick={onClose}>
-      <div className="xform-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="xform-modal-header">
+      <div className="xform-modal xform-preview-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="xform-modal-header xform-preview-modal-header">
           <h2 className="xform-modal-title">表單預覽</h2>
           <button className="btn btn-sm btn-light" onClick={onClose}>
             <i className="bi bi-x-lg" />
           </button>
         </div>
-        <div className="xform-modal-body">
+        <div className="xform-modal-body xform-preview-modal-body">
           {enabledItems.length === 0 && (
             <p className="text-muted text-center py-4" style={{ fontSize: "0.85rem" }}>沒有啟用的欄位</p>
           )}
@@ -65,20 +65,32 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                   )}
 
                   {item.type === "short_text" && (
-                    <input type="text" className="form-control form-control-sm" placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
+                    <input type="text" className="xform-preview-input" placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
                   )}
                   {item.type === "long_text" && (
-                    <textarea className="form-control form-control-sm" rows={3} placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
+                    <textarea className="xform-preview-input xform-preview-textarea" rows={3} placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
                   )}
                   {item.type === "number" && (
-                    <input type="number" className="form-control form-control-sm" placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
+                    <input type="number" className="xform-preview-input" placeholder={item.placeholder} defaultValue={item.defaultValue} readOnly />
                   )}
                   {item.type === "email" && (
-                    <input type="email" className="form-control form-control-sm" placeholder={item.placeholder || "example@email.com"} readOnly />
+                    <input type="email" className="xform-preview-input" placeholder={item.placeholder || "example@email.com"} readOnly />
                   )}
-                  {item.type === "phone" && (
-                    <input type="tel" className="form-control form-control-sm" placeholder={item.placeholder || "0912-345-678"} readOnly />
-                  )}
+                  {item.type === "phone" && (() => {
+                    const pc = item.phoneConfig || DEFAULT_PHONE_CONFIG;
+                    const codes = pc.acceptAll ? COMMON_COUNTRY_CODES : COMMON_COUNTRY_CODES.filter(c => pc.allowedCodes.includes(c.code));
+                    const displayCodes = codes.length > 0 ? codes : COMMON_COUNTRY_CODES;
+                    return (
+                      <div className="xform-preview-phone-row">
+                        <select className="xform-preview-phone-code">
+                          {displayCodes.map(c => (
+                            <option key={c.code} value={c.code}>{c.code}</option>
+                          ))}
+                        </select>
+                        <input type="tel" className="xform-preview-input xform-preview-phone-input" placeholder={item.placeholder || "手機號碼"} readOnly />
+                      </div>
+                    );
+                  })()}
                   {item.type === "date" && (() => {
                     const dc = item.dateConfig || DEFAULT_DATE_CONFIG;
                     const yearOpts = [];
@@ -91,7 +103,7 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                       <div className="xform-date-preview-row">
                         {dc.includeYear && (
                           <>
-                            <select className="form-select form-select-sm xform-date-select">
+                            <select className="xform-preview-select xform-date-select">
                               <option>--</option>
                               {dc.allowNA && <option>不適用</option>}
                               {yearOpts.map(y => <option key={y}>{y}</option>)}
@@ -101,7 +113,7 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                         )}
                         {dc.includeMonth && (
                           <>
-                            <select className="form-select form-select-sm xform-date-select">
+                            <select className="xform-preview-select xform-date-select">
                               <option>--</option>
                               {dc.allowNA && <option>不適用</option>}
                               {monthOpts.map(m => <option key={m}>{m}</option>)}
@@ -111,7 +123,7 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                         )}
                         {dc.includeDay && (
                           <>
-                            <select className="form-select form-select-sm xform-date-select">
+                            <select className="xform-preview-select xform-date-select">
                               <option>--</option>
                               {dc.allowNA && <option>不適用</option>}
                               {dayOpts.map(d => <option key={d}>{d}</option>)}
@@ -131,9 +143,9 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                   {item.type === "single_choice" && (
                     <div className="xform-preview-options">
                       {(item.options || []).map((opt) => (
-                        <div key={opt.id} className="form-check">
-                          <input className="form-check-input" type="radio" name={item.id} disabled />
-                          <label className="form-check-label">{opt.label}</label>
+                        <div key={opt.id} className="xform-preview-radio-item">
+                          <input className="xform-preview-radio" type="radio" name={item.id} disabled />
+                          <label className="xform-preview-radio-label">{opt.label}</label>
                         </div>
                       ))}
                     </div>
@@ -141,15 +153,15 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                   {item.type === "multiple_choice" && (
                     <div className="xform-preview-options">
                       {(item.options || []).map((opt) => (
-                        <div key={opt.id} className="form-check">
-                          <input className="form-check-input" type="checkbox" disabled />
-                          <label className="form-check-label">{opt.label}</label>
+                        <div key={opt.id} className="xform-preview-radio-item">
+                          <input className="xform-preview-checkbox" type="checkbox" disabled />
+                          <label className="xform-preview-radio-label">{opt.label}</label>
                         </div>
                       ))}
                     </div>
                   )}
                   {item.type === "dropdown" && (
-                    <select className="form-select form-select-sm" disabled>
+                    <select className="xform-preview-select" disabled>
                       <option>請選擇...</option>
                       {(item.options || []).map((opt) => (
                         <option key={opt.id}>{opt.label}</option>

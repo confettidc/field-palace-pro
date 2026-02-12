@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig } from "@/types/formField";
+import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -75,9 +75,11 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
 
   const hasOptions = ["single_choice", "multiple_choice", "dropdown"].includes(field.type);
   const isDate = field.type === "date";
-  const showHintSection = !hasOptions && !isDate && field.type !== "file_upload";
+  const isPhone = field.type === "phone";
+  const showHintSection = !hasOptions && !isDate && !isPhone && field.type !== "file_upload";
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
   const choiceConfig = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
+  const phoneConfig = field.phoneConfig || DEFAULT_PHONE_CONFIG;
   const displayLabel = field.label || "未命名欄位";
 
   const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
@@ -183,24 +185,21 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
         <div className="xform-field-body">
           <div className="xform-form-group">
             <label className="xform-form-label">題目</label>
-            <div className="xform-textarea-wrap">
-              <textarea
-                className="form-control form-control-sm xform-auto-resize"
-                value={field.label}
-                onChange={(e) => {
-                  updateField({ label: e.target.value });
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-                onFocus={(e) => {
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-                placeholder="例如：您的職位"
-                rows={1}
-              />
-              <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
-            </div>
+            <textarea
+              className="form-control form-control-sm xform-auto-resize"
+              value={field.label}
+              onChange={(e) => {
+                updateField({ label: e.target.value });
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+              }}
+              onFocus={(e) => {
+                e.target.style.height = 'auto';
+                e.target.style.height = e.target.scrollHeight + 'px';
+              }}
+              placeholder="例如：您的職位"
+              rows={1}
+            />
           </div>
 
           {!showDesc ? (
@@ -381,6 +380,59 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                     </>
                   )}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {isPhone && (
+            <div className="xform-form-group">
+              <label className="xform-form-label">進階設定</label>
+              <div className="xform-phone-config">
+                <div className="xform-phone-mode-select">
+                  <label className="xform-phone-mode-option" onClick={() => updateField({ phoneConfig: { ...phoneConfig, acceptAll: true, allowedCodes: [] } })}>
+                    <input type="radio" checked={phoneConfig.acceptAll} readOnly />
+                    <span>預設（接受全球區碼登記）</span>
+                  </label>
+                  <label className="xform-phone-mode-option" onClick={() => updateField({ phoneConfig: { ...phoneConfig, acceptAll: false, allowedCodes: phoneConfig.allowedCodes.length ? phoneConfig.allowedCodes : ["886"] } })}>
+                    <input type="radio" checked={!phoneConfig.acceptAll} readOnly />
+                    <span>只接受以下區碼登記</span>
+                  </label>
+                </div>
+                {!phoneConfig.acceptAll && (
+                  <div className="xform-phone-codes">
+                    {phoneConfig.allowedCodes.map((code, idx) => {
+                      const found = COMMON_COUNTRY_CODES.find(c => c.code === code);
+                      return (
+                        <div key={idx} className="xform-phone-code-row">
+                          <select
+                            className="form-select form-select-sm"
+                            value={code}
+                            onChange={(e) => {
+                              const newCodes = [...phoneConfig.allowedCodes];
+                              newCodes[idx] = e.target.value;
+                              updateField({ phoneConfig: { ...phoneConfig, allowedCodes: newCodes } });
+                            }}
+                          >
+                            {COMMON_COUNTRY_CODES.map(c => (
+                              <option key={c.code} value={c.code}>{c.label}</option>
+                            ))}
+                          </select>
+                          <button className="btn btn-sm btn-light text-danger" onClick={() => {
+                            const newCodes = phoneConfig.allowedCodes.filter((_, i) => i !== idx);
+                            updateField({ phoneConfig: { ...phoneConfig, allowedCodes: newCodes.length ? newCodes : ["886"], acceptAll: newCodes.length === 0 } });
+                          }}>
+                            <i className="bi bi-trash" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <button className="btn btn-sm xform-add-option-btn" onClick={() => {
+                      updateField({ phoneConfig: { ...phoneConfig, allowedCodes: [...phoneConfig.allowedCodes, "886"] } });
+                    }}>
+                      + 新增
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           )}

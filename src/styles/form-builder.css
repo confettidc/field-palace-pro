@@ -989,7 +989,53 @@
 .xform-divider-dotted { border-top-style: dotted; }
 .xform-divider-double { border-top: 4px double #8892a4; }
 
-/* ===== Preview Modal ===== */
+/* ===== Phone config ===== */
+.xform-phone-config {
+  background: #f3f4f7;
+  border: 1px solid #e0e3ea;
+  border-radius: 0.45rem;
+  padding: 0.65rem 0.75rem;
+}
+
+.xform-phone-mode-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.xform-phone-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  color: #1a1f36;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.xform-phone-mode-option input[type="radio"] {
+  accent-color: #4a5da8;
+  cursor: pointer;
+}
+
+.xform-phone-codes {
+  padding-left: 1.2rem;
+  margin-top: 0.25rem;
+}
+
+.xform-phone-code-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.xform-phone-code-row select {
+  max-width: 200px;
+}
+
+/* ===== Preview Modal – styled ===== */
 .xform-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1024,6 +1070,18 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.xform-preview-modal {
+  background: linear-gradient(180deg, #eef1f8 0%, #f8f9fc 100%);
+  max-width: 680px;
+}
+
+.xform-preview-modal-header {
+  background: #fff;
+  border-bottom: 1px solid #e2e6ef;
+  border-radius: 1rem 1rem 0 0;
+  padding: 1rem 1.35rem;
+}
+
 .xform-modal-header {
   display: flex;
   align-items: center;
@@ -1039,23 +1097,32 @@
   color: #1a1f36;
 }
 
+.xform-preview-modal-body {
+  padding: 1.5rem 1.75rem;
+}
+
 .xform-modal-body {
   padding: 1.5rem 1.35rem;
   overflow-y: auto;
   flex: 1;
 }
 
-/* ===== Preview field items ===== */
+/* ===== Preview field items – styled ===== */
 .xform-preview-field {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem 1.15rem;
+  background: #fff;
+  border-radius: 0.6rem;
+  border: 1px solid #e2e6ef;
+  box-shadow: 0 1px 4px rgba(26, 31, 54, 0.04);
 }
 
 .xform-preview-label {
   display: block;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #1a1f36;
-  margin-bottom: 0.3rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #2d3350;
+  margin-bottom: 0.5rem;
 }
 
 .xform-preview-required {
@@ -1064,9 +1131,10 @@
 }
 
 .xform-preview-desc {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   color: #8892a4;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }
 
 .xform-preview-desc img {
@@ -1074,14 +1142,104 @@
   border-radius: 0.25rem;
 }
 
+/* Styled inputs for preview */
+.xform-preview-input {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid #dce1ed;
+  border-radius: 0.45rem;
+  background: #f9fafb;
+  color: #1a1f36;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.xform-preview-input:focus {
+  border-color: #4a5da8;
+  background: #fff;
+}
+
+.xform-preview-textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.xform-preview-select {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid #dce1ed;
+  border-radius: 0.45rem;
+  background: #f9fafb;
+  color: #1a1f36;
+  outline: none;
+}
+
+/* Phone preview */
+.xform-preview-phone-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid #dce1ed;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.xform-preview-phone-code {
+  border: none;
+  border-right: 1px solid #dce1ed;
+  background: #fff;
+  padding: 0.5rem 0.6rem;
+  font-size: 0.9rem;
+  color: #1a1f36;
+  width: 90px;
+  outline: none;
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a6580' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 14px;
+  padding-right: 24px;
+}
+
+.xform-preview-phone-input {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  flex: 1;
+}
+
+/* Options in preview */
 .xform-preview-options {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.45rem;
 }
 
-.xform-preview-options .form-check-label {
-  font-size: 0.92rem;
+.xform-preview-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+}
+
+.xform-preview-radio,
+.xform-preview-checkbox {
+  accent-color: #4a5da8;
+  width: 16px;
+  height: 16px;
+  cursor: default;
+}
+
+.xform-preview-radio-label {
+  font-size: 0.9rem;
+  color: #3a3f52;
+  cursor: default;
 }
 
 .xform-preview-file-upload {
@@ -1095,6 +1253,7 @@
   border-radius: 0.5rem;
   color: #8892a4;
   font-size: 0.9rem;
+  background: #f9fafb;
 }
 
 .xform-preview-file-upload i {
@@ -1129,6 +1288,7 @@
   padding: 0.85rem;
   margin: 0.75rem 0;
   font-size: 0.92rem;
+  background: #fff;
 }
 
 .xform-preview-text {
