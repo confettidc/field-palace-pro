@@ -93,17 +93,38 @@ export default function Index() {
   };
 
   // Build question number map
+  // Build question number map respecting group order
   const questionNumberMap = useMemo(() => {
     const map = new Map<string, number>();
     if (!formSettings.showQuestionNumbers) return map;
     let num = 1;
-    for (const item of items) {
-      if (isFormField(item) && item.enabled) {
-        map.set(item.id, num++);
+
+    if (groups.length > 0) {
+      // Iterate in group order
+      for (const group of groups) {
+        for (const item of items) {
+          const gid = isContentBlock(item) ? item.groupId : (item as FormField).groupId;
+          if (gid === group.id && isFormField(item) && item.enabled) {
+            map.set(item.id, num++);
+          }
+        }
+      }
+      // Ungrouped items after
+      for (const item of items) {
+        const gid = isContentBlock(item) ? item.groupId : (item as FormField).groupId;
+        if (!gid && isFormField(item) && item.enabled) {
+          map.set(item.id, num++);
+        }
+      }
+    } else {
+      for (const item of items) {
+        if (isFormField(item) && item.enabled) {
+          map.set(item.id, num++);
+        }
       }
     }
     return map;
-  }, [items, formSettings.showQuestionNumbers]);
+  }, [items, groups, formSettings.showQuestionNumbers]);
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
