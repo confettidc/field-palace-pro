@@ -395,6 +395,7 @@ export default function Index() {
                 onDeleteGroup={deleteGroup}
                 onUpdateItem={updateItem}
                 onDeleteItem={deleteItem}
+                onShowAddPanel={handleShowPanel}
               >
                 {idx === groups.length - 1 && !showPanel && items.length > 0 && (
                   <button
