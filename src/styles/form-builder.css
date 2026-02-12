@@ -325,31 +325,44 @@
   text-align: right;
 }
 
-/* ===== Choice Advanced Settings ===== */
-.xform-choice-advanced-section {
-  margin-bottom: 0.75rem;
-}
-
-.xform-choice-advanced-header {
+/* ===== Options Header with inline advanced toggle ===== */
+.xform-options-header {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.82rem;
-  color: #7c8598;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
+.xform-advanced-toggle-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: #8892a4;
   cursor: pointer;
   user-select: none;
-  padding: 0.3rem 0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  transition: all 0.15s;
   font-weight: 500;
-  transition: color 0.15s;
+  position: relative;
 }
 
-.xform-choice-advanced-header:hover {
+.xform-advanced-toggle-inline:hover {
   color: #4a5da8;
+  background: #edf0f7;
 }
 
-.xform-choice-advanced-header i {
-  font-size: 0.7rem;
-  transition: transform 0.15s;
+.xform-advanced-toggle-inline i:first-child {
+  font-size: 0.8rem;
+}
+
+.xform-advanced-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4a5da8;
+  display: inline-block;
 }
 
 .xform-choice-advanced-body {
@@ -454,24 +467,41 @@
   color: #dc3545;
 }
 
-.xform-tag-input {
-  border: 1px solid #dce0ea;
-  outline: none;
-  background: #fff;
-  font-size: 0.78rem;
-  width: 100px;
-  padding: 0.18rem 0.45rem;
-  color: #4a5580;
+.xform-tag-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  color: #8892a4;
+  cursor: text;
+  padding: 0.12rem 0.4rem;
+  border: 1px dashed #c8cee0;
   border-radius: 999px;
+  background: #fff;
   transition: border-color 0.15s;
 }
 
-.xform-tag-input::placeholder {
-  color: #b0b8cc;
+.xform-tag-add-btn:hover {
+  border-color: #4a5da8;
+  color: #4a5da8;
 }
 
-.xform-tag-input:focus {
-  border-color: #4a5da8;
+.xform-tag-add-btn i {
+  font-size: 0.72rem;
+}
+
+.xform-tag-inline-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.75rem;
+  width: 60px;
+  padding: 0;
+  color: #4a5580;
+}
+
+.xform-tag-inline-input::placeholder {
+  color: #b0b8cc;
 }
 
 /* ===== Add Field Panel ===== */
