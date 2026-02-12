@@ -226,39 +226,38 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           {isDate && (
             <div className="xform-form-group">
               <label className="xform-form-label">日期項目</label>
-              <div className="xform-date-checks">
-                <label className="xform-date-check-label">
-                  <input type="checkbox" checked={dateConfig.includeYear}
-                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeYear: e.target.checked } })} />
-                  <span>需輸入年份</span>
-                </label>
-                <label className="xform-date-check-label">
-                  <input type="checkbox" checked={dateConfig.includeMonth}
-                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeMonth: e.target.checked } })} />
-                  <span>需輸入月份</span>
-                </label>
-                <label className="xform-date-check-label">
-                  <input type="checkbox" checked={dateConfig.includeDay}
-                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeDay: e.target.checked } })} />
-                  <span>需輸入日子</span>
-                </label>
-              </div>
+              <div className="xform-date-top-row">
+                <div className="xform-date-checks">
+                  <label className="xform-date-check-label">
+                    <input type="checkbox" checked={dateConfig.includeYear}
+                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeYear: e.target.checked } })} />
+                    <span>需輸入年份</span>
+                  </label>
+                  <label className="xform-date-check-label">
+                    <input type="checkbox" checked={dateConfig.includeMonth}
+                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeMonth: e.target.checked } })} />
+                    <span>需輸入月份</span>
+                  </label>
+                  <label className="xform-date-check-label">
+                    <input type="checkbox" checked={dateConfig.includeDay}
+                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeDay: e.target.checked } })} />
+                    <span>需輸入日子</span>
+                  </label>
+                </div>
 
-              {dateConfig.includeYear && (
-                <div className="xform-date-year-range">
-                  <label className="xform-form-label">自訂年份範圍</label>
-                  <div className="xform-date-range-inputs">
-                    <span>由</span>
-                    <input type="number" className="form-control form-control-sm" style={{ width: 90 }}
+                {dateConfig.includeYear && (
+                  <div className="xform-date-year-range-inline">
+                    <span className="xform-date-range-label">年份範圍</span>
+                    <input type="number" className="form-control form-control-sm xform-year-input"
                       value={dateConfig.yearStart}
                       onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) || 1950 } })} />
-                    <span>至</span>
-                    <input type="number" className="form-control form-control-sm" style={{ width: 90 }}
+                    <span className="xform-date-range-sep">～</span>
+                    <input type="number" className="form-control form-control-sm xform-year-input"
                       value={dateConfig.yearEnd}
                       onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) || new Date().getFullYear() } })} />
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               <div className="xform-date-na-option">
                 <label className="xform-date-check-label">
