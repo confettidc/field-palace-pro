@@ -2,6 +2,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
+import Link from "@tiptap/extension-link";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { Extension } from "@tiptap/core";
 import { useRef } from "react";
@@ -58,6 +59,10 @@ export default function RichTextEditor({ content, onChange }: Props) {
       TextStyle,
       FontSize,
       Image.configure({ inline: true }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" },
+      }),
     ],
     content,
     onUpdate: ({ editor }) => {
@@ -79,15 +84,25 @@ export default function RichTextEditor({ content, onChange }: Props) {
     e.target.value = "";
   };
 
+  const handleLink = () => {
+    const prev = editor.getAttributes("link").href || "";
+    const url = window.prompt("輸入連結網址", prev);
+    if (url === null) return;
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
+    } else {
+      editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+    }
+  };
+
   const fontSizes = ["12px", "14px", "16px", "18px", "20px", "24px"];
 
   return (
-    <div className="x-rte-wrapper">
-      {/* Toolbar */}
-      <div className="x-rte-toolbar">
+    <div className="xform-rte-wrapper">
+      <div className="xform-rte-toolbar">
         <button
           type="button"
-          className={`x-rte-btn ${editor.isActive("bold") ? "active" : ""}`}
+          className={`xform-rte-btn ${editor.isActive("bold") ? "active" : ""}`}
           onClick={() => editor.chain().focus().toggleBold().run()}
           title="粗體"
         >
@@ -95,7 +110,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
         </button>
         <button
           type="button"
-          className={`x-rte-btn ${editor.isActive("italic") ? "active" : ""}`}
+          className={`xform-rte-btn ${editor.isActive("italic") ? "active" : ""}`}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           title="斜體"
         >
@@ -103,17 +118,17 @@ export default function RichTextEditor({ content, onChange }: Props) {
         </button>
         <button
           type="button"
-          className={`x-rte-btn ${editor.isActive("underline") ? "active" : ""}`}
+          className={`xform-rte-btn ${editor.isActive("underline") ? "active" : ""}`}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           title="底線"
         >
           <i className="bi bi-type-underline" />
         </button>
 
-        <span className="x-rte-divider" />
+        <span className="xform-rte-divider" />
 
         <select
-          className="x-rte-select"
+          className="xform-rte-select"
           onChange={(e) => {
             const val = e.target.value;
             if (val) {
@@ -131,11 +146,20 @@ export default function RichTextEditor({ content, onChange }: Props) {
           ))}
         </select>
 
-        <span className="x-rte-divider" />
+        <span className="xform-rte-divider" />
 
         <button
           type="button"
-          className="x-rte-btn"
+          className={`xform-rte-btn ${editor.isActive("link") ? "active" : ""}`}
+          onClick={handleLink}
+          title="插入連結"
+        >
+          <i className="bi bi-link-45deg" />
+        </button>
+
+        <button
+          type="button"
+          className="xform-rte-btn"
           onClick={() => fileInputRef.current?.click()}
           title="插入圖片"
         >
@@ -150,8 +174,7 @@ export default function RichTextEditor({ content, onChange }: Props) {
         />
       </div>
 
-      {/* Editor */}
-      <EditorContent editor={editor} className="x-rte-content" />
+      <EditorContent editor={editor} className="xform-rte-content" />
     </div>
   );
 }
