@@ -56,12 +56,19 @@
 }
 
 /* ===== Hide-disabled toggle ===== */
+/* ===== Filter bar ===== */
 .xform-filter-bar {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-bottom: 0.75rem;
   gap: 0.5rem;
+}
+
+.xform-filter-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .xform-filter-toggle-label {
@@ -1668,129 +1675,105 @@
   color: #4a5da8;
 }
 
-/* ===== Form Settings Panel ===== */
-.xform-settings-panel {
+/* ===== Settings Popover ===== */
+.xform-settings-popover-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.xform-settings-gear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0 !important;
+  border-radius: 0.4rem;
+  color: #6b7590;
+  border: 1px solid #dce1ed;
+  background: #fff;
+  font-size: 0.95rem;
+  transition: all 0.15s;
+}
+
+.xform-settings-gear-btn:hover {
+  color: #4a5da8;
+  border-color: #4a5da8;
+  background: #f0f2f8;
+}
+
+.xform-settings-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  width: 320px;
   background: #fff;
   border: 1px solid #e2e6ef;
-  border-radius: 0.75rem;
-  margin-top: 1.5rem;
-  overflow: hidden;
+  border-radius: 0.6rem;
+  box-shadow: 0 8px 28px rgba(26, 31, 54, 0.12);
+  animation: xform-dropdown-in 0.12s ease;
 }
 
-.xform-settings-header {
+@keyframes xform-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.xform-settings-dropdown-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1.15rem;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.xform-settings-header:hover {
-  background: #f8f9fc;
-}
-
-.xform-settings-title {
-  font-size: 1rem;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #1a1f36;
-  margin: 0;
-  display: flex;
-  align-items: center;
+  border-bottom: 1px solid #eef0f5;
 }
 
-.xform-settings-body {
-  padding: 0.75rem 1.15rem 1.15rem;
-  border-top: 1px solid #e2e6ef;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
+.xform-settings-dropdown-body {
+  padding: 0.65rem 0.85rem;
 }
 
-/* Settings card group */
-.xform-settings-card {
-  background: #f8f9fc;
-  border: 1px solid #eef0f5;
-  border-radius: 0.6rem;
-  overflow: hidden;
+.xform-settings-divider {
+  height: 1px;
+  background: #eef0f5;
+  margin: 0.5rem 0;
 }
 
-.xform-settings-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.55rem 0.85rem;
-  font-size: 0.82rem;
+.xform-settings-section-label {
+  font-size: 0.78rem;
   font-weight: 700;
   color: #4a5da8;
-  background: #eef1f9;
-  border-bottom: 1px solid #e2e6ef;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  margin-bottom: 0.45rem;
 }
 
-.xform-settings-card-body {
-  padding: 0.75rem 0.85rem;
-}
-
-/* Settings row */
-.xform-settings-row {
+.xform-settings-simple-toggle {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
-}
-
-.xform-settings-row + .xform-settings-row {
-  border-top: 1px solid #f0f2f6;
-}
-
-.xform-settings-row-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #5a6580;
-  min-width: 70px;
-  padding-top: 0.3rem;
-  flex-shrink: 0;
-}
-
-.xform-settings-row-control {
-  flex: 1;
-  min-width: 0;
-}
-
-.xform-settings-row-inline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.xform-settings-desc {
-  font-size: 0.85rem;
-  color: #3a3f50;
-  font-weight: 500;
-}
-
-.xform-settings-hint {
-  font-size: 0.75rem;
-  color: #8892a4;
-  margin-top: 0.3rem;
-  display: block;
-}
-
-.xform-settings-toggle {
-  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
   user-select: none;
+  padding: 0.3rem 0;
 }
 
-.xform-settings-toggle-text {
-  font-size: 0.88rem;
+.xform-settings-simple-toggle-text {
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #1a1f36;
+  color: #3a3f50;
+}
+
+.xform-settings-field {
+  margin-bottom: 0.5rem;
+}
+
+.xform-settings-field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #5a6580;
+  margin-bottom: 0.25rem;
+  display: block;
 }
 
 /* ===== Settings color section ===== */
@@ -1867,7 +1850,7 @@
   background: #f0f2f8;
   border: 1px solid #e2e6ef;
   border-radius: 0.45rem;
-  padding: 0.6rem;
+  padding: 0.5rem;
   text-align: center;
   margin-top: 0.5rem;
 }
