@@ -78,7 +78,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
     <div
       ref={setNodeRef}
       style={style}
-      className={`xform-field-card ${!field.enabled ? "xform-field-disabled" : ""}`}
+      className={`xform-field-card ${!field.enabled ? "xform-field-dimmed" : ""}`}
     >
       {/* Header */}
       <div className="xform-field-header" onClick={onToggleExpand} style={{ cursor: "pointer" }}>
@@ -108,16 +108,13 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           </div>
 
           <span className="xform-toggle-label">啟用</span>
-          <div className="form-check form-switch mb-0">
+          <div className="form-check form-switch xform-switch-green mb-0">
             <input
               className="form-check-input"
               type="checkbox"
               role="switch"
               checked={field.enabled}
-              onChange={(e) => {
-                updateField({ enabled: e.target.checked });
-                if (!e.target.checked && expanded) onToggleExpand();
-              }}
+              onChange={(e) => updateField({ enabled: e.target.checked })}
             />
           </div>
 

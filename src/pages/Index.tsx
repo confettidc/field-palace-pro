@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, isContentBlock, isFormField } from "@/types/formField";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
+import FormPreviewModal from "@/components/FormPreviewModal";
 import "@/styles/form-builder.css";
 import { toast } from "sonner";
 import {
@@ -46,6 +47,7 @@ export default function Index() {
   const [items, setItems] = useState<FormItem[]>([]);
   const [showPanel, setShowPanel] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -53,9 +55,6 @@ export default function Index() {
   );
 
   const toggleExpand = (id: string) => {
-    // Don't expand disabled items
-    const item = items.find((i) => i.id === id);
-    if (item && !item.enabled) return;
     setExpandedId((prev) => (prev === id ? null : id));
   };
 
@@ -105,6 +104,11 @@ export default function Index() {
     toast.success(`已儲存 ${items.length} 個項目`);
   };
 
+  const handleShowPanel = () => {
+    setExpandedId(null);
+    setShowPanel(true);
+  };
+
   return (
     <div className="xform-page">
       <div className="xform-container">
@@ -113,9 +117,15 @@ export default function Index() {
             <h1 className="xform-header-title">表單欄位設定</h1>
             <p className="xform-header-desc">新增與編輯表單欄位，拖曳調整順序</p>
           </div>
-          <button className="btn btn-primary xform-save-btn" onClick={handleSave} disabled={items.length === 0}>
-            儲存
-          </button>
+          <div className="xform-header-actions">
+            <button className="btn btn-outline-secondary xform-preview-btn" onClick={() => setShowPreview(true)} disabled={items.length === 0}>
+              <i className="bi bi-eye me-1" />
+              預覽
+            </button>
+            <button className="btn btn-primary xform-save-btn" onClick={handleSave} disabled={items.length === 0}>
+              儲存
+            </button>
+          </div>
         </div>
 
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -150,7 +160,7 @@ export default function Index() {
           <div className="xform-empty-state">
             <i className="bi bi-inbox xform-empty-icon" />
             <p className="xform-empty-text">尚未新增任何欄位</p>
-            <button className="btn btn-primary" onClick={() => setShowPanel(true)}>
+            <button className="btn btn-primary" onClick={handleShowPanel}>
               <i className="bi bi-plus me-1" />
               新增欄位
             </button>
@@ -170,13 +180,19 @@ export default function Index() {
         {items.length > 0 && !showPanel && (
           <button
             className="xform-add-more-btn"
-            onClick={() => setShowPanel(true)}
+            onClick={handleShowPanel}
           >
             <i className="bi bi-plus me-1" />
             新增欄位
           </button>
         )}
       </div>
+
+      <FormPreviewModal
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+        items={items}
+      />
     </div>
   );
 }
