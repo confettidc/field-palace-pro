@@ -61,7 +61,11 @@ export default function RichTextEditor({ content, onChange }: Props) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        hardBreak: {
+          keepMarks: true,
+        },
+      }),
       Underline,
       TextStyle,
       FontSize,
@@ -74,6 +78,17 @@ export default function RichTextEditor({ content, onChange }: Props) {
       }),
     ],
     content,
+    editorProps: {
+      handleKeyDown: (_view, event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          // Enter = hard break (new line)
+          editor?.chain().focus().setHardBreak().run();
+          return true;
+        }
+        // Shift+Enter = default behavior (new paragraph)
+        return false;
+      },
+    },
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },

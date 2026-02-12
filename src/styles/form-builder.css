@@ -1405,8 +1405,15 @@
 }
 
 .xform-group-header-left {
+  display: flex;
+  align-items: center;
   flex: 1;
   min-width: 0;
+}
+
+.xform-group-add-desc-inline {
+  margin: 0;
+  font-size: 0.78rem;
 }
 
 .xform-group-name {
@@ -1455,10 +1462,6 @@
   flex-shrink: 0;
 }
 
-.xform-group-add-desc {
-  margin-bottom: 0.65rem;
-  font-size: 0.8rem;
-}
 
 .xform-group-desc-section {
   margin-bottom: 0.75rem;

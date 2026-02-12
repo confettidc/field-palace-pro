@@ -244,7 +244,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   content={field.description || ""}
                   onChange={(html) => updateField({ description: html })}
                 />
-                <div className="xform-desc-hint" style={{ borderTop: '1px solid #dee2e6' }}>Shift + Enter = 下一行</div>
+                
               </div>
             </div>
           )}
@@ -294,7 +294,6 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                     placeholder="例如：請輸入..."
                     rows={1}
                   />
-                  <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
                 </div>
               )}
               {hintMode === "default_value" && (
@@ -314,7 +313,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                     placeholder="例如：預設內容"
                     rows={1}
                   />
-                  <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
+                  
                 </div>
               )}
             </div>
