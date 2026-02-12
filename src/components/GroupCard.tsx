@@ -20,6 +20,8 @@ interface Props {
   isDraggingGroup?: boolean;
   showQuestionNumbers?: boolean;
   questionNumberMap?: Map<string, number>;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
   onDeleteGroup: (groupId: string) => void;
@@ -36,6 +38,8 @@ export default function GroupCard({
   isDraggingGroup,
   showQuestionNumbers,
   questionNumberMap,
+  collapsed,
+  onToggleCollapse,
   onToggleExpand,
   onUpdateGroup,
   onDeleteGroup,
@@ -78,7 +82,7 @@ export default function GroupCard({
     }
   }, [editingName]);
 
-  const isCollapsed = isDraggingGroup && !isDragging;
+  const isCollapsed = (isDraggingGroup && !isDragging) || collapsed;
 
   return (
     <div
@@ -121,7 +125,7 @@ export default function GroupCard({
               <i className="bi bi-pencil xform-group-edit-icon" />
             </h3>
           )}
-          {isDraggingGroup && !isDragging && (
+          {isCollapsed && (
             <span className="xform-group-item-count">
               {items.length} 個欄位
             </span>
@@ -138,6 +142,13 @@ export default function GroupCard({
                   + 分頁說明
                 </button>
               )}
+              <button
+                className="btn btn-sm btn-light xform-group-collapse-btn"
+                title={collapsed ? "展開分頁" : "收合分頁"}
+                onClick={() => onToggleCollapse?.()}
+              >
+                <i className={`bi ${collapsed ? "bi-chevron-down" : "bi-chevron-up"}`} />
+              </button>
               <button
                 className="btn btn-sm btn-light text-danger"
                 title="刪除分頁（保留欄位）"
@@ -158,7 +169,7 @@ export default function GroupCard({
         />
       )}
 
-      {!isDraggingGroup && (
+      {!isDraggingGroup && !collapsed && (
         <>
           {showDesc && (
             <div className="xform-group-desc-section">
