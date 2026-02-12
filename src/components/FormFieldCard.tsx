@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FormField, FieldType, FIELD_TYPE_META, FieldOption } from "@/types/formField";
+import RichTextEditor from "./RichTextEditor";
 
 const iconMap: Record<FieldType, string> = {
   short_text: "bi-type",
@@ -13,6 +14,8 @@ const iconMap: Record<FieldType, string> = {
   email: "bi-envelope",
   phone: "bi-phone",
 };
+
+type HintMode = "none" | "placeholder" | "default_value";
 
 interface Props {
   field: FormField;
@@ -28,6 +31,9 @@ interface Props {
 export default function FormFieldCard({ field, index, onUpdate, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [showDesc, setShowDesc] = useState(!!field.description);
+  const [hintMode, setHintMode] = useState<HintMode>(
+    field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
+  );
 
   const updateField = (patch: Partial<FormField>) => onUpdate({ ...field, ...patch });
 
@@ -48,16 +54,28 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
   };
 
   const hasOptions = ["single_choice", "multiple_choice", "dropdown"].includes(field.type);
-  const displayLabel = field.label || `未命名欄位`;
+  const showHintSection = !hasOptions && field.type !== "file_upload";
+  const displayLabel = field.label || "未命名欄位";
+
+  const handleHintModeChange = (mode: HintMode) => {
+    setHintMode(mode);
+    if (mode === "none") {
+      updateField({ placeholder: "", defaultValue: "" });
+    } else if (mode === "placeholder") {
+      updateField({ defaultValue: "" });
+    } else {
+      updateField({ placeholder: "" });
+    }
+  };
 
   return (
     <div className={`x-field-card ${!field.enabled ? "x-field-disabled" : ""}`}>
       {/* Header (collapsed view) */}
       <div className="x-field-header" onClick={() => setExpanded(!expanded)} style={{ cursor: "pointer" }}>
-        {/* Move buttons */}
+        {/* Move buttons - small vertical */}
         <div className="x-field-move-btns" onClick={(e) => e.stopPropagation()}>
           <button
-            className="btn btn-sm btn-light x-move-btn"
+            className="x-move-btn"
             disabled={isFirst}
             title="上移"
             onClick={() => onMoveUp(field.id)}
@@ -65,7 +83,7 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             <i className="bi bi-chevron-up" />
           </button>
           <button
-            className="btn btn-sm btn-light x-move-btn"
+            className="x-move-btn"
             disabled={isLast}
             title="下移"
             onClick={() => onMoveDown(field.id)}
@@ -85,7 +103,7 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
 
         <span className="x-field-spacer" />
 
-        {/* Toggles + actions in collapsed */}
+        {/* Toggles + actions */}
         <div className="x-field-header-right" onClick={(e) => e.stopPropagation()}>
           <span className="x-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
@@ -132,7 +150,7 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             />
           </div>
 
-          {/* Description (optional, toggle to show) */}
+          {/* Description (optional rich text) */}
           {!showDesc ? (
             <div className="x-form-group">
               <button
@@ -158,27 +176,60 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
                   <i className="bi bi-x" />
                 </button>
               </div>
-              <textarea
-                className="form-control form-control-sm"
-                value={field.description || ""}
-                onChange={(e) => updateField({ description: e.target.value })}
-                placeholder="為題目加入額外說明..."
-                rows={2}
+              <RichTextEditor
+                content={field.description || ""}
+                onChange={(html) => updateField({ description: html })}
               />
             </div>
           )}
 
-          {/* Placeholder */}
-          {!hasOptions && field.type !== "file_upload" && (
+          {/* Placeholder / Default Value toggle */}
+          {showHintSection && (
             <div className="x-form-group">
-              <label className="x-form-label">提示文字</label>
-              <input
-                type="text"
-                className="form-control form-control-sm"
-                value={field.placeholder || ""}
-                onChange={(e) => updateField({ placeholder: e.target.value })}
-                placeholder="例如：請輸入..."
-              />
+              <div className="x-hint-mode-bar">
+                <label className="x-form-label mb-0">輸入提示</label>
+                <div className="x-hint-mode-btns">
+                  <button
+                    type="button"
+                    className={`x-hint-btn ${hintMode === "none" ? "active" : ""}`}
+                    onClick={() => handleHintModeChange("none")}
+                  >
+                    不使用
+                  </button>
+                  <button
+                    type="button"
+                    className={`x-hint-btn ${hintMode === "placeholder" ? "active" : ""}`}
+                    onClick={() => handleHintModeChange("placeholder")}
+                  >
+                    提示文字
+                  </button>
+                  <button
+                    type="button"
+                    className={`x-hint-btn ${hintMode === "default_value" ? "active" : ""}`}
+                    onClick={() => handleHintModeChange("default_value")}
+                  >
+                    預設值
+                  </button>
+                </div>
+              </div>
+              {hintMode === "placeholder" && (
+                <input
+                  type="text"
+                  className="form-control form-control-sm mt-2"
+                  value={field.placeholder || ""}
+                  onChange={(e) => updateField({ placeholder: e.target.value })}
+                  placeholder="例如：請輸入..."
+                />
+              )}
+              {hintMode === "default_value" && (
+                <input
+                  type="text"
+                  className="form-control form-control-sm mt-2"
+                  value={field.defaultValue || ""}
+                  onChange={(e) => updateField({ defaultValue: e.target.value })}
+                  placeholder="例如：預設內容"
+                />
+              )}
             </div>
           )}
 
