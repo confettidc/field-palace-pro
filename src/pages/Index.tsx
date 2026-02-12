@@ -343,13 +343,19 @@ export default function Index() {
 
         {items.length > 0 && (
           <div className="xform-filter-bar">
-            <button
-              className="btn btn-sm xform-group-create-btn"
-              onClick={handleCreateGroup}
-            >
-              <i className="bi bi-folder-plus me-1" />
-              新增分頁
-            </button>
+            <div className="xform-filter-bar-left">
+              <button
+                className="btn btn-sm xform-group-create-btn"
+                onClick={handleCreateGroup}
+              >
+                <i className="bi bi-folder-plus me-1" />
+                新增分頁
+              </button>
+              <FormSettingsPanel
+                settings={formSettings}
+                onChange={setFormSettings}
+              />
+            </div>
             {disabledCount > 0 && (
               <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
                 <span className="xform-filter-toggle-text">
@@ -471,13 +477,7 @@ export default function Index() {
           </button>
         )}
 
-        {/* Form Settings Panel */}
-        {items.length > 0 && (
-          <FormSettingsPanel
-            settings={formSettings}
-            onChange={setFormSettings}
-          />
-        )}
+        {/* Form settings now in filter bar gear icon */}
       </div>
 
       <FormPreviewModal
