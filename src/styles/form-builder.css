@@ -1384,3 +1384,158 @@
   color: #5a6580;
   margin-right: 0.5rem;
 }
+
+/* ===== Group Card ===== */
+.xform-group-card {
+  border: 2px solid #c0c7db;
+  border-radius: 0.85rem;
+  background: #f8f9fc;
+  margin-bottom: 1rem;
+  padding: 1rem 1rem 0.75rem;
+  position: relative;
+}
+
+.xform-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid #e2e6ef;
+}
+
+.xform-group-header-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.xform-group-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s;
+}
+
+.xform-group-name:hover {
+  color: #4a5da8;
+}
+
+.xform-group-edit-icon {
+  font-size: 0.72rem;
+  color: #b0b8cc;
+  transition: color 0.15s;
+}
+
+.xform-group-name:hover .xform-group-edit-icon {
+  color: #4a5da8;
+}
+
+.xform-group-name-input {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1f36;
+  border: 1px solid #4a5da8;
+  border-radius: 0.4rem;
+  padding: 0.2rem 0.5rem;
+  outline: none;
+  background: #fff;
+  width: 100%;
+  max-width: 400px;
+}
+
+.xform-group-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.xform-group-add-desc {
+  margin-bottom: 0.65rem;
+  font-size: 0.8rem;
+}
+
+.xform-group-desc-section {
+  margin-bottom: 0.75rem;
+}
+
+.xform-group-items {
+  min-height: 20px;
+}
+
+.xform-group-empty {
+  padding: 1.25rem;
+  text-align: center;
+  color: #adb5bd;
+  font-size: 0.85rem;
+  border: 1px dashed #d0d5e2;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+/* ===== Group create button ===== */
+.xform-group-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #4a5da8;
+  background: #eef1f9;
+  border: 1px solid #c0c7db;
+  border-radius: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.xform-group-create-btn:hover {
+  background: #dce2f2;
+  border-color: #4a5da8;
+}
+
+/* ===== Preview Group ===== */
+.xform-preview-group {
+  margin-bottom: 1.5rem;
+}
+
+.xform-preview-group-header {
+  background: #fff;
+  border-radius: 0.6rem 0.6rem 0 0;
+  border: 1px solid #e2e6ef;
+  border-bottom: 3px solid #4a5da8;
+  padding: 1rem 1.15rem;
+  margin-bottom: 0;
+}
+
+.xform-preview-group-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin: 0;
+}
+
+.xform-preview-group-desc {
+  font-size: 0.85rem;
+  color: #6b7590;
+  margin-top: 0.35rem;
+  line-height: 1.45;
+}
+
+.xform-preview-group-items {
+  border-left: 1px solid #e2e6ef;
+  border-right: 1px solid #e2e6ef;
+  border-bottom: 1px solid #e2e6ef;
+  border-radius: 0 0 0.6rem 0.6rem;
+  background: linear-gradient(180deg, #f5f7fb 0%, #fafbfd 100%);
+  padding: 1rem 0.75rem;
+}
+
+.xform-preview-group-items .xform-preview-field:last-child {
+  margin-bottom: 0;
+}
