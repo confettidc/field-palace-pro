@@ -19,11 +19,15 @@ interface Props {
   index: number;
   onUpdate: (field: FormField) => void;
   onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
+  onMoveUp: (id: string) => void;
+  onMoveDown: (id: string) => void;
+  isFirst: boolean;
+  isLast: boolean;
 }
 
-export default function FormFieldCard({ field, index, onUpdate, onDelete, onDuplicate }: Props) {
-  const [expanded, setExpanded] = useState(true);
+export default function FormFieldCard({ field, index, onUpdate, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: Props) {
+  const [expanded, setExpanded] = useState(false);
+  const [showDesc, setShowDesc] = useState(!!field.description);
 
   const updateField = (patch: Partial<FormField>) => onUpdate({ ...field, ...patch });
 
@@ -44,25 +48,36 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onDupl
   };
 
   const hasOptions = ["single_choice", "multiple_choice", "dropdown"].includes(field.type);
+  const displayLabel = field.label || `未命名欄位`;
 
   return (
     <div className={`x-field-card ${!field.enabled ? "x-field-disabled" : ""}`}>
-      {/* Header */}
-      <div className="x-field-header">
-        <i className="bi bi-grip-vertical text-secondary" style={{ cursor: "grab" }} />
-        <span className="x-field-index">{index}.</span>
-
-        {/* Enable toggle */}
-        <div className="form-check form-switch x-toggle mb-0">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            checked={field.enabled}
-            onChange={(e) => updateField({ enabled: e.target.checked })}
-          />
+      {/* Header (collapsed view) */}
+      <div className="x-field-header" onClick={() => setExpanded(!expanded)} style={{ cursor: "pointer" }}>
+        {/* Move buttons */}
+        <div className="x-field-move-btns" onClick={(e) => e.stopPropagation()}>
+          <button
+            className="btn btn-sm btn-light x-move-btn"
+            disabled={isFirst}
+            title="上移"
+            onClick={() => onMoveUp(field.id)}
+          >
+            <i className="bi bi-chevron-up" />
+          </button>
+          <button
+            className="btn btn-sm btn-light x-move-btn"
+            disabled={isLast}
+            title="下移"
+            onClick={() => onMoveDown(field.id)}
+          >
+            <i className="bi bi-chevron-down" />
+          </button>
         </div>
 
+        {/* Field label */}
+        <span className="x-field-label-text">{displayLabel}</span>
+
+        {/* Type badge */}
         <span className="x-field-type-badge">
           <i className={`bi ${iconMap[field.type]}`} />
           {FIELD_TYPE_META[field.type].label}
@@ -70,47 +85,44 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onDupl
 
         <span className="x-field-spacer" />
 
-        {/* Type selector */}
-        <select
-          className="form-select form-select-sm"
-          style={{ width: 140, fontSize: "0.78rem" }}
-          value={field.type}
-          onChange={(e) => {
-            const newType = e.target.value as FieldType;
-            const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(newType);
-            updateField({
-              type: newType,
-              options: needsOptions && !field.options?.length
-                ? [{ id: crypto.randomUUID(), label: "選項 1" }]
-                : needsOptions ? field.options : undefined,
-            });
-          }}
-        >
-          {(Object.entries(FIELD_TYPE_META) as [FieldType, { label: string }][]).map(([key, meta]) => (
-            <option key={key} value={key}>{meta.label}</option>
-          ))}
-        </select>
+        {/* Toggles + actions in collapsed */}
+        <div className="x-field-header-right" onClick={(e) => e.stopPropagation()}>
+          <span className="x-toggle-label">必填</span>
+          <div className="form-check form-switch mb-0">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              checked={field.required}
+              onChange={(e) => updateField({ required: e.target.checked })}
+            />
+          </div>
 
-        {/* Action buttons */}
-        <div className="x-field-actions">
-          <button className="btn btn-sm btn-light" title="複製" onClick={() => onDuplicate(field.id)}>
-            <i className="bi bi-copy" />
-          </button>
+          <span className="x-toggle-label">啟用</span>
+          <div className="form-check form-switch mb-0">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              role="switch"
+              checked={field.enabled}
+              onChange={(e) => updateField({ enabled: e.target.checked })}
+            />
+          </div>
+
           <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => onDelete(field.id)}>
             <i className="bi bi-trash" />
           </button>
-          <button className="btn btn-sm btn-light" onClick={() => setExpanded(!expanded)}>
-            <i className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"}`} />
-          </button>
+
+          <i className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} x-expand-icon`} />
         </div>
       </div>
 
-      {/* Body */}
+      {/* Body (expanded view) */}
       {expanded && (
         <div className="x-field-body">
           {/* Label */}
           <div className="x-form-group">
-            <label className="x-form-label">題目名稱</label>
+            <label className="x-form-label">題目</label>
             <input
               type="text"
               className="form-control form-control-sm"
@@ -120,17 +132,41 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onDupl
             />
           </div>
 
-          {/* Description */}
-          <div className="x-form-group">
-            <label className="x-form-label">補充說明（選填）</label>
-            <textarea
-              className="form-control form-control-sm"
-              value={field.description || ""}
-              onChange={(e) => updateField({ description: e.target.value })}
-              placeholder="為題目加入額外說明..."
-              rows={2}
-            />
-          </div>
+          {/* Description (optional, toggle to show) */}
+          {!showDesc ? (
+            <div className="x-form-group">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={() => setShowDesc(true)}
+              >
+                <i className="bi bi-plus me-1" />
+                新增補充說明
+              </button>
+            </div>
+          ) : (
+            <div className="x-form-group">
+              <div className="d-flex align-items-center justify-content-between mb-1">
+                <label className="x-form-label mb-0">補充說明</label>
+                <button
+                  className="btn btn-sm btn-light text-muted"
+                  title="移除說明"
+                  onClick={() => {
+                    updateField({ description: "" });
+                    setShowDesc(false);
+                  }}
+                >
+                  <i className="bi bi-x" />
+                </button>
+              </div>
+              <textarea
+                className="form-control form-control-sm"
+                value={field.description || ""}
+                onChange={(e) => updateField({ description: e.target.value })}
+                placeholder="為題目加入額外說明..."
+                rows={2}
+              />
+            </div>
+          )}
 
           {/* Placeholder */}
           {!hasOptions && field.type !== "file_upload" && (
@@ -172,20 +208,6 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onDupl
               </button>
             </div>
           )}
-
-          {/* Required toggle */}
-          <div className="x-field-footer">
-            <span className="x-form-label mb-0">必填</span>
-            <div className="form-check form-switch mb-0">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                role="switch"
-                checked={field.required}
-                onChange={(e) => updateField({ required: e.target.checked })}
-              />
-            </div>
-          </div>
         </div>
       )}
     </div>

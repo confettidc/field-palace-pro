@@ -37,16 +37,16 @@ export default function Index() {
     toast("已刪除欄位");
   };
 
-  const duplicateField = (id: string) => {
+  const moveField = (id: string, direction: "up" | "down") => {
     setFields((prev) => {
       const idx = prev.findIndex((f) => f.id === id);
       if (idx === -1) return prev;
-      const clone = { ...prev[idx], id: crypto.randomUUID() };
+      const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+      if (targetIdx < 0 || targetIdx >= prev.length) return prev;
       const next = [...prev];
-      next.splice(idx + 1, 0, clone);
+      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
       return next;
     });
-    toast("已複製欄位");
   };
 
   const handleSave = () => {
@@ -66,7 +66,7 @@ export default function Index() {
         <div className="x-header">
           <div>
             <h1 className="x-header-title">表單欄位設定</h1>
-            <p className="x-header-desc">新增與編輯表單欄位，拖曳調整順序</p>
+            <p className="x-header-desc">新增與編輯表單欄位，使用箭頭調整順序</p>
           </div>
           <button className="btn btn-primary" onClick={handleSave} disabled={fields.length === 0}>
             儲存
@@ -82,7 +82,10 @@ export default function Index() {
               index={index + 1}
               onUpdate={updateField}
               onDelete={deleteField}
-              onDuplicate={duplicateField}
+              onMoveUp={(id) => moveField(id, "up")}
+              onMoveDown={(id) => moveField(id, "down")}
+              isFirst={index === 0}
+              isLast={index === fields.length - 1}
             />
           ))}
         </div>
