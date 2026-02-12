@@ -77,7 +77,11 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
             <i className="bi bi-trash" />
           </button>
 
-          <i className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`} />
+          <i
+            className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
+            onClick={onToggleExpand}
+            style={{ cursor: "pointer" }}
+          />
         </div>
       </div>
 
