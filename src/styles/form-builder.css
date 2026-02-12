@@ -117,7 +117,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
+  max-width: 420px;
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 /* ===== Type Badge ===== */
@@ -169,7 +171,7 @@
 .xform-field-body {
   padding: 1.15rem 1.25rem;
   border-top: 2px solid #d0d5e2;
-  background: #f0f2f8;
+  background: #e8ebf4;
   animation: xform-slide-down 0.15s ease;
 }
 

@@ -88,7 +88,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           <i className="bi bi-grip-vertical" />
         </div>
 
-        <span className="xform-field-label-text">{displayLabel}</span>
+        <span className="xform-field-label-text" title={displayLabel}>{displayLabel}</span>
 
         <span className="xform-field-type-badge">
           <i className={`bi ${iconMap[field.type]}`} />
