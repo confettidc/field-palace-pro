@@ -38,6 +38,8 @@ export interface FormField {
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
 
+export type SpacerSize = "small" | "medium" | "large";
+
 export interface ContentBlock {
   id: string;
   kind: "content_block";
@@ -45,6 +47,7 @@ export interface ContentBlock {
   content: string;
   enabled: boolean;
   dividerStyle?: DividerLineStyle;
+  spacerSize?: SpacerSize;
 }
 
 export type FormItem = FormField | ContentBlock;
