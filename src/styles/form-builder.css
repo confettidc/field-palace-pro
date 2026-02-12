@@ -325,36 +325,46 @@
   text-align: right;
 }
 
-/* ===== Choice Advanced Settings ===== */
-.xform-choice-advanced-section {
-  margin-bottom: 0.75rem;
-}
-
-.xform-choice-advanced-header {
+/* ===== Options Header with Advanced toggle ===== */
+.xform-options-header {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.82rem;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+}
+
+.xform-advanced-toggle-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
   color: #7c8598;
   cursor: pointer;
   user-select: none;
-  padding: 0.3rem 0;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  transition: all 0.15s;
   font-weight: 500;
-  transition: color 0.15s;
+  position: relative;
 }
 
-.xform-choice-advanced-header:hover {
+.xform-advanced-toggle-link:hover {
   color: #4a5da8;
+  background: #edf0f7;
 }
 
-.xform-choice-advanced-header i {
-  font-size: 0.7rem;
-  transition: transform 0.15s;
+.xform-advanced-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5b6abf;
+  display: inline-block;
 }
 
+/* ===== Choice Advanced Settings ===== */
 .xform-choice-advanced-body {
   padding: 0.65rem 0.75rem;
-  margin-top: 0.35rem;
+  margin-bottom: 0.5rem;
   background: #edf0f7;
   border-radius: 0.45rem;
   border: 1px solid #dce1ed;
@@ -424,8 +434,15 @@
   align-items: center;
   gap: 0.3rem;
   flex-wrap: wrap;
-  margin-top: 0.3rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
   padding-left: 1.6rem;
+}
+
+.xform-tag-icon {
+  font-size: 0.72rem;
+  color: #9ba3b8;
+  margin-right: 0.1rem;
 }
 
 .xform-tag {
