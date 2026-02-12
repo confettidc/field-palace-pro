@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG } from "@/types/formField";
+import { useState, useMemo } from "react";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import GroupCard from "@/components/GroupCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
 import FormPreviewModal from "@/components/FormPreviewModal";
+import FormSettingsPanel from "@/components/FormSettingsPanel";
 import "@/styles/form-builder.css";
 import { toast } from "sonner";
 import {
@@ -27,6 +28,16 @@ import {
 } from "@dnd-kit/sortable";
 
 let fieldCounter = 0;
+
+const DEFAULT_SETTINGS: FormSettings = {
+  submitButtonText: "立即登記",
+  enableCustomButtonColor: false,
+  buttonBgColor: "#4a5da8",
+  buttonTextColor: "#ffffff",
+  buttonHoverBgColor: "#3d4e8f",
+  buttonHoverTextColor: "#ffffff",
+  showQuestionNumbers: false,
+};
 
 const createField = (type: FieldType, groupId?: string): FormField => {
   fieldCounter++;
@@ -63,17 +74,16 @@ export default function Index() {
   const [showPreview, setShowPreview] = useState(false);
   const [hideDisabled, setHideDisabled] = useState(false);
   const [isDraggingGroup, setIsDraggingGroup] = useState(false);
+  const [formSettings, setFormSettings] = useState<FormSettings>(DEFAULT_SETTINGS);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor)
   );
 
-  // Custom collision detection: when dragging a group, only collide with other groups
   const customCollisionDetection: CollisionDetection = (args) => {
     const activeId = String(args.active.id);
     if (activeId.startsWith("group-sort-")) {
-      // Filter droppable containers to only group sortables
       const groupContainers = args.droppableContainers.filter((c) =>
         String(c.id).startsWith("group-sort-")
       );
@@ -82,12 +92,24 @@ export default function Index() {
     return closestCenter(args);
   };
 
+  // Build question number map
+  const questionNumberMap = useMemo(() => {
+    const map = new Map<string, number>();
+    if (!formSettings.showQuestionNumbers) return map;
+    let num = 1;
+    for (const item of items) {
+      if (isFormField(item) && item.enabled) {
+        map.set(item.id, num++);
+      }
+    }
+    return map;
+  }, [items, formSettings.showQuestionNumbers]);
+
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
     if (showPanel) setShowPanel(false);
   };
 
-  // Determine which group new items should go into (last group, or none)
   const activeGroupId = groups.length > 0 ? groups[groups.length - 1].id : undefined;
 
   const addField = (type: FieldType) => {
@@ -114,7 +136,6 @@ export default function Index() {
     toast("已刪除");
   };
 
-  // Handle drag start to detect if a group is being dragged
   const handleDragStart = (event: DragStartEvent) => {
     const activeId = String(event.active.id);
     if (activeId.startsWith("group-sort-")) {
@@ -122,19 +143,16 @@ export default function Index() {
     }
   };
 
-  // Handle drag over to detect cross-group movement
   const handleDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    // Skip if dragging a group
     const activeId = String(active.id);
     if (activeId.startsWith("group-sort-")) return;
 
     const activeItem = items.find((i) => i.id === active.id);
     if (!activeItem) return;
 
-    // Check if dragging over a group drop zone
     const overId = String(over.id);
     if (overId.startsWith("group-drop-")) {
       const targetGroupId = overId.replace("group-drop-", "");
@@ -151,7 +169,6 @@ export default function Index() {
       return;
     }
 
-    // Check if dragging over an item in a different group
     const overItem = items.find((i) => i.id === over.id);
     if (!overItem) return;
 
@@ -172,7 +189,6 @@ export default function Index() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    // Handle group reorder
     const activeId = String(active.id);
     if (activeId.startsWith("group-sort-")) {
       setIsDraggingGroup(false);
@@ -195,7 +211,6 @@ export default function Index() {
       return;
     }
 
-    // Handle item reorder
     if (over && active.id !== over.id) {
       const overId = String(over.id);
       if (overId.startsWith("group-drop-") || overId.startsWith("group-sort-")) return;
@@ -220,7 +235,7 @@ export default function Index() {
       toast.error("有欄位尚未填寫題目名稱");
       return;
     }
-    console.log("Saved items:", items, "Groups:", groups);
+    console.log("Saved items:", items, "Groups:", groups, "Settings:", formSettings);
     toast.success(`已儲存 ${items.length} 個項目`);
   };
 
@@ -229,7 +244,6 @@ export default function Index() {
     setShowPanel(true);
   };
 
-  // Group management
   const renameGroupsByOrder = (groupList: FormGroup[]): FormGroup[] =>
     groupList.map((g, i) => ({ ...g, name: `第 ${i + 1} 頁` }));
 
@@ -270,7 +284,6 @@ export default function Index() {
   const disabledCount = items.filter((i) => !i.enabled).length;
   const visibleItems = hideDisabled ? items.filter((i) => i.enabled) : items;
 
-  // Separate ungrouped items from grouped items
   const ungroupedItems = visibleItems.filter((i) => {
     if (isContentBlock(i)) return !i.groupId;
     if (isFormField(i)) return !i.groupId;
@@ -284,7 +297,6 @@ export default function Index() {
       return false;
     });
 
-  // Group sort IDs only
   const groupSortIds = groups.map((g) => `group-sort-${g.id}`);
 
   return (
@@ -337,7 +349,6 @@ export default function Index() {
           onDragCancel={handleDragCancel}
         >
           <SortableContext items={groupSortIds} strategy={verticalListSortingStrategy}>
-            {/* Render groups */}
             {groups.map((group, idx) => (
               <GroupCard
                 key={group.id}
@@ -346,6 +357,8 @@ export default function Index() {
                 expandedId={expandedId}
                 isLastGroup={idx === groups.length - 1}
                 isDraggingGroup={isDraggingGroup}
+                showQuestionNumbers={formSettings.showQuestionNumbers}
+                questionNumberMap={questionNumberMap}
                 onToggleExpand={toggleExpand}
                 onUpdateGroup={updateGroup}
                 onDeleteGroup={deleteGroup}
@@ -373,7 +386,6 @@ export default function Index() {
               </GroupCard>
             ))}
 
-            {/* Render ungrouped items */}
             {ungroupedItems.length > 0 && (
               <div>
                 {ungroupedItems.map((item) =>
@@ -391,6 +403,7 @@ export default function Index() {
                       key={item.id}
                       field={item}
                       expanded={expandedId === item.id}
+                      questionNumber={formSettings.showQuestionNumbers ? questionNumberMap.get(item.id) : undefined}
                       onToggleExpand={() => toggleExpand(item.id)}
                       onUpdate={(f) => updateItem(f)}
                       onDelete={deleteItem}
@@ -432,6 +445,14 @@ export default function Index() {
             新增欄位 / 內容區塊
           </button>
         )}
+
+        {/* Form Settings Panel */}
+        {items.length > 0 && (
+          <FormSettingsPanel
+            settings={formSettings}
+            onChange={setFormSettings}
+          />
+        )}
       </div>
 
       <FormPreviewModal
@@ -439,6 +460,8 @@ export default function Index() {
         onClose={() => setShowPreview(false)}
         items={items}
         groups={groups}
+        settings={formSettings}
+        questionNumberMap={questionNumberMap}
       />
     </div>
   );

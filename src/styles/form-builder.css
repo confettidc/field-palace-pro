@@ -1550,65 +1550,48 @@
   box-shadow: 0 0 0 3px rgba(74, 93, 168, 0.15);
 }
 
-/* ===== Group delete confirm ===== */
-.xform-group-delete-confirm {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
+/* ===== Delete confirm modal ===== */
+.xform-delete-modal {
+  background: #fff;
+  border-radius: 0.85rem;
+  padding: 1.75rem 2rem;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: xform-slide-up 0.2s ease;
 }
 
-.xform-group-delete-msg {
-  font-size: 0.8rem;
-  color: #dc3545;
+.xform-delete-modal-icon {
+  font-size: 2.2rem;
+  color: #ef4444;
+  margin-bottom: 0.75rem;
+}
+
+.xform-delete-modal-msg {
+  font-size: 0.95rem;
   font-weight: 600;
-  white-space: nowrap;
+  color: #1a1f36;
+  margin-bottom: 1.25rem;
 }
 
-.xform-group-delete-confirm .btn-sm {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-}
-
-/* ===== Field delete confirm ===== */
-.xform-field-delete-confirm {
+.xform-delete-modal-actions {
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.xform-field-delete-msg {
-  font-size: 0.75rem;
-  color: #dc3545;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.xform-field-delete-confirm .btn-sm {
-  font-size: 0.72rem;
-  padding: 0.15rem 0.45rem;
-}
-
-/* ===== Group drag handle ===== */
-.xform-group-drag-handle {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 28px;
-  margin-right: 0.4rem;
-  color: #adb5bd;
+  gap: 0.65rem;
+}
+
+.xform-delete-modal-actions .btn {
+  min-width: 80px;
+  font-weight: 600;
+}
+
+/* ===== Group drag handle (removed icon, entire header is handle) ===== */
+.xform-group-header {
   cursor: grab;
-  border-radius: 4px;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
 }
 
-.xform-group-drag-handle:hover {
-  color: #6c757d;
-  background: #e9ecef;
-}
-
-.xform-group-drag-handle:active {
+.xform-group-header:active {
   cursor: grabbing;
 }
 
@@ -1634,4 +1617,207 @@
   padding: 0.1rem 0.5rem;
   border-radius: 10px;
   white-space: nowrap;
+}
+
+/* ===== Question number ===== */
+.xform-question-number {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #4a5da8;
+  margin-right: 0.25rem;
+  flex-shrink: 0;
+}
+
+.xform-preview-qnum {
+  font-weight: 700;
+  color: #4a5da8;
+}
+
+/* ===== Form Settings Panel ===== */
+.xform-settings-panel {
+  background: #fff;
+  border: 1px solid #e2e6ef;
+  border-radius: 0.75rem;
+  margin-top: 1.5rem;
+  overflow: hidden;
+}
+
+.xform-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.15rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.xform-settings-header:hover {
+  background: #f8f9fc;
+}
+
+.xform-settings-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1f36;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.xform-settings-body {
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid #e2e6ef;
+}
+
+.xform-settings-section {
+  padding: 0.85rem 0;
+  border-bottom: 1px solid #f0f2f6;
+}
+
+.xform-settings-section:last-child {
+  border-bottom: none;
+}
+
+.xform-settings-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.xform-settings-hint {
+  font-size: 0.75rem;
+  color: #8892a4;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+.xform-settings-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.xform-settings-toggle-text {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1a1f36;
+}
+
+/* ===== Color picker grid ===== */
+.xform-color-grid {
+  margin-top: 0.5rem;
+}
+
+.xform-color-group {
+  margin-bottom: 0.85rem;
+}
+
+.xform-color-group-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a6580;
+  margin-bottom: 0.5rem;
+}
+
+.xform-color-group-sub {
+  font-weight: 400;
+  color: #8892a4;
+  font-size: 0.78rem;
+  margin-left: 0.25rem;
+}
+
+.xform-color-row {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.xform-color-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.xform-color-item label {
+  font-size: 0.78rem;
+  color: #6b7590;
+  font-weight: 500;
+}
+
+.xform-color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #f8f9fc;
+  border: 1px solid #e2e6ef;
+  border-radius: 0.4rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.xform-color-input-wrap input[type="color"] {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+}
+
+.xform-color-input-wrap input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.xform-color-input-wrap input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 3px;
+}
+
+.xform-color-input-wrap span {
+  font-size: 0.78rem;
+  color: #5a6580;
+  font-family: monospace;
+}
+
+.xform-btn-preview {
+  background: #f6f7fb;
+  border: 1px solid #e2e6ef;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.xform-btn-preview .xform-form-label {
+  margin-bottom: 0.5rem;
+}
+
+/* ===== Preview submit button ===== */
+.xform-preview-submit-wrap {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e6ef;
+}
+
+.xform-preview-submit-btn {
+  display: inline-block;
+  padding: 0.6rem 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  background: #4a5da8;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.xform-preview-submit-btn:hover {
+  background: #3d4e8f;
 }

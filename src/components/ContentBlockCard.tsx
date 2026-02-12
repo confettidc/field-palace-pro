@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ContentBlock, ContentBlockStyle, CONTENT_BLOCK_META, DividerLineStyle, SpacerSize } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -75,17 +76,9 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
             />
           </div>
 
-          {showDeleteConfirm ? (
-            <div className="xform-field-delete-confirm">
-              <span className="xform-field-delete-msg">確定刪除？</span>
-              <button className="btn btn-sm btn-danger" onClick={() => { onDelete(block.id); setShowDeleteConfirm(false); }}>確定</button>
-              <button className="btn btn-sm btn-light" onClick={() => setShowDeleteConfirm(false)}>取消</button>
-            </div>
-          ) : (
-            <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
-              <i className="bi bi-trash" />
-            </button>
-          )}
+          <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
+            <i className="bi bi-trash" />
+          </button>
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
@@ -94,6 +87,14 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
           />
         </div>
       </div>
+
+      {showDeleteConfirm && (
+        <DeleteConfirmModal
+          message="確定刪除此內容區塊？"
+          onConfirm={() => { onDelete(block.id); setShowDeleteConfirm(false); }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
       {expanded && (
         <div className="xform-field-body">

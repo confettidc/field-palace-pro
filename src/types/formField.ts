@@ -104,6 +104,16 @@ export interface FormGroup {
   description?: string;
 }
 
+export interface FormSettings {
+  submitButtonText: string;
+  enableCustomButtonColor: boolean;
+  buttonBgColor: string;
+  buttonTextColor: string;
+  buttonHoverBgColor: string;
+  buttonHoverTextColor: string;
+  showQuestionNumbers: boolean;
+}
+
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
 
 export type SpacerSize = "small" | "medium" | "large";
