@@ -330,7 +330,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.75rem;
 }
 
 .xform-advanced-toggle-inline {
@@ -354,12 +354,13 @@
 }
 
 .xform-advanced-toggle-inline.has-active {
-  color: #6d5bbd;
+  color: #7c6bc4;
   font-weight: 600;
+  background: #f0ecfa;
 }
 
 .xform-advanced-toggle-inline.has-active:hover {
-  background: #f0ecfa;
+  background: #e8e0f6;
 }
 
 .xform-advanced-toggle-inline i:first-child {
@@ -368,10 +369,11 @@
 
 .xform-choice-advanced-body {
   padding: 0.65rem 0.75rem;
-  margin-top: 0.35rem;
-  background: #f3f0fa;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  background: #f5f2fc;
   border-radius: 0.45rem;
-  border: 1px solid #ddd5f0;
+  border: 1px solid #e4dcf3;
 }
 
 .xform-choice-toolbar {
@@ -386,24 +388,24 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.82rem;
-  color: #6d5bbd;
+  color: #7c6bc4;
   cursor: pointer;
   user-select: none;
   padding: 0.3rem 0.6rem;
   border-radius: 0.35rem;
-  border: 1px solid #ddd5f0;
+  border: 1px solid #e4dcf3;
   background: #fff;
   transition: all 0.15s;
 }
 
 .xform-choice-toggle:hover {
-  background: #f3f0fa;
+  background: #f5f2fc;
 }
 
 .xform-choice-toggle.active {
-  background: #e8e0f6;
-  border-color: #b8a8e0;
-  color: #4a3d8f;
+  background: #ece6f8;
+  border-color: #c4b5e3;
+  color: #5a4b9a;
   font-weight: 600;
 }
 
