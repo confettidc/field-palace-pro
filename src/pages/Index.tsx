@@ -21,12 +21,15 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 
+let fieldCounter = 0;
+
 const createField = (type: FieldType): FormField => {
+  fieldCounter++;
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
   return {
     id: crypto.randomUUID(),
     type,
-    label: "",
+    label: `欄位 ${fieldCounter}`,
     required: false,
     enabled: true,
     options: needsOptions
@@ -56,6 +59,7 @@ export default function Index() {
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
+    if (showPanel) setShowPanel(false);
   };
 
   const addField = (type: FieldType) => {
@@ -161,13 +165,13 @@ export default function Index() {
             <i className="bi bi-inbox xform-empty-icon" />
             <p className="xform-empty-text">尚未新增任何欄位</p>
             <button className="btn btn-primary" onClick={handleShowPanel}>
-              <i className="bi bi-plus me-1" />
-              新增欄位
-            </button>
-          </div>
-        )}
+            <i className="bi bi-plus me-1" />
+            新增欄位 / 內容區塊
+          </button>
+        </div>
+      )}
 
-        {showPanel && (
+      {showPanel && (
           <div className="mt-3">
             <AddFieldPanel
               onAddField={addField}
@@ -183,7 +187,7 @@ export default function Index() {
             onClick={handleShowPanel}
           >
             <i className="bi bi-plus me-1" />
-            新增欄位
+            新增欄位 / 內容區塊
           </button>
         )}
       </div>

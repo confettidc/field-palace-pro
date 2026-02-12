@@ -481,14 +481,27 @@
 
 /* ===== Green switch for 啟用 ===== */
 .xform-switch-green .form-check-input:checked {
-  background-color: #22c55e;
-  border-color: #22c55e;
+  background-color: #22c55e !important;
+  border-color: #22c55e !important;
 }
 
 /* ===== Default switch ===== */
 .xform-field-header .form-check-input:checked {
   background-color: #4a5da8;
   border-color: #4a5da8;
+}
+
+/* ===== Spacer preview ===== */
+.xform-spacer-preview {
+  width: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    #d0d5e2 3px,
+    #d0d5e2 4px
+  );
+  border-radius: 2px;
 }
 
 /* ===== Divider style picker ===== */

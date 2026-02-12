@@ -1,4 +1,4 @@
-import { ContentBlock, ContentBlockStyle, CONTENT_BLOCK_META, DividerLineStyle } from "@/types/formField";
+import { ContentBlock, ContentBlockStyle, CONTENT_BLOCK_META, DividerLineStyle, SpacerSize } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -8,6 +8,12 @@ const DIVIDER_STYLES: { value: DividerLineStyle; label: string }[] = [
   { value: "dashed", label: "虛線" },
   { value: "dotted", label: "點線" },
   { value: "double", label: "雙線" },
+];
+
+const SPACER_SIZES: { value: SpacerSize; label: string; height: string }[] = [
+  { value: "small", label: "小", height: "16px" },
+  { value: "medium", label: "中", height: "32px" },
+  { value: "large", label: "大", height: "64px" },
 ];
 
 interface Props {
@@ -33,6 +39,7 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
     : (block.content ? "內容區塊" : "未輸入內容");
 
   const isDivider = block.style === "divider";
+  const isSpacer = block.style === "spacer";
 
   return (
     <div
@@ -88,6 +95,22 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
                   >
                     <hr className={`xform-divider-preview xform-divider-${ds.value}`} />
                     <span>{ds.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : isSpacer ? (
+            <div className="xform-form-group">
+              <label className="xform-form-label">間距大小</label>
+              <div className="xform-divider-styles">
+                {SPACER_SIZES.map((ss) => (
+                  <button
+                    key={ss.value}
+                    className={`xform-divider-style-btn ${(block.spacerSize || "medium") === ss.value ? "active" : ""}`}
+                    onClick={() => onUpdate({ ...block, spacerSize: ss.value })}
+                  >
+                    <div className="xform-spacer-preview" style={{ height: ss.height }} />
+                    <span>{ss.label}</span>
                   </button>
                 ))}
               </div>
