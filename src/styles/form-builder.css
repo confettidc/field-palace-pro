@@ -1489,12 +1489,15 @@
 }
 
 .xform-group-empty {
-  padding: 0.6rem 1rem;
+  display: block;
+  width: fit-content;
+  margin: 0.25rem auto;
+  padding: 0.45rem 1.2rem;
   text-align: center;
-  color: #8892a4;
-  font-size: 0.85rem;
-  border-radius: 0.5rem;
-  background: #f0f2f8;
+  color: #9a8450;
+  font-size: 0.84rem;
+  border-radius: 999px;
+  background: #fdf6e3;
 }
 
 /* ===== Group create button ===== */
