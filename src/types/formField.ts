@@ -24,6 +24,24 @@ export interface FieldOption {
   label: string;
 }
 
+export interface DateConfig {
+  includeYear: boolean;
+  includeMonth: boolean;
+  includeDay: boolean;
+  yearStart: number;
+  yearEnd: number;
+  allowNA: boolean;
+}
+
+export const DEFAULT_DATE_CONFIG: DateConfig = {
+  includeYear: true,
+  includeMonth: true,
+  includeDay: true,
+  yearStart: 1950,
+  yearEnd: new Date().getFullYear(),
+  allowNA: false,
+};
+
 export interface FormField {
   id: string;
   type: FieldType;
@@ -34,6 +52,7 @@ export interface FormField {
   required: boolean;
   enabled: boolean;
   options?: FieldOption[];
+  dateConfig?: DateConfig;
 }
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";

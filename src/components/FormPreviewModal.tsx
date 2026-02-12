@@ -1,4 +1,4 @@
-import { FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META } from "@/types/formField";
+import { FormItem, isContentBlock, isFormField, FIELD_TYPE_META, CONTENT_BLOCK_META, DEFAULT_DATE_CONFIG } from "@/types/formField";
 
 interface Props {
   open: boolean;
@@ -79,9 +79,49 @@ export default function FormPreviewModal({ open, onClose, items }: Props) {
                   {item.type === "phone" && (
                     <input type="tel" className="form-control form-control-sm" placeholder={item.placeholder || "0912-345-678"} readOnly />
                   )}
-                  {item.type === "date" && (
-                    <input type="date" className="form-control form-control-sm" readOnly />
-                  )}
+                  {item.type === "date" && (() => {
+                    const dc = item.dateConfig || DEFAULT_DATE_CONFIG;
+                    const yearOpts = [];
+                    if (dc.includeYear) {
+                      for (let y = dc.yearStart; y <= dc.yearEnd; y++) yearOpts.push(y);
+                    }
+                    const monthOpts = Array.from({ length: 12 }, (_, i) => i + 1);
+                    const dayOpts = Array.from({ length: 31 }, (_, i) => i + 1);
+                    return (
+                      <div className="xform-date-preview-row">
+                        {dc.includeYear && (
+                          <>
+                            <select className="form-select form-select-sm xform-date-select">
+                              <option>--</option>
+                              {dc.allowNA && <option>不適用</option>}
+                              {yearOpts.map(y => <option key={y}>{y}</option>)}
+                            </select>
+                            <span className="xform-date-sep">年</span>
+                          </>
+                        )}
+                        {dc.includeMonth && (
+                          <>
+                            <select className="form-select form-select-sm xform-date-select">
+                              <option>--</option>
+                              {dc.allowNA && <option>不適用</option>}
+                              {monthOpts.map(m => <option key={m}>{m}</option>)}
+                            </select>
+                            <span className="xform-date-sep">月</span>
+                          </>
+                        )}
+                        {dc.includeDay && (
+                          <>
+                            <select className="form-select form-select-sm xform-date-select">
+                              <option>--</option>
+                              {dc.allowNA && <option>不適用</option>}
+                              {dayOpts.map(d => <option key={d}>{d}</option>)}
+                            </select>
+                            <span className="xform-date-sep">日</span>
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
                   {item.type === "file_upload" && (
                     <div className="xform-preview-file-upload">
                       <i className="bi bi-cloud-arrow-up" />
