@@ -19,6 +19,13 @@ const iconMap: Record<FieldType, string> = {
 
 type HintMode = "none" | "placeholder" | "default_value";
 
+const DEFAULT_CHOICE_CONFIG: ChoiceAdvancedConfig = {
+  allowOther: false,
+  otherLabel: "其他",
+  showTags: false,
+  showDefaultSelection: false,
+};
+
 interface Props {
   field: FormField;
   expanded: boolean;
@@ -32,6 +39,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
   const [hintMode, setHintMode] = useState<HintMode>(
     field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
   );
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
@@ -63,11 +71,11 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
   const isDate = field.type === "date";
   const showHintSection = !hasOptions && !isDate && field.type !== "file_upload";
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
-  const choiceConfig = field.choiceConfig || { allowOther: false, otherLabel: "以上皆非，我的答案是：", showTags: false, showDefaultSelection: false };
+  const choiceConfig = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
   const displayLabel = field.label || "未命名欄位";
 
   const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
-    const current = field.choiceConfig || { allowOther: false, otherLabel: "以上皆非，我的答案是：", showTags: false, showDefaultSelection: false };
+    const current = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
     updateField({ choiceConfig: { ...current, [key]: !current[key] } });
   };
 
@@ -104,6 +112,9 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
     }
   };
 
+  // Check if any advanced config is active
+  const hasActiveAdvanced = choiceConfig.allowOther || choiceConfig.showDefaultSelection || choiceConfig.showTags;
+
   return (
     <div
       ref={setNodeRef}
@@ -116,7 +127,12 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           <i className="bi bi-grip-vertical" />
         </div>
 
-        <span className="xform-field-label-text" data-tip={field.label.length > 30 ? displayLabel : undefined}>{displayLabel}</span>
+        <span
+          className="xform-field-label-text"
+          data-tip={displayLabel.length > 20 ? displayLabel : undefined}
+        >
+          {displayLabel}
+        </span>
 
         <span className="xform-field-type-badge">
           <i className={`bi ${iconMap[field.type]}`} />
@@ -332,34 +348,6 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
             <div className="xform-form-group">
               <label className="xform-form-label">選項</label>
 
-              {/* Advanced toggles toolbar */}
-              <div className="xform-choice-toolbar">
-                <button
-                  type="button"
-                  className={`xform-choice-toggle ${choiceConfig.allowOther ? "active" : ""}`}
-                  onClick={() => toggleChoiceConfig("allowOther")}
-                >
-                  <i className="bi bi-chat-dots" />
-                  允許其他
-                </button>
-                <button
-                  type="button"
-                  className={`xform-choice-toggle ${choiceConfig.showDefaultSelection ? "active" : ""}`}
-                  onClick={() => toggleChoiceConfig("showDefaultSelection")}
-                >
-                  <i className="bi bi-check2-circle" />
-                  設定預選
-                </button>
-                <button
-                  type="button"
-                  className={`xform-choice-toggle ${choiceConfig.showTags ? "active" : ""}`}
-                  onClick={() => toggleChoiceConfig("showTags")}
-                >
-                  <i className="bi bi-tags" />
-                  標籤
-                </button>
-              </div>
-
               {/* Option rows */}
               {(field.options || []).map((opt, i) => (
                 <div key={opt.id}>
@@ -398,7 +386,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                       <input
                         type="text"
                         className="xform-tag-input"
-                        placeholder="新增標籤"
+                        placeholder="輸入標籤後按 Enter"
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             e.preventDefault();
@@ -429,6 +417,50 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   <span className="xform-other-row-label">用戶填答區</span>
                 </div>
               )}
+
+              {/* Advanced settings collapsible */}
+              <div className="xform-choice-advanced-section">
+                <div
+                  className="xform-choice-advanced-header"
+                  onClick={() => setShowAdvanced(!showAdvanced)}
+                >
+                  <i className={`bi ${showAdvanced ? "bi-chevron-down" : "bi-chevron-right"}`} />
+                  <span>進階設定</span>
+                  {hasActiveAdvanced && !showAdvanced && (
+                    <span style={{ fontSize: "0.72rem", color: "#4a5da8", fontWeight: 600 }}>（已啟用）</span>
+                  )}
+                </div>
+                {showAdvanced && (
+                  <div className="xform-choice-advanced-body">
+                    <div className="xform-choice-toolbar">
+                      <button
+                        type="button"
+                        className={`xform-choice-toggle ${choiceConfig.allowOther ? "active" : ""}`}
+                        onClick={() => toggleChoiceConfig("allowOther")}
+                      >
+                        <i className="bi bi-chat-dots" />
+                        允許「其他」填答
+                      </button>
+                      <button
+                        type="button"
+                        className={`xform-choice-toggle ${choiceConfig.showDefaultSelection ? "active" : ""}`}
+                        onClick={() => toggleChoiceConfig("showDefaultSelection")}
+                      >
+                        <i className="bi bi-check2-circle" />
+                        設定預選答案
+                      </button>
+                      <button
+                        type="button"
+                        className={`xform-choice-toggle ${choiceConfig.showTags ? "active" : ""}`}
+                        onClick={() => toggleChoiceConfig("showTags")}
+                      >
+                        <i className="bi bi-tags" />
+                        為選項加標籤
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
