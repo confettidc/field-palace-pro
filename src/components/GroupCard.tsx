@@ -73,7 +73,6 @@ export default function GroupCard({
     }
   }, [editingName]);
 
-  // When any group is being dragged, collapse to compact mode
   const isCollapsed = isDraggingGroup && !isDragging;
 
   return (
@@ -124,6 +123,14 @@ export default function GroupCard({
         <div className="xform-group-header-right">
           {!isDraggingGroup && (
             <>
+              {!showDesc && (
+                <button
+                  className="btn btn-sm xform-add-desc-btn xform-group-add-desc-inline"
+                  onClick={() => setShowDesc(true)}
+                >
+                  + 分頁說明
+                </button>
+              )}
               {showDeleteConfirm ? (
                 <div className="xform-group-delete-confirm">
                   <span className="xform-group-delete-msg">確定刪除此分頁？</span>
@@ -145,11 +152,11 @@ export default function GroupCard({
                 </div>
               ) : (
                 <button
-                  className="btn btn-sm btn-light text-muted"
+                  className="btn btn-sm btn-light text-danger"
                   title="刪除分頁（保留欄位）"
                   onClick={() => setShowDeleteConfirm(true)}
                 >
-                  <i className="bi bi-folder-minus" />
+                  <i className="bi bi-folder-x" />
                 </button>
               )}
             </>
@@ -159,14 +166,7 @@ export default function GroupCard({
 
       {!isDraggingGroup && (
         <>
-          {!showDesc ? (
-            <button
-              className="btn btn-sm xform-add-desc-btn xform-group-add-desc"
-              onClick={() => setShowDesc(true)}
-            >
-              + 分頁說明
-            </button>
-          ) : (
+          {showDesc && (
             <div className="xform-group-desc-section">
               <div className="d-flex align-items-center justify-content-between mb-1">
                 <label className="xform-form-label mb-0" style={{ fontSize: '0.8rem' }}>分頁說明</label>
@@ -185,9 +185,6 @@ export default function GroupCard({
                   content={group.description || ""}
                   onChange={(html) => onUpdateGroup({ ...group, description: html })}
                 />
-                <div className="xform-desc-hint" style={{ borderTop: '1px solid #dee2e6' }}>
-                  Shift + Enter = 下一行
-                </div>
               </div>
             </div>
           )}

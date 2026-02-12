@@ -269,11 +269,8 @@ export default function Index() {
       return false;
     });
 
-  // Collect all sortable IDs: items + group sort IDs
-  const allSortableIds = [
-    ...visibleItems.map((i) => i.id),
-    ...groups.map((g) => `group-sort-${g.id}`),
-  ];
+  // Group sort IDs only
+  const groupSortIds = groups.map((g) => `group-sort-${g.id}`);
 
   return (
     <div className="xform-page">
@@ -324,7 +321,7 @@ export default function Index() {
           onDragEnd={handleDragEnd}
           onDragCancel={handleDragCancel}
         >
-          <SortableContext items={allSortableIds} strategy={verticalListSortingStrategy}>
+          <SortableContext items={groupSortIds} strategy={verticalListSortingStrategy}>
             {/* Render groups */}
             {groups.map((group, idx) => (
               <GroupCard
