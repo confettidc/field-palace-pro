@@ -56,11 +56,48 @@
   flex-wrap: wrap;
 }
 
-.x-field-index {
-  font-size: 0.8rem;
-  font-weight: 700;
+.x-field-label-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #212529;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.x-field-move-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.x-move-btn {
+  padding: 0 0.25rem !important;
+  line-height: 1 !important;
+  font-size: 0.7rem !important;
+}
+
+.x-move-btn:disabled {
+  opacity: 0.3;
+}
+
+.x-field-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.x-toggle-label {
+  font-size: 0.72rem;
   color: #6c757d;
-  min-width: 22px;
+  white-space: nowrap;
+}
+
+.x-expand-icon {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-left: 0.25rem;
 }
 
 .x-field-type-badge {
