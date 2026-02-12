@@ -149,7 +149,8 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
             {displayLabel}
           </span>
 
-          <span className="xform-field-type-badge">
+          <span className={`xform-field-type-badge ${field.profileKey ? "xform-badge-profile" : ""}`}>
+            {field.profileKey && <i className="bi bi-person-badge me-1" />}
             <i className={`bi ${iconMap[field.type]}`} />
             {FIELD_TYPE_META[field.type].label}
           </span>

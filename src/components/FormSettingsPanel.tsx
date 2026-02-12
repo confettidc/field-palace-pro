@@ -1,14 +1,15 @@
 import { useState, useRef, useEffect } from "react";
-import { FormSettings } from "@/types/formField";
+import { FormSettings, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
 
 interface Props {
   settings: FormSettings;
   onChange: (settings: FormSettings) => void;
+  onProfileToggle: (key: ProfileFieldKey, checked: boolean) => void;
 }
 
-export default function FormSettingsPanel({ settings, onChange }: Props) {
+export default function FormSettingsPanel({ settings, onChange, onProfileToggle }: Props) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"numbering" | "submit">("submit");
+  const [activeTab, setActiveTab] = useState<"profile" | "submit" | "numbering">("profile");
   const panelRef = useRef<HTMLDivElement>(null);
 
   const update = (patch: Partial<FormSettings>) => onChange({ ...settings, ...patch });
@@ -44,6 +45,12 @@ export default function FormSettingsPanel({ settings, onChange }: Props) {
           {/* Tabs */}
           <div className="xform-settings-tabs">
             <button
+              className={`xform-settings-tab ${activeTab === "profile" ? "active" : ""}`}
+              onClick={() => setActiveTab("profile")}
+            >
+              用戶輪廓
+            </button>
+            <button
               className={`xform-settings-tab ${activeTab === "submit" ? "active" : ""}`}
               onClick={() => setActiveTab("submit")}
             >
@@ -58,6 +65,34 @@ export default function FormSettingsPanel({ settings, onChange }: Props) {
           </div>
 
           <div className="xform-settings-dropdown-body">
+            {activeTab === "profile" && (
+              <div className="xform-profile-tab">
+                <p className="xform-profile-desc">
+                  輪廓欄位用來建立用戶的基本屬性；用戶填寫後，內容會寫入並更新到該用戶的個人資料，作為其身分與輪廓資訊的一部分。
+                </p>
+                <div className="xform-profile-list">
+                  {PROFILE_FIELDS.map((pf) => {
+                    const checked = settings.profileFields.includes(pf.key);
+                    return (
+                      <label key={pf.key} className="xform-profile-item">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => onProfileToggle(pf.key, e.target.checked)}
+                        />
+                        <i className={`bi ${pf.icon} xform-profile-item-icon`} />
+                        <span>{pf.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="xform-profile-hint">
+                  <i className="bi bi-info-circle me-1" />
+                  至少需勾選「電郵」或「手機」其中一項
+                </p>
+              </div>
+            )}
+
             {activeTab === "numbering" && (
               <label
                 className="xform-settings-simple-toggle"

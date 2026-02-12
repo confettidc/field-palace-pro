@@ -143,18 +143,18 @@ export default function GroupCard({
                 </button>
               )}
               <button
-                className="btn btn-sm btn-light xform-group-collapse-btn"
-                title={collapsed ? "展開分頁" : "收合分頁"}
-                onClick={() => onToggleCollapse?.()}
-              >
-                <i className={`bi ${collapsed ? "bi-chevron-down" : "bi-chevron-up"}`} />
-              </button>
-              <button
                 className="btn btn-sm btn-light text-danger"
                 title="刪除分頁（保留欄位）"
                 onClick={() => setShowDeleteConfirm(true)}
               >
                 <i className="bi bi-file-earmark-x" />
+              </button>
+              <button
+                className="btn btn-sm xform-group-collapse-btn"
+                title={collapsed ? "展開分頁" : "收合分頁"}
+                onClick={() => onToggleCollapse?.()}
+              >
+                <i className={`bi ${collapsed ? "bi-arrows-expand" : "bi-arrows-collapse"}`} />
               </button>
             </>
           )}
