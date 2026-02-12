@@ -1949,6 +1949,15 @@
   margin-bottom: 0.75rem;
 }
 
+.xform-profile-link {
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 500;
+}
+.xform-profile-link:hover {
+  text-decoration: underline;
+}
+
 .xform-profile-list {
   display: flex;
   flex-direction: column;
