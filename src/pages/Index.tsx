@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import {
   DndContext,
   closestCenter,
+  rectIntersection,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -17,6 +18,7 @@ import {
   DragEndEvent,
   DragOverEvent,
   DragStartEvent,
+  CollisionDetection,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -66,6 +68,19 @@ export default function Index() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor)
   );
+
+  // Custom collision detection: when dragging a group, only collide with other groups
+  const customCollisionDetection: CollisionDetection = (args) => {
+    const activeId = String(args.active.id);
+    if (activeId.startsWith("group-sort-")) {
+      // Filter droppable containers to only group sortables
+      const groupContainers = args.droppableContainers.filter((c) =>
+        String(c.id).startsWith("group-sort-")
+      );
+      return rectIntersection({ ...args, droppableContainers: groupContainers });
+    }
+    return closestCenter(args);
+  };
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -315,7 +330,7 @@ export default function Index() {
 
         <DndContext
           sensors={sensors}
-          collisionDetection={closestCenter}
+          collisionDetection={customCollisionDetection}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
