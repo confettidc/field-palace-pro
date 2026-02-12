@@ -95,6 +95,13 @@ export interface FormField {
   dateConfig?: DateConfig;
   choiceConfig?: ChoiceAdvancedConfig;
   phoneConfig?: PhoneConfig;
+  groupId?: string;
+}
+
+export interface FormGroup {
+  id: string;
+  name: string;
+  description?: string;
 }
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
@@ -109,6 +116,7 @@ export interface ContentBlock {
   enabled: boolean;
   dividerStyle?: DividerLineStyle;
   spacerSize?: SpacerSize;
+  groupId?: string;
 }
 
 export type FormItem = FormField | ContentBlock;
