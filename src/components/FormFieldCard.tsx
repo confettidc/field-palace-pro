@@ -183,21 +183,24 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
         <div className="xform-field-body">
           <div className="xform-form-group">
             <label className="xform-form-label">題目</label>
-            <textarea
-              className="form-control form-control-sm xform-auto-resize"
-              value={field.label}
-              onChange={(e) => {
-                updateField({ label: e.target.value });
-                e.target.style.height = 'auto';
-                e.target.style.height = e.target.scrollHeight + 'px';
-              }}
-              onFocus={(e) => {
-                e.target.style.height = 'auto';
-                e.target.style.height = e.target.scrollHeight + 'px';
-              }}
-              placeholder="例如：您的職位"
-              rows={1}
-            />
+            <div className="xform-textarea-wrap">
+              <textarea
+                className="form-control form-control-sm xform-auto-resize"
+                value={field.label}
+                onChange={(e) => {
+                  updateField({ label: e.target.value });
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                onFocus={(e) => {
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                placeholder="例如：您的職位"
+                rows={1}
+              />
+              <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
+            </div>
           </div>
 
           {!showDesc ? (
@@ -229,7 +232,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   content={field.description || ""}
                   onChange={(html) => updateField({ description: html })}
                 />
-                <div className="xform-desc-hint">Shift + Enter = 下一行</div>
+                <div className="xform-desc-hint" style={{ borderTop: '1px solid #dee2e6' }}>Shift + Enter = 下一行</div>
               </div>
             </div>
           )}
@@ -263,22 +266,44 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                 </div>
               </div>
               {hintMode === "placeholder" && (
-                <input
-                  type="text"
-                  className="form-control form-control-sm mt-2"
-                  value={field.placeholder || ""}
-                  onChange={(e) => updateField({ placeholder: e.target.value })}
-                  placeholder="例如：請輸入..."
-                />
+                <div className="xform-textarea-wrap mt-2">
+                  <textarea
+                    className="form-control form-control-sm xform-auto-resize"
+                    value={field.placeholder || ""}
+                    onChange={(e) => {
+                      updateField({ placeholder: e.target.value });
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    placeholder="例如：請輸入..."
+                    rows={1}
+                  />
+                  <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
+                </div>
               )}
               {hintMode === "default_value" && (
-                <input
-                  type="text"
-                  className="form-control form-control-sm mt-2"
-                  value={field.defaultValue || ""}
-                  onChange={(e) => updateField({ defaultValue: e.target.value })}
-                  placeholder="例如：預設內容"
-                />
+                <div className="xform-textarea-wrap mt-2">
+                  <textarea
+                    className="form-control form-control-sm xform-auto-resize"
+                    value={field.defaultValue || ""}
+                    onChange={(e) => {
+                      updateField({ defaultValue: e.target.value });
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    placeholder="例如：預設內容"
+                    rows={1}
+                  />
+                  <div className="xform-textarea-hint">Shift + Enter = 下一行</div>
+                </div>
               )}
             </div>
           )}
