@@ -133,10 +133,12 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
           ) : (
             <div className="xform-form-group">
               <label className="xform-form-label">內容</label>
-              <RichTextEditor
-                content={block.content || ""}
-                onChange={(html) => onUpdate({ ...block, content: html })}
-              />
+              <div className="xform-desc-editor-wrap">
+                <RichTextEditor
+                  content={block.content || ""}
+                  onChange={(html) => onUpdate({ ...block, content: html })}
+                />
+              </div>
             </div>
           )}
         </div>
