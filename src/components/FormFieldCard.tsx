@@ -21,7 +21,7 @@ type HintMode = "none" | "placeholder" | "default_value";
 
 const DEFAULT_CHOICE_CONFIG: ChoiceAdvancedConfig = {
   allowOther: false,
-  otherLabel: "其他",
+  otherLabel: "以上皆非，我的答案是",
   showTags: false,
   showDefaultSelection: false,
 };
@@ -193,7 +193,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                 onClick={() => setShowDesc(true)}
               >
                 <i className="bi bi-plus me-1" />
-                新增補充說明
+                補充說明
               </button>
             </div>
           ) : (
@@ -349,14 +349,11 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
               <div className="xform-options-header">
                 <label className="xform-form-label mb-0">選項</label>
                 <div
-                  className="xform-advanced-toggle-inline"
+                  className={`xform-advanced-toggle-inline ${hasActiveAdvanced ? 'has-active' : ''}`}
                   onClick={() => setShowAdvanced(!showAdvanced)}
                 >
                   <i className={`bi bi-gear`} />
-                  <span>進階設定</span>
-                  {hasActiveAdvanced && !showAdvanced && (
-                    <span className="xform-advanced-dot" />
-                  )}
+                  <span>{hasActiveAdvanced ? '進階設定 (已選用)' : '進階設定'}</span>
                   <i className={`bi ${showAdvanced ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ fontSize: "0.65rem" }} />
                 </div>
               </div>
@@ -463,11 +460,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                 </div>
               ))}
 
-              <button className="btn btn-outline-secondary btn-sm mt-1" onClick={addOption}>
-                + 新增選項
-              </button>
-
-              {/* "Others" free-text option – always at bottom */}
+              {/* "Others" free-text option – above add button */}
               {choiceConfig.allowOther && (
                 <div className="xform-other-row">
                   <input
@@ -480,6 +473,10 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   <span className="xform-other-row-label">用戶填答區</span>
                 </div>
               )}
+
+              <button className="btn btn-outline-secondary btn-sm mt-1" onClick={addOption}>
+                + 選項
+              </button>
             </div>
           )}
         </div>
