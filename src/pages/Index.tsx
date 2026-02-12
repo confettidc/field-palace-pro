@@ -52,6 +52,7 @@ export default function Index() {
   const [showPanel, setShowPanel] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [hideDisabled, setHideDisabled] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -114,6 +115,9 @@ export default function Index() {
     setShowPanel(true);
   };
 
+  const disabledCount = items.filter((i) => !i.enabled).length;
+  const visibleItems = hideDisabled ? items.filter((i) => i.enabled) : items;
+
   return (
     <div className="xform-page">
       <div className="xform-container">
@@ -133,10 +137,22 @@ export default function Index() {
           </div>
         </div>
 
+        {items.length > 0 && disabledCount > 0 && (
+          <div className="xform-filter-bar">
+            <button
+              className={`xform-filter-toggle ${hideDisabled ? "active" : ""}`}
+              onClick={() => setHideDisabled(!hideDisabled)}
+            >
+              <i className={`bi ${hideDisabled ? "bi-eye-slash" : "bi-eye"}`} />
+              {hideDisabled ? `已隱藏 ${disabledCount} 個停用項目` : "隱藏停用項目"}
+            </button>
+          </div>
+        )}
+
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+          <SortableContext items={visibleItems.map((i) => i.id)} strategy={verticalListSortingStrategy}>
             <div>
-              {items.map((item) =>
+              {visibleItems.map((item) =>
                 isContentBlock(item) ? (
                   <ContentBlockCard
                     key={item.id}
