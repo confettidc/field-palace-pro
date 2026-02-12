@@ -1489,13 +1489,27 @@
 }
 
 .xform-group-empty {
-  padding: 1.25rem;
+  padding: 1.5rem 1.25rem;
   text-align: center;
   color: #adb5bd;
-  font-size: 0.85rem;
-  border: 1px dashed #d0d5e2;
-  border-radius: 0.5rem;
-  background: #fff;
+  font-size: 0.88rem;
+  border: 1px dashed #d8dde8;
+  border-radius: 0.6rem;
+  background: #fafbfd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.xform-group-empty-icon {
+  font-size: 1.6rem;
+  color: #c8cee0;
+}
+
+.xform-group-empty-add {
+  margin-top: 0.25rem;
+  font-size: 0.82rem !important;
 }
 
 /* ===== Group create button ===== */
