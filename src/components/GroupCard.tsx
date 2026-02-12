@@ -14,6 +14,7 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   group: FormGroup;
+  pageIndex?: number;
   items: FormItem[];
   expandedId: string | null;
   isLastGroup?: boolean;
@@ -32,6 +33,7 @@ interface Props {
 
 export default function GroupCard({
   group,
+  pageIndex,
   items,
   expandedId,
   isLastGroup,
@@ -101,6 +103,9 @@ export default function GroupCard({
         {...listeners}
       >
         <div className="xform-group-header-left">
+          {pageIndex != null && (
+            <span className="xform-group-page-num">P{pageIndex}</span>
+          )}
           {editingName ? (
             <input
               ref={nameRef}
@@ -127,7 +132,7 @@ export default function GroupCard({
           )}
           {isCollapsed && (
             <span className="xform-group-item-count">
-              {items.length} 個欄位
+              {items.length} 個項目
             </span>
           )}
         </div>

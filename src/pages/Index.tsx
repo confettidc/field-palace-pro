@@ -28,6 +28,7 @@ import {
 } from "@dnd-kit/sortable";
 
 let fieldCounter = 1;
+let pageCounter = 1;
 
 const DEFAULT_SETTINGS: FormSettings = {
   submitButtonText: "立即登記",
@@ -46,7 +47,7 @@ const createField = (type: FieldType, groupId?: string): FormField => {
   return {
     id: crypto.randomUUID(),
     type,
-    label: `欄位 ${num}`,
+    label: `未命名欄位 ${num}`,
     required: false,
     enabled: true,
     groupId,
@@ -303,8 +304,7 @@ export default function Index() {
           const oldIndex = prev.findIndex((g) => g.id === activeGroupId2);
           const newIndex = prev.findIndex((g) => g.id === overGroupId);
           if (oldIndex === -1 || newIndex === -1) return prev;
-          const reordered = arrayMove(prev, oldIndex, newIndex);
-          return renameGroupsByOrder(reordered);
+          return arrayMove(prev, oldIndex, newIndex);
         });
       }
       return;
@@ -353,13 +353,10 @@ export default function Index() {
     setShowPanel(true);
   };
 
-  const renameGroupsByOrder = (groupList: FormGroup[]): FormGroup[] =>
-    groupList.map((g, i) => ({ ...g, name: `第 ${i + 1} 頁` }));
-
   const handleCreateGroup = () => {
     const newGroup: FormGroup = {
       id: crypto.randomUUID(),
-      name: `第 ${groups.length + 1} 頁`,
+      name: `未命名頁面 ${pageCounter++}`,
     };
 
     if (groups.length === 0 && items.length > 0) {
@@ -370,6 +367,7 @@ export default function Index() {
     }
 
     setGroups((prev) => [...prev, newGroup]);
+    setShowPanel(false);
     toast.success(`已建立「${newGroup.name}」`);
   };
 
@@ -386,7 +384,7 @@ export default function Index() {
       if (isFormField(item) && item.groupId === groupId) return { ...item, groupId: fallbackGroupId };
       return item;
     }));
-    setGroups(renameGroupsByOrder(remainingGroups));
+    setGroups(remainingGroups);
     toast("已刪除分頁（欄位已保留）");
   };
 
@@ -471,6 +469,7 @@ export default function Index() {
               <GroupCard
                 key={group.id}
                 group={group}
+                pageIndex={idx + 1}
                 items={getGroupItems(group.id)}
                 expandedId={expandedId}
                 isLastGroup={idx === groups.length - 1}
