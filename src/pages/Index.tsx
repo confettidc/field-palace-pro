@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG } from "@/types/formField";
+import { useState, useMemo, useCallback } from "react";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import GroupCard from "@/components/GroupCard";
@@ -37,6 +37,7 @@ const DEFAULT_SETTINGS: FormSettings = {
   buttonHoverBgColor: "#3d4e8f",
   buttonHoverTextColor: "#ffffff",
   showQuestionNumbers: false,
+  profileFields: ["name", "email"],
 };
 
 const createField = (type: FieldType, groupId?: string): FormField => {
@@ -57,6 +58,29 @@ const createField = (type: FieldType, groupId?: string): FormField => {
   };
 };
 
+const createProfileField = (key: ProfileFieldKey, label: string, type: FieldType, groupId?: string): FormField => {
+  const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
+  return {
+    id: crypto.randomUUID(),
+    type,
+    label,
+    required: key === "name" || key === "email",
+    enabled: true,
+    groupId,
+    profileKey: key,
+    options: key === "gender"
+      ? [
+          { id: crypto.randomUUID(), label: "男" },
+          { id: crypto.randomUUID(), label: "女" },
+          { id: crypto.randomUUID(), label: "其他" },
+        ]
+      : needsOptions
+        ? [{ id: crypto.randomUUID(), label: "選項 1" }]
+        : undefined,
+    phoneConfig: type === "phone" ? { ...DEFAULT_PHONE_CONFIG } : undefined,
+  };
+};
+
 const createContentBlock = (style: ContentBlockStyle, groupId?: string): ContentBlock => ({
   id: crypto.randomUUID(),
   kind: "content_block",
@@ -67,7 +91,18 @@ const createContentBlock = (style: ContentBlockStyle, groupId?: string): Content
 });
 
 export default function Index() {
-  const [items, setItems] = useState<FormItem[]>([]);
+  const [items, setItems] = useState<FormItem[]>(() => {
+    // Create initial profile fields for default checked ones
+    const initialItems: FormItem[] = [];
+    for (const key of DEFAULT_SETTINGS.profileFields) {
+      const def = PROFILE_FIELDS.find(p => p.key === key);
+      if (def) {
+        const f = createProfileField(def.key, def.label, def.fieldType, undefined);
+        initialItems.push(f);
+      }
+    }
+    return initialItems;
+  });
   const [groups, setGroups] = useState<FormGroup[]>([]);
   const [showPanel, setShowPanel] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -133,6 +168,35 @@ export default function Index() {
   };
 
   const activeGroupId = groups.length > 0 ? groups[groups.length - 1].id : undefined;
+  const firstGroupId = groups.length > 0 ? groups[0].id : undefined;
+
+  const handleProfileToggle = useCallback((key: ProfileFieldKey, checked: boolean) => {
+    if (checked) {
+      // Ensure at least email or phone remains
+      const def = PROFILE_FIELDS.find(p => p.key === key)!;
+      const f = createProfileField(key, def.label, def.fieldType, firstGroupId);
+      // Insert profile fields at the beginning
+      setItems(prev => {
+        const profileItems = prev.filter(i => isFormField(i) && (i as FormField).profileKey);
+        const insertIndex = profileItems.length;
+        const newItems = [...prev];
+        newItems.splice(insertIndex, 0, f);
+        return newItems;
+      });
+      setFormSettings(prev => ({ ...prev, profileFields: [...prev.profileFields, key] }));
+    } else {
+      // Validate: at least email or phone must remain
+      const currentProfile = formSettings.profileFields.filter(k => k !== key);
+      const hasContact = currentProfile.includes("email") || currentProfile.includes("phone");
+      if (!hasContact) {
+        toast.error("至少需保留「電郵」或「手機」其中一項");
+        return;
+      }
+      // Remove the profile field from items
+      setItems(prev => prev.filter(i => !(isFormField(i) && (i as FormField).profileKey === key)));
+      setFormSettings(prev => ({ ...prev, profileFields: currentProfile }));
+    }
+  }, [firstGroupId, formSettings.profileFields]);
 
   const addField = (type: FieldType) => {
     const f = createField(type, activeGroupId);
@@ -376,6 +440,7 @@ export default function Index() {
               <FormSettingsPanel
                 settings={formSettings}
                 onChange={setFormSettings}
+                onProfileToggle={handleProfileToggle}
               />
             </div>
             {disabledCount > 0 && (

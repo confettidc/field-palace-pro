@@ -96,6 +96,7 @@ export interface FormField {
   choiceConfig?: ChoiceAdvancedConfig;
   phoneConfig?: PhoneConfig;
   groupId?: string;
+  profileKey?: ProfileFieldKey;
 }
 
 export interface FormGroup {
@@ -103,6 +104,22 @@ export interface FormGroup {
   name: string;
   description?: string;
 }
+
+export type ProfileFieldKey = "name" | "email" | "phone" | "gender";
+
+export interface ProfileFieldDef {
+  key: ProfileFieldKey;
+  label: string;
+  fieldType: FieldType;
+  icon: string;
+}
+
+export const PROFILE_FIELDS: ProfileFieldDef[] = [
+  { key: "name", label: "姓名", fieldType: "short_text", icon: "bi-person" },
+  { key: "email", label: "電郵", fieldType: "email", icon: "bi-envelope" },
+  { key: "phone", label: "手機", fieldType: "phone", icon: "bi-phone" },
+  { key: "gender", label: "性別", fieldType: "single_choice", icon: "bi-gender-ambiguous" },
+];
 
 export interface FormSettings {
   submitButtonText: string;
@@ -112,6 +129,7 @@ export interface FormSettings {
   buttonHoverBgColor: string;
   buttonHoverTextColor: string;
   showQuestionNumbers: boolean;
+  profileFields: ProfileFieldKey[];
 }
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
