@@ -3,6 +3,7 @@ import { FormGroup, FormItem, isContentBlock, isFormField } from "@/types/formFi
 import FormFieldCard from "./FormFieldCard";
 import ContentBlockCard from "./ContentBlockCard";
 import RichTextEditor from "./RichTextEditor";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -17,6 +18,8 @@ interface Props {
   expandedId: string | null;
   isLastGroup?: boolean;
   isDraggingGroup?: boolean;
+  showQuestionNumbers?: boolean;
+  questionNumberMap?: Map<string, number>;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
   onDeleteGroup: (groupId: string) => void;
@@ -31,6 +34,8 @@ export default function GroupCard({
   expandedId,
   isLastGroup,
   isDraggingGroup,
+  showQuestionNumbers,
+  questionNumberMap,
   onToggleExpand,
   onUpdateGroup,
   onDeleteGroup,
@@ -84,15 +89,14 @@ export default function GroupCard({
       style={sortStyle}
       className={`xform-group-card ${isOver ? "xform-group-drop-over" : ""} ${isDragging ? "xform-group-dragging" : ""} ${isCollapsed ? "xform-group-collapsed" : ""}`}
     >
-      <div className="xform-group-header">
+      {/* Entire header row is the drag handle */}
+      <div
+        className="xform-group-header"
+        style={{ cursor: isDraggingGroup || !editingName ? "grab" : undefined }}
+        {...attributes}
+        {...listeners}
+      >
         <div className="xform-group-header-left">
-          <div
-            className="xform-group-drag-handle"
-            {...attributes}
-            {...listeners}
-          >
-            <i className="bi bi-grip-vertical" />
-          </div>
           {editingName ? (
             <input
               ref={nameRef}
@@ -103,11 +107,14 @@ export default function GroupCard({
               onKeyDown={(e) => {
                 if (e.key === "Enter") setEditingName(false);
               }}
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => e.stopPropagation()}
             />
           ) : (
             <h3
               className="xform-group-name"
-              onClick={() => setEditingName(true)}
+              onClick={(e) => { e.stopPropagation(); e.preventDefault(); setEditingName(true); }}
+              onPointerDown={(e) => e.stopPropagation()}
               title="點擊編輯分頁名稱"
             >
               {group.name || "未命名分頁"}
@@ -120,7 +127,7 @@ export default function GroupCard({
             </span>
           )}
         </div>
-        <div className="xform-group-header-right">
+        <div className="xform-group-header-right" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
           {!isDraggingGroup && (
             <>
               {!showDesc && (
@@ -131,38 +138,25 @@ export default function GroupCard({
                   + 分頁說明
                 </button>
               )}
-              {showDeleteConfirm ? (
-                <div className="xform-group-delete-confirm">
-                  <span className="xform-group-delete-msg">確定刪除此分頁？</span>
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => {
-                      onDeleteGroup(group.id);
-                      setShowDeleteConfirm(false);
-                    }}
-                  >
-                    確定
-                  </button>
-                  <button
-                    className="btn btn-sm btn-light"
-                    onClick={() => setShowDeleteConfirm(false)}
-                  >
-                    取消
-                  </button>
-                </div>
-              ) : (
-                <button
-                  className="btn btn-sm btn-light text-danger"
-                  title="刪除分頁（保留欄位）"
-                  onClick={() => setShowDeleteConfirm(true)}
-                >
-                  <i className="bi bi-folder-x" />
-                </button>
-              )}
+              <button
+                className="btn btn-sm btn-light text-danger"
+                title="刪除分頁（保留欄位）"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                <i className="bi bi-folder-x" />
+              </button>
             </>
           )}
         </div>
       </div>
+
+      {showDeleteConfirm && (
+        <DeleteConfirmModal
+          message="確定刪除此分頁？（欄位將被保留）"
+          onConfirm={() => { onDeleteGroup(group.id); setShowDeleteConfirm(false); }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
       {!isDraggingGroup && (
         <>
@@ -206,6 +200,7 @@ export default function GroupCard({
                     key={item.id}
                     field={item}
                     expanded={expandedId === item.id}
+                    questionNumber={showQuestionNumbers ? questionNumberMap?.get(item.id) : undefined}
                     onToggleExpand={() => onToggleExpand(item.id)}
                     onUpdate={(f) => onUpdateItem(f)}
                     onDelete={onDeleteItem}

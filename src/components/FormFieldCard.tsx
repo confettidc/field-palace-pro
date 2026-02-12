@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -29,12 +30,13 @@ const DEFAULT_CHOICE_CONFIG: ChoiceAdvancedConfig = {
 interface Props {
   field: FormField;
   expanded: boolean;
+  questionNumber?: number;
   onToggleExpand: () => void;
   onUpdate: (field: FormField) => void;
   onDelete: (id: string) => void;
 }
 
-export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdate, onDelete }: Props) {
+export default function FormFieldCard({ field, expanded, questionNumber, onToggleExpand, onUpdate, onDelete }: Props) {
   const [showDesc, setShowDesc] = useState(!!field.description);
   const [hintMode, setHintMode] = useState<HintMode>(
     field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
@@ -136,6 +138,10 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           <i className="bi bi-grip-vertical" />
         </div>
 
+        {questionNumber !== undefined && (
+          <span className="xform-question-number">{questionNumber}.</span>
+        )}
+
         <span
           className="xform-field-label-text"
           data-tip={displayLabel.length > 20 ? displayLabel : undefined}
@@ -173,17 +179,9 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
             />
           </div>
 
-          {showDeleteConfirm ? (
-            <div className="xform-field-delete-confirm">
-              <span className="xform-field-delete-msg">確定刪除？</span>
-              <button className="btn btn-sm btn-danger" onClick={() => { onDelete(field.id); setShowDeleteConfirm(false); }}>確定</button>
-              <button className="btn btn-sm btn-light" onClick={() => setShowDeleteConfirm(false)}>取消</button>
-            </div>
-          ) : (
-            <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
-              <i className="bi bi-trash" />
-            </button>
-          )}
+          <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
+            <i className="bi bi-trash" />
+          </button>
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
@@ -192,6 +190,14 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           />
         </div>
       </div>
+
+      {showDeleteConfirm && (
+        <DeleteConfirmModal
+          message={`確定刪除「${displayLabel}」？`}
+          onConfirm={() => { onDelete(field.id); setShowDeleteConfirm(false); }}
+          onCancel={() => setShowDeleteConfirm(false)}
+        />
+      )}
 
       {/* Body */}
       {expanded && (

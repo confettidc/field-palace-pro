@@ -1,13 +1,15 @@
-import { FormItem, FormGroup, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
+import { FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   items: FormItem[];
   groups: FormGroup[];
+  settings: FormSettings;
+  questionNumberMap: Map<string, number>;
 }
 
-function renderField(item: FormItem) {
+function renderField(item: FormItem, settings: FormSettings, questionNumberMap: Map<string, number>) {
   if (isContentBlock(item)) {
     if (item.style === "divider") {
       return <hr key={item.id} className={`xform-preview-divider xform-divider-${item.dividerStyle || "solid"}`} />;
@@ -28,9 +30,11 @@ function renderField(item: FormItem) {
   }
 
   if (isFormField(item)) {
+    const qNum = settings.showQuestionNumbers ? questionNumberMap.get(item.id) : undefined;
     return (
       <div key={item.id} className="xform-preview-field">
         <label className="xform-preview-label">
+          {qNum !== undefined && <span className="xform-preview-qnum">{qNum}. </span>}
           {item.label || "未命名欄位"}
           {item.required && <span className="xform-preview-required">*</span>}
         </label>
@@ -148,7 +152,7 @@ function renderField(item: FormItem) {
   return null;
 }
 
-export default function FormPreviewModal({ open, onClose, items, groups }: Props) {
+export default function FormPreviewModal({ open, onClose, items, groups, settings, questionNumberMap }: Props) {
   if (!open) return null;
 
   const enabledItems = items.filter((i) => i.enabled);
@@ -166,6 +170,10 @@ export default function FormPreviewModal({ open, onClose, items, groups }: Props
     return true;
   });
 
+  const btnStyle: React.CSSProperties = settings.enableCustomButtonColor
+    ? { backgroundColor: settings.buttonBgColor, color: settings.buttonTextColor, border: 'none' }
+    : {};
+
   return (
     <div className="xform-modal-overlay" onClick={onClose}>
       <div className="xform-modal xform-preview-modal" onClick={(e) => e.stopPropagation()}>
@@ -180,7 +188,6 @@ export default function FormPreviewModal({ open, onClose, items, groups }: Props
             <p className="text-muted text-center py-4" style={{ fontSize: "0.85rem" }}>沒有啟用的欄位</p>
           )}
 
-          {/* Render groups */}
           {groups.map((group) => {
             const groupItems = getGroupItems(group.id);
             if (groupItems.length === 0) return null;
@@ -193,14 +200,36 @@ export default function FormPreviewModal({ open, onClose, items, groups }: Props
                   )}
                 </div>
                 <div className="xform-preview-group-items">
-                  {groupItems.map(renderField)}
+                  {groupItems.map((item) => renderField(item, settings, questionNumberMap))}
                 </div>
               </div>
             );
           })}
 
-          {/* Render ungrouped items */}
-          {ungroupedItems.map(renderField)}
+          {ungroupedItems.map((item) => renderField(item, settings, questionNumberMap))}
+
+          {enabledItems.length > 0 && (
+            <div className="xform-preview-submit-wrap">
+              <button
+                className="xform-preview-submit-btn"
+                style={btnStyle}
+                onMouseEnter={(e) => {
+                  if (settings.enableCustomButtonColor) {
+                    e.currentTarget.style.backgroundColor = settings.buttonHoverBgColor;
+                    e.currentTarget.style.color = settings.buttonHoverTextColor;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (settings.enableCustomButtonColor) {
+                    e.currentTarget.style.backgroundColor = settings.buttonBgColor;
+                    e.currentTarget.style.color = settings.buttonTextColor;
+                  }
+                }}
+              >
+                {settings.submitButtonText || "立即登記"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
