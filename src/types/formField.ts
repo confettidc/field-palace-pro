@@ -51,6 +51,37 @@ export const DEFAULT_DATE_CONFIG: DateConfig = {
   allowNA: false,
 };
 
+export interface PhoneConfig {
+  acceptAll: boolean;
+  allowedCodes: string[];
+}
+
+export const DEFAULT_PHONE_CONFIG: PhoneConfig = {
+  acceptAll: true,
+  allowedCodes: [],
+};
+
+export const COMMON_COUNTRY_CODES = [
+  { code: "886", label: "台灣 +886" },
+  { code: "86", label: "中國 +86" },
+  { code: "852", label: "香港 +852" },
+  { code: "853", label: "澳門 +853" },
+  { code: "81", label: "日本 +81" },
+  { code: "82", label: "韓國 +82" },
+  { code: "65", label: "新加坡 +65" },
+  { code: "60", label: "馬來西亞 +60" },
+  { code: "1", label: "美國/加拿大 +1" },
+  { code: "44", label: "英國 +44" },
+  { code: "61", label: "澳洲 +61" },
+  { code: "49", label: "德國 +49" },
+  { code: "33", label: "法國 +33" },
+  { code: "66", label: "泰國 +66" },
+  { code: "63", label: "菲律賓 +63" },
+  { code: "84", label: "越南 +84" },
+  { code: "62", label: "印尼 +62" },
+  { code: "91", label: "印度 +91" },
+];
+
 export interface FormField {
   id: string;
   type: FieldType;
@@ -63,6 +94,7 @@ export interface FormField {
   options?: FieldOption[];
   dateConfig?: DateConfig;
   choiceConfig?: ChoiceAdvancedConfig;
+  phoneConfig?: PhoneConfig;
 }
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
@@ -99,7 +131,7 @@ export const FIELD_TYPE_META: Record<FieldType, { label: string; icon: string }>
   file_upload: { label: "檔案上傳", icon: "Upload" },
   number: { label: "數字", icon: "Hash" },
   email: { label: "電子郵件", icon: "Mail" },
-  phone: { label: "電話", icon: "Phone" },
+  phone: { label: "手機", icon: "Phone" },
 };
 
 export const CONTENT_BLOCK_META: Record<ContentBlockStyle, { label: string; icon: string }> = {
