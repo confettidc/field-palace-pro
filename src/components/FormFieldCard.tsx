@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormField, FieldType, FIELD_TYPE_META, FieldOption } from "@/types/formField";
+import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -60,7 +60,9 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
   };
 
   const hasOptions = ["single_choice", "multiple_choice", "dropdown"].includes(field.type);
-  const showHintSection = !hasOptions && field.type !== "file_upload";
+  const isDate = field.type === "date";
+  const showHintSection = !hasOptions && !isDate && field.type !== "file_upload";
+  const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
   const displayLabel = field.label || "未命名欄位";
 
   const handleHintModeChange = (mode: HintMode) => {
@@ -218,6 +220,84 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
                   placeholder="例如：預設內容"
                 />
               )}
+            </div>
+          )}
+
+          {isDate && (
+            <div className="xform-form-group">
+              <label className="xform-form-label">日期項目</label>
+              <div className="xform-date-checks">
+                <label className="xform-date-check-label">
+                  <input type="checkbox" checked={dateConfig.includeYear}
+                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeYear: e.target.checked } })} />
+                  <span>需輸入年份</span>
+                </label>
+                <label className="xform-date-check-label">
+                  <input type="checkbox" checked={dateConfig.includeMonth}
+                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeMonth: e.target.checked } })} />
+                  <span>需輸入月份</span>
+                </label>
+                <label className="xform-date-check-label">
+                  <input type="checkbox" checked={dateConfig.includeDay}
+                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeDay: e.target.checked } })} />
+                  <span>需輸入日子</span>
+                </label>
+              </div>
+
+              {dateConfig.includeYear && (
+                <div className="xform-date-year-range">
+                  <label className="xform-form-label">自訂年份範圍</label>
+                  <div className="xform-date-range-inputs">
+                    <span>由</span>
+                    <input type="number" className="form-control form-control-sm" style={{ width: 90 }}
+                      value={dateConfig.yearStart}
+                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) || 1950 } })} />
+                    <span>至</span>
+                    <input type="number" className="form-control form-control-sm" style={{ width: 90 }}
+                      value={dateConfig.yearEnd}
+                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) || new Date().getFullYear() } })} />
+                  </div>
+                </div>
+              )}
+
+              <div className="xform-date-na-option">
+                <label className="xform-date-check-label">
+                  <input type="checkbox" checked={dateConfig.allowNA}
+                    onChange={(e) => updateField({ dateConfig: { ...dateConfig, allowNA: e.target.checked } })} />
+                  <span>為每個項目增加「不適用」選項</span>
+                </label>
+              </div>
+
+              {/* Mini preview */}
+              <div className="xform-date-preview-box">
+                <span className="xform-form-label">預覽</span>
+                <div className="xform-date-preview-row">
+                  {dateConfig.includeYear && (
+                    <>
+                      <select className="form-select form-select-sm xform-date-select" disabled>
+                        <option>--</option>
+                      </select>
+                      <span className="xform-date-sep">年</span>
+                    </>
+                  )}
+                  {dateConfig.includeMonth && (
+                    <>
+                      <select className="form-select form-select-sm xform-date-select" disabled>
+                        <option>--</option>
+                      </select>
+                      <span className="xform-date-sep">月</span>
+                    </>
+                  )}
+                  {dateConfig.includeDay && (
+                    <>
+                      <select className="form-select form-select-sm xform-date-select" disabled>
+                        <option>--</option>
+                      </select>
+                      <span className="xform-date-sep">日</span>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
