@@ -1,9 +1,24 @@
 import { useState } from "react";
-import { FormField, FieldType } from "@/types/formField";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, isContentBlock, isFormField } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
+import ContentBlockCard from "@/components/ContentBlockCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
 import "@/styles/form-builder.css";
 import { toast } from "sonner";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 const createField = (type: FieldType): FormField => {
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
@@ -19,106 +34,142 @@ const createField = (type: FieldType): FormField => {
   };
 };
 
+const createContentBlock = (style: ContentBlockStyle): ContentBlock => ({
+  id: crypto.randomUUID(),
+  kind: "content_block",
+  style,
+  content: "",
+  enabled: true,
+});
+
 export default function Index() {
-  const [fields, setFields] = useState<FormField[]>([]);
+  const [items, setItems] = useState<FormItem[]>([]);
   const [showPanel, setShowPanel] = useState(false);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor)
+  );
+
+  const toggleExpand = (id: string) => {
+    // Don't expand disabled items
+    const item = items.find((i) => i.id === id);
+    if (item && !item.enabled) return;
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
 
   const addField = (type: FieldType) => {
-    setFields((prev) => [...prev, createField(type)]);
+    const f = createField(type);
+    setItems((prev) => [...prev, f]);
+    setExpandedId(f.id);
     setShowPanel(false);
   };
 
-  const updateField = (updated: FormField) => {
-    setFields((prev) => prev.map((f) => (f.id === updated.id ? updated : f)));
+  const addContentBlock = (style: ContentBlockStyle) => {
+    const b = createContentBlock(style);
+    setItems((prev) => [...prev, b]);
+    setExpandedId(b.id);
+    setShowPanel(false);
   };
 
-  const deleteField = (id: string) => {
-    setFields((prev) => prev.filter((f) => f.id !== id));
-    toast("已刪除欄位");
+  const updateItem = (updated: FormItem) => {
+    setItems((prev) => prev.map((i) => (i.id === updated.id ? updated : i)));
   };
 
-  const moveField = (id: string, direction: "up" | "down") => {
-    setFields((prev) => {
-      const idx = prev.findIndex((f) => f.id === id);
-      if (idx === -1) return prev;
-      const targetIdx = direction === "up" ? idx - 1 : idx + 1;
-      if (targetIdx < 0 || targetIdx >= prev.length) return prev;
-      const next = [...prev];
-      [next[idx], next[targetIdx]] = [next[targetIdx], next[idx]];
-      return next;
-    });
+  const deleteItem = (id: string) => {
+    setItems((prev) => prev.filter((i) => i.id !== id));
+    if (expandedId === id) setExpandedId(null);
+    toast("已刪除");
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setItems((prev) => {
+        const oldIndex = prev.findIndex((i) => i.id === active.id);
+        const newIndex = prev.findIndex((i) => i.id === over.id);
+        return arrayMove(prev, oldIndex, newIndex);
+      });
+    }
   };
 
   const handleSave = () => {
+    const fields = items.filter(isFormField);
     const empty = fields.filter((f) => !f.label.trim());
     if (empty.length) {
       toast.error("有欄位尚未填寫題目名稱");
       return;
     }
-    console.log("Saved fields:", fields);
-    toast.success(`已儲存 ${fields.length} 個欄位`);
+    console.log("Saved items:", items);
+    toast.success(`已儲存 ${items.length} 個項目`);
   };
 
   return (
-    <div className="x-page">
-      <div className="x-container">
-        {/* Title */}
-        <div className="x-header">
+    <div className="xform-page">
+      <div className="xform-container">
+        <div className="xform-header">
           <div>
-            <h1 className="x-header-title">表單欄位設定</h1>
-            <p className="x-header-desc">新增與編輯表單欄位，使用箭頭調整順序</p>
+            <h1 className="xform-header-title">表單欄位設定</h1>
+            <p className="xform-header-desc">新增與編輯表單欄位，拖曳調整順序</p>
           </div>
-          <button className="btn btn-primary" onClick={handleSave} disabled={fields.length === 0}>
+          <button className="btn btn-primary xform-save-btn" onClick={handleSave} disabled={items.length === 0}>
             儲存
           </button>
         </div>
 
-        {/* Fields */}
-        <div>
-          {fields.map((field, index) => (
-            <FormFieldCard
-              key={field.id}
-              field={field}
-              index={index + 1}
-              onUpdate={updateField}
-              onDelete={deleteField}
-              onMoveUp={(id) => moveField(id, "up")}
-              onMoveDown={(id) => moveField(id, "down")}
-              isFirst={index === 0}
-              isLast={index === fields.length - 1}
-            />
-          ))}
-        </div>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={items.map((i) => i.id)} strategy={verticalListSortingStrategy}>
+            <div>
+              {items.map((item) =>
+                isContentBlock(item) ? (
+                  <ContentBlockCard
+                    key={item.id}
+                    block={item}
+                    expanded={expandedId === item.id}
+                    onToggleExpand={() => toggleExpand(item.id)}
+                    onUpdate={(b) => updateItem(b)}
+                    onDelete={deleteItem}
+                  />
+                ) : (
+                  <FormFieldCard
+                    key={item.id}
+                    field={item}
+                    expanded={expandedId === item.id}
+                    onToggleExpand={() => toggleExpand(item.id)}
+                    onUpdate={(f) => updateItem(f)}
+                    onDelete={deleteItem}
+                  />
+                )
+              )}
+            </div>
+          </SortableContext>
+        </DndContext>
 
-        {/* Empty state */}
-        {fields.length === 0 && !showPanel && (
-          <div className="x-empty-state">
-            <p className="x-empty-text">尚未新增任何欄位</p>
-            <button className="btn btn-outline-primary" onClick={() => setShowPanel(true)}>
+        {items.length === 0 && !showPanel && (
+          <div className="xform-empty-state">
+            <i className="bi bi-inbox xform-empty-icon" />
+            <p className="xform-empty-text">尚未新增任何欄位</p>
+            <button className="btn btn-primary" onClick={() => setShowPanel(true)}>
               <i className="bi bi-plus me-1" />
               新增欄位
             </button>
           </div>
         )}
 
-        {/* Add field panel */}
         {showPanel && (
           <div className="mt-3">
-            <div className="d-flex align-items-center justify-content-between mb-2">
-              <h2 style={{ fontSize: "0.9rem", fontWeight: 500, margin: 0 }}>選擇欄位類型</h2>
-              <button className="btn btn-sm btn-light" onClick={() => setShowPanel(false)}>
-                取消
-              </button>
-            </div>
-            <AddFieldPanel onAdd={addField} />
+            <AddFieldPanel
+              onAddField={addField}
+              onAddContentBlock={addContentBlock}
+              onCancel={() => setShowPanel(false)}
+            />
           </div>
         )}
 
-        {/* Add more button */}
-        {fields.length > 0 && !showPanel && (
+        {items.length > 0 && !showPanel && (
           <button
-            className="btn btn-outline-secondary w-100 mt-2"
-            style={{ borderStyle: "dashed" }}
+            className="xform-add-more-btn"
             onClick={() => setShowPanel(true)}
           >
             <i className="bi bi-plus me-1" />

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { FormField, FieldType, FIELD_TYPE_META, FieldOption } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 const iconMap: Record<FieldType, string> = {
   short_text: "bi-type",
@@ -19,21 +21,25 @@ type HintMode = "none" | "placeholder" | "default_value";
 
 interface Props {
   field: FormField;
-  index: number;
+  expanded: boolean;
+  onToggleExpand: () => void;
   onUpdate: (field: FormField) => void;
   onDelete: (id: string) => void;
-  onMoveUp: (id: string) => void;
-  onMoveDown: (id: string) => void;
-  isFirst: boolean;
-  isLast: boolean;
 }
 
-export default function FormFieldCard({ field, index, onUpdate, onDelete, onMoveUp, onMoveDown, isFirst, isLast }: Props) {
-  const [expanded, setExpanded] = useState(false);
+export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdate, onDelete }: Props) {
   const [showDesc, setShowDesc] = useState(!!field.description);
   const [hintMode, setHintMode] = useState<HintMode>(
     field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
   );
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
 
   const updateField = (patch: Partial<FormField>) => onUpdate({ ...field, ...patch });
 
@@ -69,43 +75,28 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
   };
 
   return (
-    <div className={`x-field-card ${!field.enabled ? "x-field-disabled" : ""}`}>
-      {/* Header (collapsed view) */}
-      <div className="x-field-header" onClick={() => setExpanded(!expanded)} style={{ cursor: "pointer" }}>
-        {/* Move buttons - small vertical */}
-        <div className="x-field-move-btns" onClick={(e) => e.stopPropagation()}>
-          <button
-            className="x-move-btn"
-            disabled={isFirst}
-            title="上移"
-            onClick={() => onMoveUp(field.id)}
-          >
-            <i className="bi bi-chevron-up" />
-          </button>
-          <button
-            className="x-move-btn"
-            disabled={isLast}
-            title="下移"
-            onClick={() => onMoveDown(field.id)}
-          >
-            <i className="bi bi-chevron-down" />
-          </button>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`xform-field-card ${!field.enabled ? "xform-field-disabled" : ""}`}
+    >
+      {/* Header */}
+      <div className="xform-field-header" onClick={onToggleExpand} style={{ cursor: "pointer" }}>
+        <div className="xform-drag-handle" {...attributes} {...listeners} onClick={(e) => e.stopPropagation()}>
+          <i className="bi bi-grip-vertical" />
         </div>
 
-        {/* Field label */}
-        <span className="x-field-label-text">{displayLabel}</span>
+        <span className="xform-field-label-text">{displayLabel}</span>
 
-        {/* Type badge */}
-        <span className="x-field-type-badge">
+        <span className="xform-field-type-badge">
           <i className={`bi ${iconMap[field.type]}`} />
           {FIELD_TYPE_META[field.type].label}
         </span>
 
-        <span className="x-field-spacer" />
+        <span className="xform-field-spacer" />
 
-        {/* Toggles + actions */}
-        <div className="x-field-header-right" onClick={(e) => e.stopPropagation()}>
-          <span className="x-toggle-label">必填</span>
+        <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
+          <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
             <input
               className="form-check-input"
@@ -116,14 +107,17 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             />
           </div>
 
-          <span className="x-toggle-label">啟用</span>
+          <span className="xform-toggle-label">啟用</span>
           <div className="form-check form-switch mb-0">
             <input
               className="form-check-input"
               type="checkbox"
               role="switch"
               checked={field.enabled}
-              onChange={(e) => updateField({ enabled: e.target.checked })}
+              onChange={(e) => {
+                updateField({ enabled: e.target.checked });
+                if (!e.target.checked && expanded) onToggleExpand();
+              }}
             />
           </div>
 
@@ -131,16 +125,15 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             <i className="bi bi-trash" />
           </button>
 
-          <i className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} x-expand-icon`} />
+          <i className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`} />
         </div>
       </div>
 
-      {/* Body (expanded view) */}
+      {/* Body */}
       {expanded && (
-        <div className="x-field-body">
-          {/* Label */}
-          <div className="x-form-group">
-            <label className="x-form-label">題目</label>
+        <div className="xform-field-body">
+          <div className="xform-form-group">
+            <label className="xform-form-label">題目</label>
             <input
               type="text"
               className="form-control form-control-sm"
@@ -150,9 +143,8 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             />
           </div>
 
-          {/* Description (optional rich text) */}
           {!showDesc ? (
-            <div className="x-form-group">
+            <div className="xform-form-group">
               <button
                 className="btn btn-sm btn-outline-secondary"
                 onClick={() => setShowDesc(true)}
@@ -162,9 +154,9 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
               </button>
             </div>
           ) : (
-            <div className="x-form-group">
+            <div className="xform-form-group">
               <div className="d-flex align-items-center justify-content-between mb-1">
-                <label className="x-form-label mb-0">補充說明</label>
+                <label className="xform-form-label mb-0">補充說明</label>
                 <button
                   className="btn btn-sm btn-light text-muted"
                   title="移除說明"
@@ -183,29 +175,28 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             </div>
           )}
 
-          {/* Placeholder / Default Value toggle */}
           {showHintSection && (
-            <div className="x-form-group">
-              <div className="x-hint-mode-bar">
-                <label className="x-form-label mb-0">輸入提示</label>
-                <div className="x-hint-mode-btns">
+            <div className="xform-form-group">
+              <div className="xform-hint-mode-bar">
+                <label className="xform-form-label mb-0">輸入提示</label>
+                <div className="xform-hint-mode-btns">
                   <button
                     type="button"
-                    className={`x-hint-btn ${hintMode === "none" ? "active" : ""}`}
+                    className={`xform-hint-btn ${hintMode === "none" ? "active" : ""}`}
                     onClick={() => handleHintModeChange("none")}
                   >
                     不使用
                   </button>
                   <button
                     type="button"
-                    className={`x-hint-btn ${hintMode === "placeholder" ? "active" : ""}`}
+                    className={`xform-hint-btn ${hintMode === "placeholder" ? "active" : ""}`}
                     onClick={() => handleHintModeChange("placeholder")}
                   >
                     提示文字
                   </button>
                   <button
                     type="button"
-                    className={`x-hint-btn ${hintMode === "default_value" ? "active" : ""}`}
+                    className={`xform-hint-btn ${hintMode === "default_value" ? "active" : ""}`}
                     onClick={() => handleHintModeChange("default_value")}
                   >
                     預設值
@@ -233,13 +224,12 @@ export default function FormFieldCard({ field, index, onUpdate, onDelete, onMove
             </div>
           )}
 
-          {/* Options */}
           {hasOptions && (
-            <div className="x-form-group">
-              <label className="x-form-label">選項</label>
+            <div className="xform-form-group">
+              <label className="xform-form-label">選項</label>
               {(field.options || []).map((opt, i) => (
-                <div key={opt.id} className="x-option-row">
-                  <span className="x-option-num">{i + 1}.</span>
+                <div key={opt.id} className="xform-option-row">
+                  <span className="xform-option-num">{i + 1}.</span>
                   <input
                     type="text"
                     className="form-control form-control-sm flex-grow-1"

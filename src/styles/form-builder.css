@@ -1,206 +1,231 @@
-/* ===== Form Builder – x- prefixed custom styles ===== */
+/* ===== Form Builder – xform- prefixed custom styles ===== */
 
-.x-page {
+/* ===== Page & Container ===== */
+.xform-page {
   min-height: 100vh;
-  padding: 2rem 1rem;
-  background: #f8f9fa;
+  padding: 2.5rem 1rem;
+  background: linear-gradient(180deg, #f0f2f8 0%, #fafbfd 100%);
 }
 
-.x-container {
-  max-width: 720px;
+.xform-container {
+  max-width: 760px;
   margin: 0 auto;
 }
 
-.x-header {
+/* ===== Header ===== */
+.xform-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.x-header-title {
-  font-size: 1.25rem;
-  font-weight: 700;
+.xform-header-title {
+  font-size: 1.35rem;
+  font-weight: 800;
   margin: 0;
+  color: #1a1f36;
+  letter-spacing: -0.02em;
 }
 
-.x-header-desc {
+.xform-header-desc {
+  font-size: 0.82rem;
+  color: #8892a4;
+  margin: 0.2rem 0 0;
+}
+
+.xform-save-btn {
+  border-radius: 0.5rem;
+  padding: 0.45rem 1.5rem;
+  font-weight: 600;
   font-size: 0.85rem;
-  color: #6c757d;
-  margin: 0.15rem 0 0;
+  letter-spacing: 0.02em;
 }
 
 /* ===== Field Card ===== */
-.x-field-card {
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
+.xform-field-card {
+  border: 1px solid #e2e6ef;
+  border-radius: 0.75rem;
   background: #fff;
-  margin-bottom: 0.75rem;
-  transition: box-shadow 0.2s, opacity 0.2s;
+  margin-bottom: 0.6rem;
+  transition: box-shadow 0.2s, opacity 0.2s, border-color 0.2s;
+  overflow: hidden;
 }
 
-.x-field-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+.xform-field-card:hover {
+  box-shadow: 0 4px 16px rgba(26, 31, 54, 0.06);
+  border-color: #c9d0e0;
 }
 
-.x-field-card.x-field-disabled {
-  opacity: 0.5;
+.xform-field-card.xform-field-disabled {
+  opacity: 0.45;
 }
 
-.x-field-header {
+/* ===== Field Header ===== */
+.xform-field-header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.65rem 0.85rem;
 }
 
-.x-field-label-text {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #212529;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 200px;
-}
-
-/* ===== Move buttons – small vertical stack ===== */
-.x-field-move-btns {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.x-move-btn {
+/* ===== Drag Handle ===== */
+.xform-drag-handle {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: none;
-  border: none;
-  padding: 0;
-  line-height: 1;
-  font-size: 0.65rem;
-  color: #6c757d;
-  cursor: pointer;
-  height: 14px;
-  width: 20px;
+  cursor: grab;
+  color: #b0b8cc;
+  font-size: 1.1rem;
+  padding: 0.15rem;
+  border-radius: 0.25rem;
+  transition: color 0.15s, background 0.15s;
 }
 
-.x-move-btn:hover:not(:disabled) {
-  color: #212529;
+.xform-drag-handle:hover {
+  color: #5a6580;
+  background: #f0f2f8;
 }
 
-.x-move-btn:disabled {
-  opacity: 0.25;
-  cursor: default;
+.xform-drag-handle:active {
+  cursor: grabbing;
 }
 
-/* ===== Header right side ===== */
-.x-field-header-right {
+.xform-field-label-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a1f36;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+/* ===== Type Badge ===== */
+.xform-field-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #eef1f9;
+  color: #4a5da8;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}
+
+.xform-badge-content {
+  background: #fef3e2;
+  color: #b8860b;
+}
+
+.xform-field-spacer {
+  flex: 1;
+}
+
+/* ===== Header Right ===== */
+.xform-field-header-right {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.x-toggle-label {
-  font-size: 0.72rem;
-  color: #6c757d;
+.xform-toggle-label {
+  font-size: 0.7rem;
+  color: #8892a4;
   white-space: nowrap;
-}
-
-.x-expand-icon {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-left: 0.25rem;
-}
-
-.x-field-type-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
   font-weight: 500;
-  background: #e8ecf4;
-  color: #3b5998;
-  padding: 0.15rem 0.5rem;
-  border-radius: 0.25rem;
-  white-space: nowrap;
 }
 
-.x-field-spacer {
-  flex: 1;
+.xform-expand-icon {
+  font-size: 0.75rem;
+  color: #8892a4;
+  margin-left: 0.2rem;
+  transition: transform 0.2s;
 }
 
 /* ===== Field Body ===== */
-.x-field-body {
-  padding: 1rem;
-  border-top: 1px solid #eee;
+.xform-field-body {
+  padding: 1.15rem 1.25rem;
+  border-top: 1px solid #eef1f5;
+  background: #fafbfd;
+  animation: xform-slide-down 0.15s ease;
 }
 
-.x-field-body .x-form-group {
-  margin-bottom: 0.85rem;
+@keyframes xform-slide-down {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.x-form-group:last-child {
+.xform-field-body .xform-form-group {
+  margin-bottom: 0.9rem;
+}
+
+.xform-form-group:last-child {
   margin-bottom: 0;
 }
 
-.x-form-label {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #6c757d;
-  margin-bottom: 0.3rem;
+.xform-form-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #5a6580;
+  margin-bottom: 0.35rem;
   display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-/* ===== Hint mode bar ===== */
-.x-hint-mode-bar {
+/* ===== Hint mode ===== */
+.xform-hint-mode-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
 }
 
-.x-hint-mode-btns {
+.xform-hint-mode-btns {
   display: flex;
   gap: 0;
   border: 1px solid #dee2e6;
-  border-radius: 0.3rem;
+  border-radius: 999px;
   overflow: hidden;
 }
 
-.x-hint-btn {
+.xform-hint-btn {
   border: none;
   background: #fff;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.72rem;
+  padding: 0.22rem 0.7rem;
+  font-size: 0.7rem;
   color: #6c757d;
   cursor: pointer;
   transition: all 0.15s;
+  font-weight: 500;
 }
 
-.x-hint-btn + .x-hint-btn {
+.xform-hint-btn + .xform-hint-btn {
   border-left: 1px solid #dee2e6;
 }
 
-.x-hint-btn.active {
-  background: #3b5998;
+.xform-hint-btn.active {
+  background: #4a5da8;
   color: #fff;
 }
 
-.x-hint-btn:hover:not(.active) {
-  background: #f0f4ff;
+.xform-hint-btn:hover:not(.active) {
+  background: #f0f2f8;
 }
 
 /* ===== Option row ===== */
-.x-option-row {
+.xform-option-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.4rem;
 }
 
-.x-option-num {
+.xform-option-num {
   font-size: 0.78rem;
   color: #adb5bd;
   min-width: 18px;
@@ -208,135 +233,235 @@
 }
 
 /* ===== Add Field Panel ===== */
-.x-add-panel {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
+.xform-add-panel-wrapper {
+  background: #fff;
+  border: 1px solid #e2e6ef;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
 }
 
-@media (max-width: 576px) {
-  .x-add-panel {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.xform-add-panel-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1f36;
 }
 
-.x-add-btn {
+.xform-category-tabs {
   display: flex;
-  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.xform-category-tab {
+  flex: 1;
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.75rem 0.5rem;
-  border: 1px solid #dee2e6;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.55rem 0.75rem;
+  border: 2px solid #e2e6ef;
   border-radius: 0.5rem;
   background: #fff;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #212529;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #5a6580;
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.x-add-btn:hover {
-  border-color: #86b7fe;
-  background: #f0f4ff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+.xform-category-tab:hover {
+  border-color: #c0c7db;
+  background: #f8f9fc;
 }
 
-.x-add-btn:active {
-  transform: scale(0.97);
+.xform-category-tab.active {
+  border-color: #4a5da8;
+  background: #eef1f9;
+  color: #4a5da8;
 }
 
-.x-add-btn i {
-  font-size: 1.15rem;
-  color: #3b5998;
+.xform-add-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 0.5rem;
 }
 
-/* ===== Empty state ===== */
-.x-empty-state {
-  border: 2px dashed #dee2e6;
-  border-radius: 0.5rem;
-  padding: 4rem 1rem;
-  text-align: center;
-}
-
-.x-empty-text {
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-bottom: 0.75rem;
-}
-
-/* ===== Rich Text Editor ===== */
-.x-rte-wrapper {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
-  overflow: hidden;
-}
-
-.x-rte-toolbar {
+.xform-add-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 0.3rem 0.5rem;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.85rem 0.5rem;
+  border: 1px solid #e2e6ef;
+  border-radius: 0.6rem;
+  background: #fff;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #1a1f36;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-.x-rte-btn {
+.xform-add-btn:hover {
+  border-color: #4a5da8;
+  background: #eef1f9;
+  box-shadow: 0 2px 8px rgba(74, 93, 168, 0.08);
+  transform: translateY(-1px);
+}
+
+.xform-add-btn:active {
+  transform: scale(0.97) translateY(0);
+}
+
+.xform-add-btn i {
+  font-size: 1.2rem;
+  color: #4a5da8;
+}
+
+/* ===== Add More Button ===== */
+.xform-add-more-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.6rem;
+  border: 2px dashed #d0d5e2;
+  border-radius: 0.6rem;
+  background: transparent;
+  color: #5a6580;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.xform-add-more-btn:hover {
+  border-color: #4a5da8;
+  color: #4a5da8;
+  background: #f8f9fc;
+}
+
+/* ===== Empty state ===== */
+.xform-empty-state {
+  border: 2px dashed #d0d5e2;
+  border-radius: 0.75rem;
+  padding: 4rem 1rem;
+  text-align: center;
+  background: #fff;
+}
+
+.xform-empty-icon {
+  font-size: 2.5rem;
+  color: #c9d0e0;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.xform-empty-text {
+  font-size: 0.88rem;
+  color: #8892a4;
+  margin-bottom: 1rem;
+}
+
+/* ===== Rich Text Editor ===== */
+.xform-rte-wrapper {
+  border: 1px solid #e2e6ef;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.xform-rte-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0.35rem 0.5rem;
+  background: #f6f7fb;
+  border-bottom: 1px solid #e2e6ef;
+  flex-wrap: wrap;
+}
+
+.xform-rte-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   border: none;
   background: transparent;
-  border-radius: 0.2rem;
+  border-radius: 0.3rem;
   color: #495057;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
+  transition: background 0.12s;
 }
 
-.x-rte-btn:hover {
-  background: #e9ecef;
+.xform-rte-btn:hover {
+  background: #e2e6ef;
 }
 
-.x-rte-btn.active {
-  background: #3b5998;
+.xform-rte-btn.active {
+  background: #4a5da8;
   color: #fff;
 }
 
-.x-rte-divider {
+.xform-rte-divider {
   width: 1px;
   height: 20px;
-  background: #dee2e6;
+  background: #d0d5e2;
   margin: 0 4px;
 }
 
-.x-rte-select {
-  border: 1px solid #dee2e6;
-  border-radius: 0.2rem;
-  font-size: 0.72rem;
-  padding: 0.15rem 0.3rem;
+.xform-rte-select {
+  border: 1px solid #e2e6ef;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  padding: 0.18rem 0.4rem;
   background: #fff;
   color: #495057;
   cursor: pointer;
   outline: none;
 }
 
-.x-rte-content .tiptap {
-  padding: 0.5rem 0.75rem;
+.xform-rte-content .tiptap {
+  padding: 0.6rem 0.85rem;
   min-height: 80px;
   font-size: 0.85rem;
   outline: none;
 }
 
-.x-rte-content .tiptap p {
+.xform-rte-content .tiptap p {
   margin: 0 0 0.4rem;
 }
 
-.x-rte-content .tiptap img {
+.xform-rte-content .tiptap img {
   max-width: 100%;
   height: auto;
   border-radius: 0.25rem;
   margin: 0.5rem 0;
+}
+
+.xform-rte-content .tiptap a {
+  color: #4a5da8;
+  text-decoration: underline;
+}
+
+/* ===== Bootstrap form control refinements ===== */
+.xform-field-body .form-control {
+  border-radius: 0.45rem;
+  border-color: #e2e6ef;
+  font-size: 0.84rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.xform-field-body .form-control:focus {
+  border-color: #4a5da8;
+  box-shadow: 0 0 0 3px rgba(74, 93, 168, 0.1);
+}
+
+/* ===== Form switch refinement ===== */
+.xform-field-header .form-check-input:checked {
+  background-color: #4a5da8;
+  border-color: #4a5da8;
 }
