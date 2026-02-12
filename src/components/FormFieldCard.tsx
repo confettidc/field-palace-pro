@@ -132,14 +132,12 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
       style={style}
       className={`xform-field-card ${!field.enabled ? "xform-field-dimmed" : ""}`}
     >
-      {/* Header – entire row is drag handle */}
-      <div
-        className="xform-field-header xform-field-header-draggable"
-        {...attributes}
-        {...listeners}
-      >
+      <div className="xform-field-header">
+        <div className="xform-drag-handle" {...attributes} {...listeners}>
+          <i className="bi bi-grip-vertical" />
+        </div>
 
-        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="xform-field-header-main" onClick={onToggleExpand}>
           {questionNumber !== undefined && (
             <span className="xform-question-number">{questionNumber}.</span>
           )}
@@ -157,7 +155,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
           </span>
         </div>
 
-        <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
+        <div className="xform-field-header-right">
           <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
             <input

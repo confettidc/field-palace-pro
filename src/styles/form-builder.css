@@ -142,11 +142,23 @@
   padding: 0.65rem 0.85rem;
 }
 
-.xform-field-header-draggable {
+/* Drag handle grip icon */
+.xform-drag-handle {
+  display: flex;
+  align-items: center;
   cursor: grab;
+  color: #bcc3d4;
+  font-size: 1.1rem;
+  padding: 0.15rem 0;
+  flex-shrink: 0;
+  transition: color 0.15s;
 }
 
-.xform-field-header-draggable:active {
+.xform-drag-handle:hover {
+  color: #6b7590;
+}
+
+.xform-drag-handle:active {
   cursor: grabbing;
 }
 
@@ -160,11 +172,6 @@
   cursor: pointer;
   border-radius: 0.35rem;
   padding: 0.15rem 0.25rem;
-  transition: background 0.12s;
-}
-
-.xform-field-header-main:hover {
-  background: #f0f2f8;
 }
 
 .xform-field-label-text {
