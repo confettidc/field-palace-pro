@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG } from "@/types/formField";
+import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -63,7 +63,35 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
   const isDate = field.type === "date";
   const showHintSection = !hasOptions && !isDate && field.type !== "file_upload";
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
+  const choiceConfig = field.choiceConfig || { allowOther: false, otherLabel: "以上皆非，我的答案是：", showTags: false, showDefaultSelection: false };
   const displayLabel = field.label || "未命名欄位";
+
+  const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
+    const current = field.choiceConfig || { allowOther: false, otherLabel: "以上皆非，我的答案是：", showTags: false, showDefaultSelection: false };
+    updateField({ choiceConfig: { ...current, [key]: !current[key] } });
+  };
+
+  const setDefaultOption = (optId: string) => {
+    const options = (field.options || []).map(o => ({ ...o, isDefault: o.id === optId ? !o.isDefault : (field.type === "single_choice" ? false : o.isDefault) }));
+    updateField({ options });
+  };
+
+  const addTagToOption = (optId: string, tag: string) => {
+    if (!tag.trim()) return;
+    updateField({
+      options: (field.options || []).map(o =>
+        o.id === optId ? { ...o, tags: [...(o.tags || []), tag.trim()] } : o
+      ),
+    });
+  };
+
+  const removeTagFromOption = (optId: string, tagIndex: number) => {
+    updateField({
+      options: (field.options || []).map(o =>
+        o.id === optId ? { ...o, tags: (o.tags || []).filter((_, i) => i !== tagIndex) } : o
+      ),
+    });
+  };
 
   const handleHintModeChange = (mode: HintMode) => {
     setHintMode(mode);
@@ -88,7 +116,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           <i className="bi bi-grip-vertical" />
         </div>
 
-        <span className="xform-field-label-text" title={displayLabel}>{displayLabel}</span>
+        <span className="xform-field-label-text" data-tip={field.label.length > 30 ? displayLabel : undefined}>{displayLabel}</span>
 
         <span className="xform-field-type-badge">
           <i className={`bi ${iconMap[field.type]}`} />
@@ -303,26 +331,104 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
           {hasOptions && (
             <div className="xform-form-group">
               <label className="xform-form-label">選項</label>
+
+              {/* Advanced toggles toolbar */}
+              <div className="xform-choice-toolbar">
+                <button
+                  type="button"
+                  className={`xform-choice-toggle ${choiceConfig.allowOther ? "active" : ""}`}
+                  onClick={() => toggleChoiceConfig("allowOther")}
+                >
+                  <i className="bi bi-chat-dots" />
+                  允許其他
+                </button>
+                <button
+                  type="button"
+                  className={`xform-choice-toggle ${choiceConfig.showDefaultSelection ? "active" : ""}`}
+                  onClick={() => toggleChoiceConfig("showDefaultSelection")}
+                >
+                  <i className="bi bi-check2-circle" />
+                  設定預選
+                </button>
+                <button
+                  type="button"
+                  className={`xform-choice-toggle ${choiceConfig.showTags ? "active" : ""}`}
+                  onClick={() => toggleChoiceConfig("showTags")}
+                >
+                  <i className="bi bi-tags" />
+                  標籤
+                </button>
+              </div>
+
+              {/* Option rows */}
               {(field.options || []).map((opt, i) => (
-                <div key={opt.id} className="xform-option-row">
-                  <span className="xform-option-num">{i + 1}.</span>
-                  <input
-                    type="text"
-                    className="form-control form-control-sm flex-grow-1"
-                    value={opt.label}
-                    onChange={(e) => updateOption(opt.id, e.target.value)}
-                  />
-                  <button
-                    className="btn btn-sm btn-light text-danger"
-                    onClick={() => removeOption(opt.id)}
-                  >
-                    <i className="bi bi-trash" />
-                  </button>
+                <div key={opt.id}>
+                  <div className="xform-option-row">
+                    {choiceConfig.showDefaultSelection && (
+                      <input
+                        type={field.type === "multiple_choice" ? "checkbox" : "radio"}
+                        className="xform-option-default-radio"
+                        checked={!!opt.isDefault}
+                        onChange={() => setDefaultOption(opt.id)}
+                        title="設為預選"
+                      />
+                    )}
+                    <span className="xform-option-num">{i + 1}.</span>
+                    <input
+                      type="text"
+                      className="form-control form-control-sm flex-grow-1"
+                      value={opt.label}
+                      onChange={(e) => updateOption(opt.id, e.target.value)}
+                    />
+                    <button
+                      className="btn btn-sm btn-light text-danger"
+                      onClick={() => removeOption(opt.id)}
+                    >
+                      <i className="bi bi-trash" />
+                    </button>
+                  </div>
+                  {choiceConfig.showTags && (
+                    <div className="xform-option-tags">
+                      {(opt.tags || []).map((tag, ti) => (
+                        <span key={ti} className="xform-tag">
+                          {tag}
+                          <button onClick={() => removeTagFromOption(opt.id, ti)}>×</button>
+                        </span>
+                      ))}
+                      <input
+                        type="text"
+                        className="xform-tag-input"
+                        placeholder="新增標籤"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            addTagToOption(opt.id, (e.target as HTMLInputElement).value);
+                            (e.target as HTMLInputElement).value = "";
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
+
               <button className="btn btn-outline-secondary btn-sm mt-1" onClick={addOption}>
                 + 新增選項
               </button>
+
+              {/* "Others" free-text option */}
+              {choiceConfig.allowOther && (
+                <div className="xform-other-row">
+                  <input
+                    type="text"
+                    className="form-control form-control-sm"
+                    style={{ maxWidth: "280px" }}
+                    value={choiceConfig.otherLabel}
+                    onChange={(e) => updateField({ choiceConfig: { ...choiceConfig, otherLabel: e.target.value } })}
+                  />
+                  <span className="xform-other-row-label">用戶填答區</span>
+                </div>
+              )}
             </div>
           )}
         </div>

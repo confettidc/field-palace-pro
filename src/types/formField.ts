@@ -22,6 +22,15 @@ export type ContentBlockStyle =
 export interface FieldOption {
   id: string;
   label: string;
+  tags?: string[];
+  isDefault?: boolean;
+}
+
+export interface ChoiceAdvancedConfig {
+  allowOther: boolean;
+  otherLabel: string;
+  showTags: boolean;
+  showDefaultSelection: boolean;
 }
 
 export interface DateConfig {
@@ -53,6 +62,7 @@ export interface FormField {
   enabled: boolean;
   options?: FieldOption[];
   dateConfig?: DateConfig;
+  choiceConfig?: ChoiceAdvancedConfig;
 }
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
