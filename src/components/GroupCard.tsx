@@ -25,7 +25,6 @@ interface Props {
   onDeleteGroup: (groupId: string) => void;
   onUpdateItem: (item: FormItem) => void;
   onDeleteItem: (id: string) => void;
-  onShowAddPanel?: () => void;
   children?: React.ReactNode;
 }
 
@@ -42,7 +41,6 @@ export default function GroupCard({
   onDeleteGroup,
   onUpdateItem,
   onDeleteItem,
-  onShowAddPanel,
   children,
 }: Props) {
   const [editingName, setEditingName] = useState(false);
@@ -211,16 +209,7 @@ export default function GroupCard({
               )}
             </SortableContext>
             {items.length === 0 && (
-              <div className="xform-group-empty">
-                <i className="bi bi-inbox xform-group-empty-icon" />
-                <span>此分頁尚無欄位</span>
-                {onShowAddPanel && (
-                  <button className="xform-add-more-btn xform-group-empty-add" onClick={onShowAddPanel}>
-                    <i className="bi bi-plus me-1" />
-                    新增欄位 / 內容區塊
-                  </button>
-                )}
-              </div>
+              <div className="xform-group-empty">此分頁尚無欄位</div>
             )}
             {children}
           </div>
