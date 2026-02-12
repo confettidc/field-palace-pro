@@ -68,7 +68,7 @@ export default function FormSettingsPanel({ settings, onChange, onProfileToggle 
             {activeTab === "profile" && (
               <div className="xform-profile-tab">
                 <p className="xform-profile-desc">
-                  輪廓欄位用來建立用戶的基本屬性；用戶填寫後，內容會寫入並更新到該用戶的個人資料，作為其身分與輪廓資訊的一部分。
+                  輪廓欄位是用戶的基本屬性；填寫表單後，內容會寫進並更新到該用戶的個人資料，作為其身分與輪廓資訊的一部分。<a href="#" className="xform-profile-link" onClick={(e) => e.preventDefault()}>按此管理</a>。
                 </p>
                 <div className="xform-profile-list">
                   {PROFILE_FIELDS.map((pf) => {
