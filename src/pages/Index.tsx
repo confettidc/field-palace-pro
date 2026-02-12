@@ -137,15 +137,18 @@ export default function Index() {
           </div>
         </div>
 
-        {items.length > 0 && disabledCount > 0 && (
+        {items.length > 0 && (
           <div className="xform-filter-bar">
-            <button
-              className={`xform-filter-toggle ${hideDisabled ? "active" : ""}`}
-              onClick={() => setHideDisabled(!hideDisabled)}
-            >
-              <i className={`bi ${hideDisabled ? "bi-eye-slash" : "bi-eye"}`} />
-              {hideDisabled ? `已隱藏 ${disabledCount} 個停用項目` : "隱藏停用項目"}
-            </button>
+            <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
+              <span className="xform-filter-toggle-text">
+                {hideDisabled && disabledCount > 0
+                  ? `隱藏停用項目 (${disabledCount})`
+                  : "隱藏停用項目"}
+              </span>
+              <span className={`xform-toggle-switch ${hideDisabled ? "active" : ""}`}>
+                <span className="xform-toggle-knob" />
+              </span>
+            </label>
           </div>
         )}
 
