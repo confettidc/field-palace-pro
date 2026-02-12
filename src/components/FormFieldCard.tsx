@@ -53,7 +53,13 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
 
   const addOption = () => {
     const options = field.options || [];
-    const newOpt: FieldOption = { id: crypto.randomUUID(), label: `選項 ${options.length + 1}` };
+    // Find the highest existing option number and increment
+    let maxNum = 0;
+    for (const o of options) {
+      const match = o.label.match(/^選項\s*(\d+)$/);
+      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+    }
+    const newOpt: FieldOption = { id: crypto.randomUUID(), label: `選項 ${maxNum + 1}` };
     updateField({ options: [...options, newOpt] });
   };
 
@@ -142,16 +148,14 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
         <span className="xform-field-spacer" />
 
         <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
-          <span className="xform-toggle-label">必填</span>
-          <div className="form-check form-switch mb-0">
+          <label className="xform-required-checkbox-label">
             <input
-              className="form-check-input"
               type="checkbox"
-              role="switch"
               checked={field.required}
               onChange={(e) => updateField({ required: e.target.checked })}
             />
-          </div>
+            <span>必填</span>
+          </label>
 
           <span className="xform-toggle-label">啟用</span>
           <div className="form-check form-switch xform-switch-green mb-0">
@@ -391,7 +395,7 @@ export default function FormFieldCard({ field, expanded, onToggleExpand, onUpdat
 
               {/* Option rows */}
               {(field.options || []).map((opt, i) => (
-                <div key={opt.id}>
+                <div key={opt.id} className="xform-option-item">
                   <div className="xform-option-row">
                     {choiceConfig.showDefaultSelection && (
                       <input
