@@ -143,7 +143,7 @@ export default function GroupCard({
                 title="刪除分頁（保留欄位）"
                 onClick={() => setShowDeleteConfirm(true)}
               >
-                <i className="bi bi-folder-x" />
+                <i className="bi bi-file-earmark-x" />
               </button>
             </>
           )}

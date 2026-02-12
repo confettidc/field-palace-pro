@@ -23,135 +23,138 @@ export default function FormSettingsPanel({ settings, onChange }: Props) {
 
       {expanded && (
         <div className="xform-settings-body">
-          {/* Submit Button Text */}
-          <div className="xform-settings-section">
-            <label className="xform-form-label">送出按鈕文字</label>
-            <input
-              className="form-control form-control-sm"
-              value={settings.submitButtonText}
-              onChange={(e) => update({ submitButtonText: e.target.value })}
-              placeholder="立即登記"
-              maxLength={20}
-            />
-            <span className="xform-settings-hint">建議不超過 6 個字</span>
-          </div>
-
-          {/* Button Color */}
-          <div className="xform-settings-section">
-            <div className="xform-settings-section-header">
-              <label className="xform-form-label mb-0">按鈕顏色</label>
-              <label className="xform-settings-toggle" onClick={() => update({ enableCustomButtonColor: !settings.enableCustomButtonColor })}>
-                <span className="xform-settings-toggle-text">開啟自訂顏色</span>
-                <span className={`xform-toggle-switch ${settings.enableCustomButtonColor ? "active" : ""}`}>
-                  <span className="xform-toggle-knob" />
-                </span>
-              </label>
+          {/* Section 1: Submit Button */}
+          <div className="xform-settings-card">
+            <div className="xform-settings-card-header">
+              <i className="bi bi-cursor-fill" />
+              <span>送出按鈕</span>
             </div>
+            <div className="xform-settings-card-body">
+              {/* Button Text */}
+              <div className="xform-settings-row">
+                <label className="xform-settings-row-label">按鈕文字</label>
+                <div className="xform-settings-row-control">
+                  <input
+                    className="form-control form-control-sm"
+                    value={settings.submitButtonText}
+                    onChange={(e) => update({ submitButtonText: e.target.value })}
+                    placeholder="立即登記"
+                    maxLength={20}
+                  />
+                  <span className="xform-settings-hint">建議不超過 6 個字</span>
+                </div>
+              </div>
 
-            {settings.enableCustomButtonColor && (
-              <div className="xform-color-grid">
-                <div className="xform-color-group">
-                  <span className="xform-color-group-label">一般狀態樣式</span>
-                  <div className="xform-color-row">
-                    <div className="xform-color-item">
-                      <label>按鈕底色</label>
+              {/* Button Color Toggle */}
+              <div className="xform-settings-row">
+                <label className="xform-settings-row-label">自訂顏色</label>
+                <div className="xform-settings-row-control">
+                  <label
+                    className="xform-settings-toggle"
+                    onClick={() => update({ enableCustomButtonColor: !settings.enableCustomButtonColor })}
+                  >
+                    <span className={`xform-toggle-switch ${settings.enableCustomButtonColor ? "active" : ""}`}>
+                      <span className="xform-toggle-knob" />
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              {settings.enableCustomButtonColor && (
+                <div className="xform-settings-color-section">
+                  <div className="xform-color-pair-row">
+                    <div className="xform-color-pair">
+                      <label>底色</label>
                       <div className="xform-color-input-wrap">
-                        <input
-                          type="color"
-                          value={settings.buttonBgColor}
-                          onChange={(e) => update({ buttonBgColor: e.target.value })}
-                        />
+                        <input type="color" value={settings.buttonBgColor} onChange={(e) => update({ buttonBgColor: e.target.value })} />
                         <span>{settings.buttonBgColor.toUpperCase()}</span>
                       </div>
                     </div>
-                    <div className="xform-color-item">
-                      <label>文字顏色</label>
+                    <div className="xform-color-pair">
+                      <label>文字</label>
                       <div className="xform-color-input-wrap">
-                        <input
-                          type="color"
-                          value={settings.buttonTextColor}
-                          onChange={(e) => update({ buttonTextColor: e.target.value })}
-                        />
+                        <input type="color" value={settings.buttonTextColor} onChange={(e) => update({ buttonTextColor: e.target.value })} />
                         <span>{settings.buttonTextColor.toUpperCase()}</span>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="xform-color-group">
-                  <span className="xform-color-group-label">
+
+                  <div className="xform-color-hover-label">
                     <i className="bi bi-cursor me-1" />
-                    滑鼠懸停效果<span className="xform-color-group-sub">(滑鼠移到按鈕上時)</span>
-                  </span>
-                  <div className="xform-color-row">
-                    <div className="xform-color-item">
-                      <label>懸停時底色</label>
+                    懸停效果
+                  </div>
+                  <div className="xform-color-pair-row">
+                    <div className="xform-color-pair">
+                      <label>底色</label>
                       <div className="xform-color-input-wrap">
-                        <input
-                          type="color"
-                          value={settings.buttonHoverBgColor}
-                          onChange={(e) => update({ buttonHoverBgColor: e.target.value })}
-                        />
+                        <input type="color" value={settings.buttonHoverBgColor} onChange={(e) => update({ buttonHoverBgColor: e.target.value })} />
                         <span>{settings.buttonHoverBgColor.toUpperCase()}</span>
                       </div>
                     </div>
-                    <div className="xform-color-item">
-                      <label>懸停時文字顏色</label>
+                    <div className="xform-color-pair">
+                      <label>文字</label>
                       <div className="xform-color-input-wrap">
-                        <input
-                          type="color"
-                          value={settings.buttonHoverTextColor}
-                          onChange={(e) => update({ buttonHoverTextColor: e.target.value })}
-                        />
+                        <input type="color" value={settings.buttonHoverTextColor} onChange={(e) => update({ buttonHoverTextColor: e.target.value })} />
                         <span>{settings.buttonHoverTextColor.toUpperCase()}</span>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Preview */}
-                <div className="xform-btn-preview">
-                  <span className="xform-form-label">預覽</span>
-                  <button
-                    className="xform-btn-preview-button"
-                    style={{
-                      backgroundColor: settings.buttonBgColor,
-                      color: settings.buttonTextColor,
-                      border: 'none',
-                      padding: '0.55rem 2rem',
-                      borderRadius: '0.45rem',
-                      fontWeight: 600,
-                      fontSize: '0.95rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = settings.buttonHoverBgColor;
-                      e.currentTarget.style.color = settings.buttonHoverTextColor;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = settings.buttonBgColor;
-                      e.currentTarget.style.color = settings.buttonTextColor;
-                    }}
-                  >
-                    {settings.submitButtonText || "立即登記"}
-                  </button>
+                  {/* Preview */}
+                  <div className="xform-btn-preview">
+                    <button
+                      className="xform-btn-preview-button"
+                      style={{
+                        backgroundColor: settings.buttonBgColor,
+                        color: settings.buttonTextColor,
+                        border: 'none',
+                        padding: '0.5rem 2rem',
+                        borderRadius: '0.45rem',
+                        fontWeight: 600,
+                        fontSize: '0.92rem',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = settings.buttonHoverBgColor;
+                        e.currentTarget.style.color = settings.buttonHoverTextColor;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = settings.buttonBgColor;
+                        e.currentTarget.style.color = settings.buttonTextColor;
+                      }}
+                    >
+                      {settings.submitButtonText || "立即登記"}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
-          {/* Question Numbers */}
-          <div className="xform-settings-section">
-            <label
-              className="xform-settings-toggle"
-              onClick={() => update({ showQuestionNumbers: !settings.showQuestionNumbers })}
-            >
-              <span className="xform-settings-toggle-text">在表單頁面顯示問題編號</span>
-              <span className={`xform-toggle-switch ${settings.showQuestionNumbers ? "active" : ""}`}>
-                <span className="xform-toggle-knob" />
-              </span>
-            </label>
-            <span className="xform-settings-hint">勾選後僅限問題類型欄位顯示編號，拖曳調整順序會自動重新編號</span>
+          {/* Section 2: Display Options */}
+          <div className="xform-settings-card">
+            <div className="xform-settings-card-header">
+              <i className="bi bi-layout-text-sidebar" />
+              <span>顯示選項</span>
+            </div>
+            <div className="xform-settings-card-body">
+              <div className="xform-settings-row">
+                <label className="xform-settings-row-label">問題編號</label>
+                <div className="xform-settings-row-control xform-settings-row-inline">
+                  <span className="xform-settings-desc">在表單頁面顯示問題編號</span>
+                  <label
+                    className="xform-settings-toggle"
+                    onClick={() => update({ showQuestionNumbers: !settings.showQuestionNumbers })}
+                  >
+                    <span className={`xform-toggle-switch ${settings.showQuestionNumbers ? "active" : ""}`}>
+                      <span className="xform-toggle-knob" />
+                    </span>
+                  </label>
+                </div>
+              </div>
+              <span className="xform-settings-hint">僅限問題類型欄位顯示，拖曳調整順序會自動重新編號</span>
+            </div>
           </div>
         </div>
       )}

@@ -132,29 +132,30 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
       style={style}
       className={`xform-field-card ${!field.enabled ? "xform-field-dimmed" : ""}`}
     >
-      {/* Header */}
-      <div className="xform-field-header" onClick={onToggleExpand} style={{ cursor: "pointer" }}>
-        <div className="xform-drag-handle" {...attributes} {...listeners} onClick={(e) => e.stopPropagation()}>
-          <i className="bi bi-grip-vertical" />
+      {/* Header – entire row is drag handle */}
+      <div
+        className="xform-field-header xform-field-header-draggable"
+        {...attributes}
+        {...listeners}
+      >
+
+        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
+          {questionNumber !== undefined && (
+            <span className="xform-question-number">{questionNumber}.</span>
+          )}
+
+          <span
+            className="xform-field-label-text"
+            data-tip={displayLabel.length > 20 ? displayLabel : undefined}
+          >
+            {displayLabel}
+          </span>
+
+          <span className="xform-field-type-badge">
+            <i className={`bi ${iconMap[field.type]}`} />
+            {FIELD_TYPE_META[field.type].label}
+          </span>
         </div>
-
-        {questionNumber !== undefined && (
-          <span className="xform-question-number">{questionNumber}.</span>
-        )}
-
-        <span
-          className="xform-field-label-text"
-          data-tip={displayLabel.length > 20 ? displayLabel : undefined}
-        >
-          {displayLabel}
-        </span>
-
-        <span className="xform-field-type-badge">
-          <i className={`bi ${iconMap[field.type]}`} />
-          {FIELD_TYPE_META[field.type].label}
-        </span>
-
-        <span className="xform-field-spacer" />
 
         <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()}>
           <span className="xform-toggle-label">必填</span>
