@@ -402,7 +402,7 @@
 .xform-field-body {
   padding: 1.15rem 1.25rem;
   border-top: 2px solid #d0d5e2;
-  background: #f4f6fc;
+  background: #f8f9fd;
   animation: xform-slide-down 0.15s ease;
 }
 
@@ -1406,7 +1406,7 @@
 .xform-group-card {
   border: 2px solid #b8c4e0;
   border-radius: 0.85rem;
-  background: #ffffff;
+  background: #f0f2f8;
   margin-bottom: 1rem;
   padding: 1rem 1rem 0.75rem;
   position: relative;
@@ -1747,7 +1747,7 @@
   border-radius: 0.4rem;
   color: #6b7590;
   border: 1px solid #dce1ed;
-  background: #fff;
+  background: transparent;
   font-size: 0.95rem;
   transition: all 0.15s;
 }
