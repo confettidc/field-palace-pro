@@ -101,6 +101,11 @@ export default function GroupCard({
         style={{ cursor: isDraggingGroup || !editingName ? "grab" : undefined }}
         {...attributes}
         {...listeners}
+        onClick={(e) => {
+          if (!editingName && !isDraggingGroup && onToggleCollapse) {
+            onToggleCollapse();
+          }
+        }}
       >
         <div className="xform-group-header-left">
           {pageIndex != null && (
@@ -150,7 +155,7 @@ export default function GroupCard({
                 </button>
               )}
               <button
-                className="btn btn-sm btn-light text-danger"
+                className="btn btn-sm xform-delete-icon-btn"
                 title="刪除分頁（保留欄位）"
                 onClick={() => setShowDeleteConfirm(true)}
               >
