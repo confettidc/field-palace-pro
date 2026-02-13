@@ -443,13 +443,13 @@ export default function Index() {
             </div>
             {disabledCount > 0 && (
               <label className="xform-filter-toggle-label" onClick={() => setHideDisabled(!hideDisabled)}>
-                <span className="xform-filter-toggle-text">
-                  {hideDisabled
-                    ? "顯示所有項目"
-                    : `隱藏關閉項目 (${disabledCount})`}
-                </span>
-                <span className={`xform-toggle-switch ${hideDisabled ? "active" : ""}`}>
+                <span className={`xform-toggle-switch ${!hideDisabled ? "active" : ""}`}>
                   <span className="xform-toggle-knob" />
+                </span>
+                <span className="xform-filter-toggle-text">
+                  {!hideDisabled
+                    ? "顯示所有項目"
+                    : `已隱藏關閉項目 (${disabledCount})`}
                 </span>
               </label>
             )}

@@ -1404,9 +1404,9 @@
 
 /* ===== Group Card ===== */
 .xform-group-card {
-  border: 2px solid #c0c7db;
+  border: 2px solid #a8b4d6;
   border-radius: 0.85rem;
-  background: #f8f9fc;
+  background: #f4f6fc;
   margin-bottom: 1rem;
   padding: 1rem 1rem 0.75rem;
   position: relative;
@@ -1417,8 +1417,12 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.65rem;
-  padding-bottom: 0.55rem;
-  border-bottom: 2px solid #e2e6ef;
+  padding: 0.5rem 0.6rem 0.55rem;
+  border-bottom: 2px solid #c5cfe6;
+  background: #e8edf8;
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin: -1rem -1rem 0.65rem -1rem;
+  padding: 0.6rem 1rem 0.55rem;
 }
 
 .xform-group-header-left {
@@ -1434,8 +1438,8 @@
   justify-content: center;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #6b7280;
-  background: #e5e7eb;
+  color: #fff;
+  background: #4a5da8;
   border-radius: 4px;
   padding: 0.1rem 0.4rem;
   margin-right: 0.45rem;
@@ -1451,7 +1455,7 @@
 .xform-group-name {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #1a1f36;
+  color: #2d3a6e;
   margin: 0;
   cursor: pointer;
   display: inline-flex;
@@ -1477,7 +1481,7 @@
 .xform-group-name-input {
   font-size: 1.05rem;
   font-weight: 700;
-  color: #1a1f36;
+  color: #2d3a6e;
   border: 1px solid #4a5da8;
   border-radius: 0.4rem;
   padding: 0.2rem 0.5rem;
@@ -1661,8 +1665,8 @@
 
 .xform-group-collapsed .xform-group-header {
   border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin-bottom: -0.75rem;
+  border-radius: 0.5rem 0.5rem 0.5rem 0.5rem;
 }
 
 /* ===== Group collapse toggle button ===== */
