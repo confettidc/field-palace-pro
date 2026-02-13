@@ -114,9 +114,11 @@ export default function GroupCard({
               onChange={(e) => onUpdateGroup({ ...group, name: e.target.value })}
               onBlur={() => setEditingName(false)}
               onKeyDown={(e) => {
+                e.stopPropagation();
                 if (e.key === "Enter") setEditingName(false);
               }}
               onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
               onPointerDown={(e) => e.stopPropagation()}
             />
           ) : (
