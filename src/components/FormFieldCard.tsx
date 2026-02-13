@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 
 const iconMap: Record<FieldType, string> = {
   short_text: "bi-type",
@@ -45,6 +47,18 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
+
+  const optionSensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const handleOptionDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const options = field.options || [];
+    const oldIdx = options.findIndex(o => o.id === active.id);
+    const newIdx = options.findIndex(o => o.id === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    onUpdate({ ...field, options: arrayMove(options, oldIdx, newIdx) });
+  }, [field, onUpdate]);
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -500,75 +514,15 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               )}
 
               {/* Option rows */}
-              {(field.options || []).map((opt, i) => (
-                <div key={opt.id} className="xform-option-item">
-                  <div className="xform-option-row">
-                    {choiceConfig.showDefaultSelection && (
-                      <input
-                        type={field.type === "multiple_choice" ? "checkbox" : "radio"}
-                        className="xform-option-default-radio"
-                        checked={!!opt.isDefault}
-                        onChange={() => setDefaultOption(opt.id)}
-                        title="設為預選"
-                      />
-                    )}
-                    <span className="xform-option-num">{i + 1}.</span>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm flex-grow-1"
-                      value={opt.label}
-                      onChange={(e) => updateOption(opt.id, e.target.value)}
-                    />
-                    <button
-                      className="btn btn-sm btn-light text-danger"
-                      onClick={() => removeOption(opt.id)}
-                    >
-                      <i className="bi bi-trash" />
-                    </button>
-                  </div>
-                  {choiceConfig.showTags && (
-                    <div className="xform-option-tags">
-                      {(opt.tags || []).map((tag, ti) => (
-                        <span key={ti} className="xform-tag">
-                          {tag}
-                          <button onClick={() => removeTagFromOption(opt.id, ti)}>×</button>
-                        </span>
-                      ))}
-                      <span
-                        className="xform-tag-add-btn"
-                        onClick={(e) => {
-                          const input = e.currentTarget.querySelector('input');
-                          if (input) input.focus();
-                        }}
-                      >
-                        <i className="bi bi-plus" />
-                        <input
-                          type="text"
-                          className="xform-tag-inline-input"
-                          placeholder="輸入標籤"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === "Tab") {
-                              e.preventDefault();
-                              const val = (e.target as HTMLInputElement).value;
-                              if (val.trim()) {
-                                addTagToOption(opt.id, val);
-                                (e.target as HTMLInputElement).value = "";
-                              }
-                            }
-                          }}
-                          onBlur={(e) => {
-                            const val = e.target.value;
-                            if (val.trim()) {
-                              addTagToOption(opt.id, val);
-                              e.target.value = "";
-                            }
-                          }}
-                        />
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
+              <DndContext sensors={optionSensors} collisionDetection={closestCenter} onDragEnd={handleOptionDragEnd}>
+                <SortableContext items={(field.options || []).map(o => o.id)} strategy={verticalListSortingStrategy}>
+                  {(field.options || []).map((opt, i) => (
+                    <SortableOptionRow key={opt.id} opt={opt} index={i} field={field} choiceConfig={choiceConfig}
+                      onUpdateOption={updateOption} onRemoveOption={removeOption} onSetDefault={setDefaultOption}
+                      onAddTag={addTagToOption} onRemoveTag={removeTagFromOption} />
+                  ))}
+                </SortableContext>
+              </DndContext>
 
               {/* "Others" free-text option – above add button */}
               {choiceConfig.allowOther && (
@@ -589,6 +543,75 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               </button>
             </div>
           )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ===== Sortable Option Row ===== */
+function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, onRemoveOption, onSetDefault, onAddTag, onRemoveTag }: {
+  opt: FieldOption; index: number; field: FormField; choiceConfig: ChoiceAdvancedConfig;
+  onUpdateOption: (id: string, label: string) => void; onRemoveOption: (id: string) => void;
+  onSetDefault: (id: string) => void; onAddTag: (id: string, tag: string) => void; onRemoveTag: (id: string, idx: number) => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: opt.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="xform-option-item">
+      <div className="xform-option-row">
+        <span className="xform-option-drag-handle" {...attributes} {...listeners}>
+          <i className="bi bi-grip-vertical" />
+        </span>
+        {choiceConfig.showDefaultSelection && (
+          <input
+            type={field.type === "multiple_choice" ? "checkbox" : "radio"}
+            className="xform-option-default-radio"
+            checked={!!opt.isDefault}
+            onChange={() => onSetDefault(opt.id)}
+            title="設為預選"
+          />
+        )}
+        <span className="xform-option-num">{index + 1}.</span>
+        <input
+          type="text"
+          className="form-control form-control-sm flex-grow-1"
+          value={opt.label}
+          onChange={(e) => onUpdateOption(opt.id, e.target.value)}
+        />
+        <button className="btn btn-sm xform-delete-icon-btn" onClick={() => onRemoveOption(opt.id)}>
+          <i className="bi bi-trash" />
+        </button>
+      </div>
+      {choiceConfig.showTags && (
+        <div className="xform-option-tags">
+          {(opt.tags || []).map((tag, ti) => (
+            <span key={ti} className="xform-tag">
+              {tag}
+              <button onClick={() => onRemoveTag(opt.id, ti)}>×</button>
+            </span>
+          ))}
+          <span className="xform-tag-add-btn" onClick={(e) => { const input = e.currentTarget.querySelector('input'); if (input) input.focus(); }}>
+            <i className="bi bi-plus" />
+            <input
+              type="text"
+              className="xform-tag-inline-input"
+              placeholder="輸入標籤"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === "Tab") {
+                  e.preventDefault();
+                  const val = (e.target as HTMLInputElement).value;
+                  if (val.trim()) { onAddTag(opt.id, val); (e.target as HTMLInputElement).value = ""; }
+                }
+              }}
+              onBlur={(e) => { const val = e.target.value; if (val.trim()) { onAddTag(opt.id, val); e.target.value = ""; } }}
+            />
+          </span>
         </div>
       )}
     </div>
