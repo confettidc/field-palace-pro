@@ -178,7 +178,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
             />
           </div>
 
-          <button className="btn btn-sm btn-light text-danger" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
+          <button className="btn btn-sm xform-delete-icon-btn" title="刪除" onClick={() => setShowDeleteConfirm(true)}>
             <i className="bi bi-trash" />
           </button>
 
