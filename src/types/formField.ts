@@ -110,6 +110,7 @@ export interface FormField {
   id: string;
   type: FieldType;
   label: string;
+  defaultLabel: string;
   description?: string;
   placeholder?: string;
   defaultValue?: string;
@@ -127,6 +128,7 @@ export interface FormField {
 export interface FormGroup {
   id: string;
   name: string;
+  defaultName: string;
   description?: string;
 }
 
@@ -167,6 +169,7 @@ export interface ContentBlock {
   style: ContentBlockStyle;
   content: string;
   enabled: boolean;
+  defaultLabel: string;
   dividerStyle?: DividerLineStyle;
   spacerSize?: SpacerSize;
   groupId?: string;

@@ -29,6 +29,7 @@ import {
 
 let fieldCounter = 1;
 let pageCounter = 1;
+let contentBlockCounter = 1;
 
 const DEFAULT_SETTINGS: FormSettings = {
   submitButtonText: "立即登記",
@@ -43,11 +44,13 @@ const DEFAULT_SETTINGS: FormSettings = {
 
 const createField = (type: FieldType, groupId?: string): FormField => {
   const num = fieldCounter++;
+  const defaultLabel = `未命名欄位 ${num}`;
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
   return {
     id: crypto.randomUUID(),
     type,
-    label: `未命名欄位 ${num}`,
+    label: "",
+    defaultLabel,
     required: false,
     enabled: true,
     groupId,
@@ -69,6 +72,7 @@ const createProfileField = (key: ProfileFieldKey, label: string, type: FieldType
     id: crypto.randomUUID(),
     type,
     label,
+    defaultLabel: label,
     required: key === "name" || key === "email",
     enabled: true,
     groupId,
@@ -86,14 +90,18 @@ const createProfileField = (key: ProfileFieldKey, label: string, type: FieldType
   };
 };
 
-const createContentBlock = (style: ContentBlockStyle, groupId?: string): ContentBlock => ({
-  id: crypto.randomUUID(),
-  kind: "content_block",
-  style,
-  content: "",
-  enabled: true,
-  groupId,
-});
+const createContentBlock = (style: ContentBlockStyle, groupId?: string): ContentBlock => {
+  const num = contentBlockCounter++;
+  return {
+    id: crypto.randomUUID(),
+    kind: "content_block",
+    style,
+    content: "",
+    enabled: true,
+    defaultLabel: `內容區塊 ${num}`,
+    groupId,
+  };
+};
 
 export default function Index() {
   const [items, setItems] = useState<FormItem[]>(() => {
@@ -343,7 +351,7 @@ export default function Index() {
 
   const handleSave = () => {
     const fields = items.filter(isFormField);
-    const empty = fields.filter((f) => !f.label.trim());
+    const empty = fields.filter((f) => !f.label.trim() && !f.profileKey);
     if (empty.length) {
       toast.error("有欄位尚未填寫題目名稱");
       return;
@@ -358,9 +366,12 @@ export default function Index() {
   };
 
   const handleCreateGroup = () => {
+    const num = pageCounter++;
+    const defaultName = `未命名頁面 ${num}`;
     const newGroup: FormGroup = {
       id: crypto.randomUUID(),
-      name: `未命名頁面 ${pageCounter++}`,
+      name: "",
+      defaultName,
     };
 
     if (groups.length === 0 && items.length > 0) {
@@ -372,7 +383,7 @@ export default function Index() {
 
     setGroups((prev) => [...prev, newGroup]);
     setShowPanel(false);
-    toast.success(`已建立「${newGroup.name}」`);
+    toast.success(`已建立「${defaultName}」`);
   };
 
   const updateGroup = (updated: FormGroup) => {
