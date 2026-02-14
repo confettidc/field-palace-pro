@@ -263,12 +263,12 @@ export default function GroupCard({
                     onUpdateGroup({ ...group, nextAction: action });
                   }}
                 >
-                  <option value="__next__">前往下一頁（預設）</option>
+                  <option value="__next__">跳往下一頁（預設）</option>
                   {allGroups
                     .filter((g) => g.id !== group.id)
                     .map((g, i) => (
                       <option key={g.id} value={g.id}>
-                        前往：{g.name || g.defaultName}
+                        跳往：{g.name || g.defaultName}
                       </option>
                     ))}
                   <option value="__submit__">送出表單</option>

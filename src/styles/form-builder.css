@@ -1565,8 +1565,8 @@
   background: #f0f3fa;
   border-radius: 0.4rem;
   border: 1px solid #dce1ed;
-  width: fit-content;
-  max-width: 55%;
+  width: 280px;
+  max-width: 100%;
 }
 
 .xform-page-jump-section .xform-form-label {
