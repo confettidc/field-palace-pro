@@ -1554,6 +1554,32 @@
   background: #fdf6e3;
 }
 
+/* ===== Page Jump Section ===== */
+.xform-page-jump-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  background: #f0f3fa;
+  border-radius: 0.5rem;
+  border: 1px solid #dce1ed;
+}
+
+.xform-page-jump-section .xform-form-label {
+  white-space: nowrap;
+  font-size: 0.82rem;
+  color: #4a5da8;
+  font-weight: 600;
+}
+
+.xform-page-jump-select {
+  flex: 1;
+  font-size: 0.82rem;
+  border-color: #c5cde0;
+  border-radius: 0.4rem;
+}
+
 /* ===== Group create button ===== */
 .xform-group-create-btn {
   display: inline-flex;

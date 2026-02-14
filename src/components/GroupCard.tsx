@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FormGroup, FormItem, isContentBlock, isFormField } from "@/types/formField";
+import { FormGroup, FormItem, isContentBlock, isFormField, PageNextAction } from "@/types/formField";
 import FormFieldCard from "./FormFieldCard";
 import ContentBlockCard from "./ContentBlockCard";
 import RichTextEditor from "./RichTextEditor";
@@ -22,6 +22,7 @@ interface Props {
   showQuestionNumbers?: boolean;
   questionNumberMap?: Map<string, number>;
   collapsed?: boolean;
+  allGroups?: FormGroup[];
   onToggleCollapse?: () => void;
   onToggleExpand: (id: string) => void;
   onUpdateGroup: (group: FormGroup) => void;
@@ -41,6 +42,7 @@ export default function GroupCard({
   showQuestionNumbers,
   questionNumberMap,
   collapsed,
+  allGroups = [],
   onToggleCollapse,
   onToggleExpand,
   onUpdateGroup,
@@ -234,6 +236,46 @@ export default function GroupCard({
             {items.length === 0 && (
               <div className="xform-group-empty">此分頁尚無欄位</div>
             )}
+
+            {/* Page jump / submit selector */}
+            {allGroups.length > 1 && (
+              <div className="xform-page-jump-section">
+                <label className="xform-form-label mb-0">完成此頁後</label>
+                <select
+                  className="form-select form-select-sm xform-page-jump-select"
+                  value={
+                    !group.nextAction || group.nextAction.type === "next"
+                      ? "__next__"
+                      : group.nextAction.type === "submit"
+                        ? "__submit__"
+                        : group.nextAction.pageId
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    let action: PageNextAction | undefined;
+                    if (val === "__next__") {
+                      action = undefined; // default behaviour
+                    } else if (val === "__submit__") {
+                      action = { type: "submit" };
+                    } else {
+                      action = { type: "page", pageId: val };
+                    }
+                    onUpdateGroup({ ...group, nextAction: action });
+                  }}
+                >
+                  <option value="__next__">前往下一頁（預設）</option>
+                  {allGroups
+                    .filter((g) => g.id !== group.id)
+                    .map((g, i) => (
+                      <option key={g.id} value={g.id}>
+                        前往：{g.name || g.defaultName}
+                      </option>
+                    ))}
+                  <option value="__submit__">送出表單</option>
+                </select>
+              </div>
+            )}
+
             {children}
           </div>
         </>
