@@ -147,11 +147,7 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 0.85rem;
-  cursor: grab;
-}
-
-.xform-field-header:active {
-  cursor: grabbing;
+  cursor: default;
 }
 
 /* Drag handle grip icon */
