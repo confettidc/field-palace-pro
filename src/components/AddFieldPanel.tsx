@@ -19,13 +19,16 @@ const fieldIconMap: Record<FieldType, string> = {
 
 type AddCategory = "field" | "content_block";
 
+const SINGLETON_FIELD_TYPES: FieldType[] = ["subscribe_invite", "terms_conditions"];
+
 interface Props {
   onAddField: (type: FieldType) => void;
   onAddContentBlock: (style: ContentBlockStyle) => void;
   onCancel: () => void;
+  existingFieldTypes?: FieldType[];
 }
 
-export default function AddFieldPanel({ onAddField, onAddContentBlock, onCancel }: Props) {
+export default function AddFieldPanel({ onAddField, onAddContentBlock, onCancel, existingFieldTypes = [] }: Props) {
   const [category, setCategory] = useState<AddCategory>("field");
 
   return (
@@ -56,12 +59,21 @@ export default function AddFieldPanel({ onAddField, onAddContentBlock, onCancel 
       {/* Field types */}
       {category === "field" && (
         <div className="xform-add-grid">
-          {ADDABLE_FIELD_TYPES.map((key) => (
-            <button key={key} className="xform-add-btn" onClick={() => onAddField(key)}>
-              <i className={`bi ${fieldIconMap[key]}`} />
-              {FIELD_TYPE_META[key].label}
-            </button>
-          ))}
+          {ADDABLE_FIELD_TYPES.map((key) => {
+            const isSingleton = SINGLETON_FIELD_TYPES.includes(key);
+            const isDisabled = isSingleton && existingFieldTypes.includes(key);
+            return (
+              <button
+                key={key}
+                className={`xform-add-btn ${isDisabled ? "xform-add-btn-disabled" : ""}`}
+                onClick={() => !isDisabled && onAddField(key)}
+                disabled={isDisabled}
+              >
+                <i className={`bi ${fieldIconMap[key]}`} />
+                {FIELD_TYPE_META[key].label}
+              </button>
+            );
+          })}
         </div>
       )}
 
