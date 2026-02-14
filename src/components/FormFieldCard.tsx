@@ -48,6 +48,8 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [ratingTab, setRatingTab] = useState<"items" | "levels">("items");
+  const [showRatingAdvanced, setShowRatingAdvanced] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
@@ -98,7 +100,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const isPhone = field.type === "phone";
   const isRatingMatrix = field.type === "rating_matrix";
   const showHintSection = !hasOptions && !isDate && !isPhone && !isRatingMatrix && field.type !== "file_upload";
-  const showTitleField = !isRatingMatrix;
+  const showTitleField = true;
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
   const choiceConfig = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
   const phoneConfig = field.phoneConfig || DEFAULT_PHONE_CONFIG;
@@ -477,156 +479,174 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
 
           {isRatingMatrix && (
             <div className="xform-form-group">
-              <label className="xform-form-label">量表標題</label>
-              <textarea
-                className="form-control form-control-sm xform-auto-resize"
-                value={field.label}
-                onChange={(e) => {
-                  updateField({ label: e.target.value });
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-                onFocus={(e) => {
-                  e.target.style.height = 'auto';
-                  e.target.style.height = e.target.scrollHeight + 'px';
-                }}
-                placeholder="例如：滿意度調查"
-                rows={1}
-              />
-            </div>
-          )}
-
-          {isRatingMatrix && (
-            <div className="xform-form-group">
-              <div className="xform-options-header">
-                <label className="xform-form-label mb-0">評分等級</label>
-              </div>
-              <div className="xform-rating-levels">
-                {ratingConfig.ratingLevels.map((level, i) => (
-                  <div key={i} className="xform-rating-level-row">
-                    <span className="xform-option-num">{i + 1}.</span>
-                    <input
-                      type="text"
-                      className="form-control form-control-sm flex-grow-1"
-                      value={level}
-                      onChange={(e) => {
-                        const newLevels = [...ratingConfig.ratingLevels];
-                        newLevels[i] = e.target.value;
-                        updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                      }}
-                    />
-                    <button
-                      className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
-                      onClick={() => {
-                        if (ratingConfig.ratingLevels.length <= 2) return;
-                        const newLevels = ratingConfig.ratingLevels.filter((_, idx) => idx !== i);
-                        updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                      }}
-                      disabled={ratingConfig.ratingLevels.length <= 2}
-                    >
-                      <i className="bi bi-trash" />
-                    </button>
-                  </div>
-                ))}
-                <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
-                  const newLevels = [...ratingConfig.ratingLevels, `等級 ${ratingConfig.ratingLevels.length + 1}`];
-                  updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                }}>
-                  + 等級
+              {/* Tabs for 評分項目 / 評分等級 */}
+              <div className="xform-rating-tabs">
+                <button
+                  type="button"
+                  className={`xform-rating-tab ${ratingTab === "items" ? "active" : ""}`}
+                  onClick={() => setRatingTab("items")}
+                >
+                  評分項目
+                </button>
+                <button
+                  type="button"
+                  className={`xform-rating-tab ${ratingTab === "levels" ? "active" : ""}`}
+                  onClick={() => setRatingTab("levels")}
+                >
+                  評分等級
                 </button>
               </div>
-            </div>
-          )}
 
-          {isRatingMatrix && (
-            <div className="xform-form-group">
-              <div className="xform-options-header">
-                <label className="xform-form-label mb-0">評分項目</label>
-              </div>
-              <div className="xform-rating-rows">
-                {ratingConfig.rows.map((row, i) => (
-                  <div key={row.id} className="xform-rating-row-item">
-                    <div className="xform-option-row">
+              {/* Tab content: 評分項目 */}
+              {ratingTab === "items" && (
+                <div className="xform-rating-tab-content">
+                  {ratingConfig.rows.map((row, i) => (
+                    <div key={row.id} className="xform-rating-row-item">
+                      <div className="xform-option-row">
+                        <span className="xform-option-num">{i + 1}.</span>
+                        <input
+                          type="text"
+                          className="form-control form-control-sm flex-grow-1"
+                          value={row.label}
+                          onChange={(e) => {
+                            const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, label: e.target.value } : r);
+                            updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                          }}
+                        />
+                        <div className="xform-rating-row-toggle">
+                          <span className="xform-toggle-label" style={{ fontSize: "0.75rem" }}>允許評分</span>
+                          <div className="form-check form-switch xform-switch-green mb-0">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              role="switch"
+                              checked={row.enabled}
+                              onChange={(e) => {
+                                const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, enabled: e.target.checked } : r);
+                                updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <button
+                          className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
+                          onClick={() => {
+                            if (ratingConfig.rows.length <= 1) return;
+                            const newRows = ratingConfig.rows.filter(r => r.id !== row.id);
+                            updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                          }}
+                          disabled={ratingConfig.rows.length <= 1}
+                        >
+                          <i className="bi bi-trash" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
+                    let maxNum = 0;
+                    for (const r of ratingConfig.rows) {
+                      const match = r.label.match(/^項目\s*(\d+)$/);
+                      if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
+                    }
+                    const newRow: RatingMatrixRow = { id: crypto.randomUUID(), label: `項目 ${maxNum + 1}`, enabled: true };
+                    updateField({ ratingMatrixConfig: { ...ratingConfig, rows: [...ratingConfig.rows, newRow] } });
+                  }}>
+                    + 項目
+                  </button>
+                </div>
+              )}
+
+              {/* Tab content: 評分等級 */}
+              {ratingTab === "levels" && (
+                <div className="xform-rating-tab-content">
+                  {ratingConfig.ratingLevels.map((level, i) => (
+                    <div key={i} className="xform-rating-level-row">
                       <span className="xform-option-num">{i + 1}.</span>
                       <input
                         type="text"
                         className="form-control form-control-sm flex-grow-1"
-                        value={row.label}
+                        value={level}
                         onChange={(e) => {
-                          const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, label: e.target.value } : r);
-                          updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                          const newLevels = [...ratingConfig.ratingLevels];
+                          newLevels[i] = e.target.value;
+                          updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
                         }}
                       />
-                      <div className="xform-rating-row-toggle">
-                        <span className="xform-toggle-label" style={{ fontSize: "0.75rem" }}>允許評分</span>
-                        <div className="form-check form-switch xform-switch-green mb-0">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            role="switch"
-                            checked={row.enabled}
-                            onChange={(e) => {
-                              const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, enabled: e.target.checked } : r);
-                              updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
-                            }}
-                          />
-                        </div>
-                      </div>
                       <button
                         className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
                         onClick={() => {
-                          if (ratingConfig.rows.length <= 1) return;
-                          const newRows = ratingConfig.rows.filter(r => r.id !== row.id);
-                          updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                          if (ratingConfig.ratingLevels.length <= 2) return;
+                          const newLevels = ratingConfig.ratingLevels.filter((_, idx) => idx !== i);
+                          updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
                         }}
-                        disabled={ratingConfig.rows.length <= 1}
+                        disabled={ratingConfig.ratingLevels.length <= 2}
                       >
                         <i className="bi bi-trash" />
                       </button>
                     </div>
-                  </div>
-                ))}
-                <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
-                  let maxNum = 0;
-                  for (const r of ratingConfig.rows) {
-                    const match = r.label.match(/^項目\s*(\d+)$/);
-                    if (match) maxNum = Math.max(maxNum, parseInt(match[1]));
-                  }
-                  const newRow: RatingMatrixRow = { id: crypto.randomUUID(), label: `項目 ${maxNum + 1}`, enabled: true };
-                  updateField({ ratingMatrixConfig: { ...ratingConfig, rows: [...ratingConfig.rows, newRow] } });
-                }}>
-                  + 項目
-                </button>
-              </div>
-            </div>
-          )}
+                  ))}
+                  <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
+                    const newLevels = [...ratingConfig.ratingLevels, `等級 ${ratingConfig.ratingLevels.length + 1}`];
+                    updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
+                  }}>
+                    + 等級
+                  </button>
+                </div>
+              )}
 
-          {isRatingMatrix && (
-            <div className="xform-form-group">
-              <label className="xform-form-label">預覽</label>
-              <div className="xform-rating-preview">
-                <table className="xform-rating-table">
-                  <thead>
-                    <tr>
-                      <th></th>
-                      {ratingConfig.ratingLevels.map((level, i) => (
-                        <th key={i} className="xform-rating-th">{level}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ratingConfig.rows.filter(r => r.enabled).map((row) => (
-                      <tr key={row.id}>
-                        <td className="xform-rating-td-label">{row.label}</td>
-                        {ratingConfig.ratingLevels.map((_, i) => (
-                          <td key={i} className="xform-rating-td-radio">
-                            <input type="radio" disabled name={`preview-${row.id}`} />
-                          </td>
+              {/* Preview area */}
+              <div className="xform-rating-preview-area">
+                <label className="xform-form-label">預覽</label>
+                <div className="xform-rating-preview">
+                  <table className="xform-rating-table">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        {ratingConfig.ratingLevels.map((level, i) => (
+                          <th key={i} className="xform-rating-th">{level}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {ratingConfig.rows.filter(r => r.enabled).map((row) => (
+                        <tr key={row.id}>
+                          <td className="xform-rating-td-label">{row.label}</td>
+                          {ratingConfig.ratingLevels.map((_, i) => (
+                            <td key={i} className="xform-rating-td-radio">
+                              <input type={ratingConfig.allowMultipleRatings ? "checkbox" : "radio"} disabled name={`preview-${row.id}`} />
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* 進階設定 */}
+              <div className="xform-rating-advanced-section">
+                <div
+                  className={`xform-advanced-toggle-inline ${ratingConfig.allowMultipleRatings ? 'has-active' : ''}`}
+                  onClick={() => setShowRatingAdvanced(!showRatingAdvanced)}
+                >
+                  <i className="bi bi-gear" />
+                  <span>{ratingConfig.allowMultipleRatings ? '進階設定 (已選用)' : '進階設定'}</span>
+                  <i className={`bi ${showRatingAdvanced ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ fontSize: "0.65rem" }} />
+                </div>
+                {showRatingAdvanced && (
+                  <div className="xform-choice-advanced-body">
+                    <div className="xform-choice-toolbar">
+                      <button
+                        type="button"
+                        className={`xform-choice-toggle ${ratingConfig.allowMultipleRatings ? "active" : ""}`}
+                        onClick={() => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: !ratingConfig.allowMultipleRatings } })}
+                      >
+                        <i className="bi bi-check2-square" />
+                        允許選取多項等級
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

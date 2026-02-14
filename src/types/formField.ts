@@ -95,6 +95,7 @@ export interface RatingMatrixRow {
 export interface RatingMatrixConfig {
   ratingLevels: string[];
   rows: RatingMatrixRow[];
+  allowMultipleRatings: boolean;
 }
 
 export const DEFAULT_RATING_MATRIX_CONFIG: RatingMatrixConfig = {
@@ -102,6 +103,7 @@ export const DEFAULT_RATING_MATRIX_CONFIG: RatingMatrixConfig = {
   rows: [
     { id: crypto.randomUUID(), label: "項目 1", enabled: true },
   ],
+  allowMultipleRatings: false,
 };
 
 export interface FormField {

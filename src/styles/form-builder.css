@@ -2115,9 +2115,63 @@
   padding-right: 1rem !important;
 }
 
-.xform-rating-td-radio input[type="radio"] {
+.xform-rating-td-radio input[type="radio"],
+.xform-rating-td-radio input[type="checkbox"] {
   accent-color: #4a5da8;
   width: 15px;
   height: 15px;
   cursor: pointer;
+}
+
+/* Rating tabs */
+.xform-rating-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e2e6ee;
+  margin-bottom: 0;
+}
+
+.xform-rating-tab {
+  padding: 0.45rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6c757d;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.xform-rating-tab:hover {
+  color: #4a5da8;
+}
+
+.xform-rating-tab.active {
+  color: #4a5da8;
+  border-bottom-color: #4a5da8;
+}
+
+.xform-rating-tab-content {
+  padding: 0.75rem 0;
+}
+
+/* Preview area with subtle background */
+.xform-rating-preview-area {
+  background: #f4f6fa;
+  border: 1px solid #e2e6ee;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.xform-rating-preview-area .xform-form-label {
+  font-size: 0.78rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.xform-rating-advanced-section {
+  margin-top: 0.75rem;
 }
