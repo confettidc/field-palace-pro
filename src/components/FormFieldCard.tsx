@@ -426,7 +426,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
 
                 {dateConfig.includeYear && (() => {
                   const yearOptions = [];
-                  for (let y = 1900; y <= new Date().getFullYear() + 10; y++) yearOptions.push(y);
+                  for (let y = 1950; y <= new Date().getFullYear(); y++) yearOptions.push(y);
                   return (
                     <div className="xform-date-year-range-inline">
                       <span className="xform-date-range-label">年份範圍</span>
@@ -458,26 +458,36 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               <div className="xform-date-preview-box">
                 <span className="xform-form-label">預覽</span>
                 <div className="xform-date-preview-row">
-                  {dateConfig.includeYear && (
-                    <>
-                      <select className="form-select form-select-sm xform-date-select" disabled>
-                        <option>--</option>
-                      </select>
-                      <span className="xform-date-sep">年</span>
-                    </>
-                  )}
+                  {dateConfig.includeYear && (() => {
+                    const yOpts: number[] = [];
+                    for (let y = dateConfig.yearStart; y <= dateConfig.yearEnd; y++) yOpts.push(y);
+                    return (
+                      <>
+                        <select className="form-select form-select-sm xform-date-select">
+                          <option>--</option>
+                          {dateConfig.allowNA && <option value="__na__">不適用</option>}
+                          {yOpts.map(y => <option key={y}>{y}</option>)}
+                        </select>
+                        <span className="xform-date-sep">年</span>
+                      </>
+                    );
+                  })()}
                   {dateConfig.includeMonth && (
                     <>
-                      <select className="form-select form-select-sm xform-date-select" disabled>
+                      <select className="form-select form-select-sm xform-date-select">
                         <option>--</option>
+                        {dateConfig.allowNA && <option value="__na__">不適用</option>}
+                        {Array.from({ length: 12 }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
                       </select>
                       <span className="xform-date-sep">月</span>
                     </>
                   )}
                   {dateConfig.includeDay && (
                     <>
-                      <select className="form-select form-select-sm xform-date-select" disabled>
+                      <select className="form-select form-select-sm xform-date-select">
                         <option>--</option>
+                        {dateConfig.allowNA && <option value="__na__">不適用</option>}
+                        {Array.from({ length: 31 }, (_, i) => <option key={i + 1}>{i + 1}</option>)}
                       </select>
                       <span className="xform-date-sep">日</span>
                     </>
