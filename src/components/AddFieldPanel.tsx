@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FieldType, FIELD_TYPE_META, ContentBlockStyle, CONTENT_BLOCK_META } from "@/types/formField";
+import { FieldType, FIELD_TYPE_META, ADDABLE_FIELD_TYPES, ContentBlockStyle, CONTENT_BLOCK_META } from "@/types/formField";
 
 const fieldIconMap: Record<FieldType, string> = {
   short_text: "bi-type",
@@ -7,11 +7,14 @@ const fieldIconMap: Record<FieldType, string> = {
   single_choice: "bi-record-circle",
   multiple_choice: "bi-check-square",
   dropdown: "bi-chevron-down",
+  rating_matrix: "bi-bar-chart-steps",
   date: "bi-calendar",
   file_upload: "bi-upload",
   number: "bi-hash",
   email: "bi-envelope",
   phone: "bi-phone",
+  subscribe_invite: "bi-bell",
+  terms_conditions: "bi-file-earmark-text",
 };
 
 type AddCategory = "field" | "content_block";
@@ -53,10 +56,10 @@ export default function AddFieldPanel({ onAddField, onAddContentBlock, onCancel 
       {/* Field types */}
       {category === "field" && (
         <div className="xform-add-grid">
-          {(Object.entries(FIELD_TYPE_META) as [FieldType, { label: string }][]).map(([key, meta]) => (
+          {ADDABLE_FIELD_TYPES.map((key) => (
             <button key={key} className="xform-add-btn" onClick={() => onAddField(key)}>
               <i className={`bi ${fieldIconMap[key]}`} />
-              {meta.label}
+              {FIELD_TYPE_META[key].label}
             </button>
           ))}
         </div>

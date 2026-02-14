@@ -4,11 +4,14 @@ export type FieldType =
   | "single_choice"
   | "multiple_choice"
   | "dropdown"
+  | "rating_matrix"
   | "date"
   | "file_upload"
   | "number"
   | "email"
-  | "phone";
+  | "phone"
+  | "subscribe_invite"
+  | "terms_conditions";
 
 export type ContentBlockStyle =
   | "section_title"
@@ -82,6 +85,25 @@ export const COMMON_COUNTRY_CODES = [
   { code: "91", label: "印度 +91" },
 ];
 
+/* ===== Rating Matrix ===== */
+export interface RatingMatrixRow {
+  id: string;
+  label: string;
+  enabled: boolean;
+}
+
+export interface RatingMatrixConfig {
+  ratingLevels: string[];
+  rows: RatingMatrixRow[];
+}
+
+export const DEFAULT_RATING_MATRIX_CONFIG: RatingMatrixConfig = {
+  ratingLevels: ["非常不滿意", "不滿意", "普通", "滿意", "非常滿意"],
+  rows: [
+    { id: crypto.randomUUID(), label: "項目 1", enabled: true },
+  ],
+};
+
 export interface FormField {
   id: string;
   type: FieldType;
@@ -95,6 +117,7 @@ export interface FormField {
   dateConfig?: DateConfig;
   choiceConfig?: ChoiceAdvancedConfig;
   phoneConfig?: PhoneConfig;
+  ratingMatrixConfig?: RatingMatrixConfig;
   groupId?: string;
   profileKey?: ProfileFieldKey;
 }
@@ -157,18 +180,36 @@ export function isFormField(item: FormItem): item is FormField {
   return !isContentBlock(item);
 }
 
+/** All field types including internal ones (email, phone, number used by profile fields) */
 export const FIELD_TYPE_META: Record<FieldType, { label: string; icon: string }> = {
   short_text: { label: "簡答題", icon: "Type" },
   long_text: { label: "段落題", icon: "AlignLeft" },
   single_choice: { label: "單選題", icon: "CircleDot" },
-  multiple_choice: { label: "勾選方格", icon: "CheckSquare" },
+  multiple_choice: { label: "勾選題", icon: "CheckSquare" },
   dropdown: { label: "下拉式選單", icon: "ChevronDown" },
+  rating_matrix: { label: "量表題", icon: "BarChart" },
   date: { label: "日期", icon: "Calendar" },
   file_upload: { label: "檔案上傳", icon: "Upload" },
   number: { label: "數字", icon: "Hash" },
   email: { label: "電子郵件", icon: "Mail" },
   phone: { label: "手機", icon: "Phone" },
+  subscribe_invite: { label: "邀請訂閱", icon: "Bell" },
+  terms_conditions: { label: "條款及細則", icon: "FileText" },
 };
+
+/** Field types available for admin to add (excludes internal-only types) */
+export const ADDABLE_FIELD_TYPES: FieldType[] = [
+  "short_text",
+  "long_text",
+  "single_choice",
+  "multiple_choice",
+  "dropdown",
+  "rating_matrix",
+  "date",
+  "file_upload",
+  "subscribe_invite",
+  "terms_conditions",
+];
 
 export const CONTENT_BLOCK_META: Record<ContentBlockStyle, { label: string; icon: string }> = {
   section_title: { label: "分組標題", icon: "bi-card-heading" },

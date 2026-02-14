@@ -1,4 +1,4 @@
-import { FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
+import { FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, DEFAULT_RATING_MATRIX_CONFIG, COMMON_COUNTRY_CODES } from "@/types/formField";
 
 interface Props {
   open: boolean;
@@ -118,6 +118,35 @@ function renderField(item: FormItem, settings: FormSettings, questionNumberMap: 
             <span>點擊或拖曳上傳檔案</span>
           </div>
         )}
+        {item.type === "rating_matrix" && (() => {
+          const rc = item.ratingMatrixConfig || DEFAULT_RATING_MATRIX_CONFIG;
+          return (
+            <div className="xform-rating-preview">
+              <table className="xform-rating-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    {rc.ratingLevels.map((level, i) => (
+                      <th key={i} className="xform-rating-th">{level}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rc.rows.filter(r => r.enabled).map((row) => (
+                    <tr key={row.id}>
+                      <td className="xform-rating-td-label">{row.label}</td>
+                      {rc.ratingLevels.map((_, i) => (
+                        <td key={i} className="xform-rating-td-radio">
+                          <input type="radio" name={`preview-${row.id}`} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })()}
         {item.type === "single_choice" && (
           <div className="xform-preview-options">
             {(item.options || []).map((opt) => (
