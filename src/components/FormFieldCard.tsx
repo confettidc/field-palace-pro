@@ -146,8 +146,11 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
       style={style}
       className={`xform-field-card ${!field.enabled ? "xform-field-dimmed" : ""}`}
     >
-      <div className="xform-field-header" style={{ cursor: "grab" }} {...attributes} {...listeners}>
-        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
+      <div className="xform-field-header">
+        <div className="xform-drag-handle" {...attributes} {...listeners}>
+          <i className="bi bi-grip-vertical" />
+        </div>
+        <div className="xform-field-header-main" onClick={onToggleExpand}>
           {questionNumber !== undefined && (
             <span className="xform-question-number">{questionNumber}.</span>
           )}
@@ -165,7 +168,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
           </span>
         </div>
 
-        <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="xform-field-header-right">
           <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
             <input
@@ -194,8 +197,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
-            onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
-            onPointerDown={(e) => e.stopPropagation()}
+            onClick={onToggleExpand}
             style={{ cursor: "pointer" }}
           />
         </div>
@@ -524,6 +526,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               {/* "Others" free-text option – above add button */}
               {choiceConfig.allowOther && (
                 <div className="xform-other-row">
+                  <span className="xform-option-num">{(field.options || []).length + 1}.</span>
                   <input
                     type="text"
                     className="form-control form-control-sm"
@@ -586,7 +589,7 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
         </button>
       </div>
       {choiceConfig.showTags && (
-        <div className="xform-option-tags">
+        <div className="xform-option-tags" style={choiceConfig.showDefaultSelection ? { paddingLeft: 'calc(16px + 18px + 1rem)' } : undefined}>
           {(opt.tags || []).map((tag, ti) => (
             <span key={ti} className="xform-tag">
               {tag}
