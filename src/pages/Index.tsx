@@ -503,6 +503,7 @@ export default function Index() {
                 showQuestionNumbers={formSettings.showQuestionNumbers}
                 questionNumberMap={questionNumberMap}
                 collapsed={collapsedGroups.has(group.id)}
+                allGroups={groups}
                 onToggleCollapse={() => setCollapsedGroups(prev => {
                   const next = new Set(prev);
                   if (next.has(group.id)) next.delete(group.id);

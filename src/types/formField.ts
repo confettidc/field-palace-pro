@@ -151,11 +151,17 @@ export interface FormField {
   profileKey?: ProfileFieldKey;
 }
 
+export type PageNextAction =
+  | { type: "next" }          // go to next page in order (default)
+  | { type: "page"; pageId: string }  // jump to specific page
+  | { type: "submit" };       // submit the form
+
 export interface FormGroup {
   id: string;
   name: string;
   defaultName: string;
   description?: string;
+  nextAction?: PageNextAction;
 }
 
 export type ProfileFieldKey = "name" | "email" | "phone" | "gender";
