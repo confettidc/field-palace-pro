@@ -1558,26 +1558,34 @@
 .xform-page-jump-section {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
   margin-top: 0.75rem;
-  padding: 0.6rem 0.75rem;
+  margin-left: auto;
+  padding: 0.4rem 0.6rem;
   background: #f0f3fa;
-  border-radius: 0.5rem;
+  border-radius: 0.4rem;
   border: 1px solid #dce1ed;
+  width: fit-content;
+  max-width: 35%;
 }
 
 .xform-page-jump-section .xform-form-label {
   white-space: nowrap;
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   color: #4a5da8;
   font-weight: 600;
 }
 
 .xform-page-jump-select {
   flex: 1;
-  font-size: 0.82rem;
+  min-width: 0;
+  font-size: 0.75rem;
   border-color: #c5cde0;
-  border-radius: 0.4rem;
+  border-radius: 0.35rem;
+  padding: 0.2rem 1.5rem 0.2rem 0.4rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 /* ===== Group create button ===== */

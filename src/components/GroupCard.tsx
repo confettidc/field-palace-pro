@@ -10,7 +10,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { useDroppable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
+
 
 interface Props {
   group: FormGroup;
@@ -74,7 +74,7 @@ export default function GroupCard({
   });
 
   const sortStyle = {
-    transform: CSS.Transform.toString(transform),
+    transform: transform ? `translate3d(0, ${transform.y}px, 0)` : undefined,
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
