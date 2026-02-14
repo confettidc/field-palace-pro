@@ -105,7 +105,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const choiceConfig = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
   const phoneConfig = field.phoneConfig || DEFAULT_PHONE_CONFIG;
   const ratingConfig = field.ratingMatrixConfig || DEFAULT_RATING_MATRIX_CONFIG;
-  const displayLabel = field.label || "未命名欄位";
+  const displayLabel = field.label || field.defaultLabel;
 
   const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
     const current = field.choiceConfig || DEFAULT_CHOICE_CONFIG;

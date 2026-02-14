@@ -39,7 +39,7 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
   const meta = CONTENT_BLOCK_META[block.style];
   const displayLabel = block.style === "divider" || block.style === "spacer"
     ? meta.label
-    : (block.content ? "內容區塊" : "未輸入內容");
+    : (block.content ? block.defaultLabel : block.defaultLabel);
 
   const isDivider = block.style === "divider";
   const isSpacer = block.style === "spacer";

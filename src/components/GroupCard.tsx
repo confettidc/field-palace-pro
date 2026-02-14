@@ -133,7 +133,7 @@ export default function GroupCard({
               onPointerDown={(e) => e.stopPropagation()}
               title="點擊編輯分頁名稱"
             >
-              {group.name || "未命名分頁"}
+              {group.name || group.defaultName || "未命名分頁"}
               <i className="bi bi-pencil xform-group-edit-icon" />
             </h3>
           )}
