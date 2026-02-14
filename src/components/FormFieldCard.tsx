@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES, RatingMatrixConfig, DEFAULT_RATING_MATRIX_CONFIG, RatingMatrixRow } from "@/types/formField";
+import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES, RatingMatrixConfig, DEFAULT_RATING_MATRIX_CONFIG, RatingMatrixRow, SubscribeConfig, DEFAULT_SUBSCRIBE_CONFIG } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useSortable } from "@dnd-kit/sortable";
@@ -99,13 +99,15 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const isDate = field.type === "date";
   const isPhone = field.type === "phone";
   const isRatingMatrix = field.type === "rating_matrix";
-  const showHintSection = !hasOptions && !isDate && !isPhone && !isRatingMatrix && field.type !== "file_upload";
-  const showTitleField = true;
+  const isSubscribe = field.type === "subscribe_invite";
+  const showHintSection = !hasOptions && !isDate && !isPhone && !isRatingMatrix && field.type !== "file_upload" && !isSubscribe;
+  const showTitleField = !isSubscribe;
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
   const choiceConfig = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
   const phoneConfig = field.phoneConfig || DEFAULT_PHONE_CONFIG;
   const ratingConfig = field.ratingMatrixConfig || DEFAULT_RATING_MATRIX_CONFIG;
   const displayLabel = field.label || field.defaultLabel;
+  const subscribeConfig = field.subscribeConfig || DEFAULT_SUBSCRIBE_CONFIG;
 
   const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
     const current = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
@@ -241,6 +243,70 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               rows={1}
             />
           </div>
+          )}
+
+          {isSubscribe && (
+            <>
+              <div className="xform-form-group">
+                <div className="d-flex align-items-center justify-content-between">
+                  <label className="xform-form-label mb-0">題目</label>
+                  <div className="form-check form-switch mb-0">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      role="switch"
+                      checked={subscribeConfig.showTitle}
+                      onChange={(e) => updateField({ subscribeConfig: { ...subscribeConfig, showTitle: e.target.checked } })}
+                    />
+                  </div>
+                </div>
+                {subscribeConfig.showTitle && (
+                  <textarea
+                    className="form-control form-control-sm xform-auto-resize mt-2"
+                    value={field.label}
+                    onChange={(e) => {
+                      updateField({ label: e.target.value });
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.height = 'auto';
+                      e.target.style.height = e.target.scrollHeight + 'px';
+                    }}
+                    placeholder="例如：訂閱電子報"
+                    rows={1}
+                  />
+                )}
+              </div>
+
+              <div className="xform-form-group">
+                <div className="d-flex align-items-center justify-content-between">
+                  <label className="xform-form-label mb-0">訂閱說明</label>
+                  <label className="xform-date-check-label mb-0" style={{ fontSize: "0.85rem" }}>
+                    <input
+                      type="checkbox"
+                      checked={subscribeConfig.defaultChecked}
+                      onChange={(e) => updateField({ subscribeConfig: { ...subscribeConfig, defaultChecked: e.target.checked } })}
+                    />
+                    <span>預設勾選</span>
+                  </label>
+                </div>
+                <textarea
+                  className="form-control form-control-sm xform-auto-resize mt-2"
+                  value={subscribeConfig.subscribeText}
+                  onChange={(e) => {
+                    updateField({ subscribeConfig: { ...subscribeConfig, subscribeText: e.target.value } });
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                  }}
+                  rows={2}
+                />
+              </div>
+            </>
           )}
 
           {!showDesc ? (

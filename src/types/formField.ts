@@ -85,6 +85,19 @@ export const COMMON_COUNTRY_CODES = [
   { code: "91", label: "印度 +91" },
 ];
 
+/* ===== Subscribe Invite ===== */
+export interface SubscribeConfig {
+  showTitle: boolean;
+  subscribeText: string;
+  defaultChecked: boolean;
+}
+
+export const DEFAULT_SUBSCRIBE_CONFIG: SubscribeConfig = {
+  showTitle: false,
+  subscribeText: "我願意訂閱及收取【夢想科技】的最新活動及資訊",
+  defaultChecked: false,
+};
+
 /* ===== Rating Matrix ===== */
 export interface RatingMatrixRow {
   id: string;
@@ -121,6 +134,7 @@ export interface FormField {
   choiceConfig?: ChoiceAdvancedConfig;
   phoneConfig?: PhoneConfig;
   ratingMatrixConfig?: RatingMatrixConfig;
+  subscribeConfig?: SubscribeConfig;
   groupId?: string;
   profileKey?: ProfileFieldKey;
 }
