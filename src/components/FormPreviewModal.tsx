@@ -71,7 +71,7 @@ function renderField(item: FormItem, settings: FormSettings, questionNumberMap: 
         })()}
         {item.type === "date" && (() => {
           const dc = item.dateConfig || DEFAULT_DATE_CONFIG;
-          const yearOpts = [];
+          const yearOpts: number[] = [];
           if (dc.includeYear) {
             for (let y = dc.yearStart; y <= dc.yearEnd; y++) yearOpts.push(y);
           }
@@ -83,7 +83,7 @@ function renderField(item: FormItem, settings: FormSettings, questionNumberMap: 
                 <>
                   <select className="xform-preview-select xform-date-select">
                     <option>--</option>
-                    {dc.allowNA && <option>不適用</option>}
+                    {dc.allowNA && <option value="__na__">不適用</option>}
                     {yearOpts.map(y => <option key={y}>{y}</option>)}
                   </select>
                   <span className="xform-date-sep">年</span>
@@ -93,7 +93,7 @@ function renderField(item: FormItem, settings: FormSettings, questionNumberMap: 
                 <>
                   <select className="xform-preview-select xform-date-select">
                     <option>--</option>
-                    {dc.allowNA && <option>不適用</option>}
+                    {dc.allowNA && <option value="__na__">不適用</option>}
                     {monthOpts.map(m => <option key={m}>{m}</option>)}
                   </select>
                   <span className="xform-date-sep">月</span>
@@ -103,7 +103,7 @@ function renderField(item: FormItem, settings: FormSettings, questionNumberMap: 
                 <>
                   <select className="xform-preview-select xform-date-select">
                     <option>--</option>
-                    {dc.allowNA && <option>不適用</option>}
+                    {dc.allowNA && <option value="__na__">不適用</option>}
                     {dayOpts.map(d => <option key={d}>{d}</option>)}
                   </select>
                   <span className="xform-date-sep">日</span>

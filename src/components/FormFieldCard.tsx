@@ -424,18 +424,26 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                   </label>
                 </div>
 
-                {dateConfig.includeYear && (
-                  <div className="xform-date-year-range-inline">
-                    <span className="xform-date-range-label">年份範圍</span>
-                    <input type="number" className="form-control form-control-sm xform-year-input"
-                      value={dateConfig.yearStart}
-                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) || 1950 } })} />
-                    <span className="xform-date-range-sep">～</span>
-                    <input type="number" className="form-control form-control-sm xform-year-input"
-                      value={dateConfig.yearEnd}
-                      onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) || new Date().getFullYear() } })} />
-                  </div>
-                )}
+                {dateConfig.includeYear && (() => {
+                  const yearOptions = [];
+                  for (let y = 1900; y <= new Date().getFullYear() + 10; y++) yearOptions.push(y);
+                  return (
+                    <div className="xform-date-year-range-inline">
+                      <span className="xform-date-range-label">年份範圍</span>
+                      <select className="form-control form-control-sm xform-year-input"
+                        value={dateConfig.yearStart}
+                        onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) } })}>
+                        {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                      <span className="xform-date-range-sep">～</span>
+                      <select className="form-control form-control-sm xform-year-input"
+                        value={dateConfig.yearEnd}
+                        onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) } })}>
+                        {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                      </select>
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className="xform-date-na-option">
