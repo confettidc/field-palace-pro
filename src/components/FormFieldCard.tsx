@@ -146,12 +146,8 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
       style={style}
       className={`xform-field-card ${!field.enabled ? "xform-field-dimmed" : ""}`}
     >
-      <div className="xform-field-header">
-        <div className="xform-drag-handle" {...attributes} {...listeners}>
-          <i className="bi bi-grip-vertical" />
-        </div>
-
-        <div className="xform-field-header-main" onClick={onToggleExpand}>
+      <div className="xform-field-header" style={{ cursor: "grab" }} {...attributes} {...listeners}>
+        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
           {questionNumber !== undefined && (
             <span className="xform-question-number">{questionNumber}.</span>
           )}
@@ -169,7 +165,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
           </span>
         </div>
 
-        <div className="xform-field-header-right">
+        <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
           <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
             <input
@@ -198,7 +194,8 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
-            onClick={onToggleExpand}
+            onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+            onPointerDown={(e) => e.stopPropagation()}
             style={{ cursor: "pointer" }}
           />
         </div>
@@ -565,9 +562,6 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
   return (
     <div ref={setNodeRef} style={style} className="xform-option-item">
       <div className="xform-option-row">
-        <span className="xform-option-drag-handle" {...attributes} {...listeners}>
-          <i className="bi bi-grip-vertical" />
-        </span>
         {choiceConfig.showDefaultSelection && (
           <input
             type={field.type === "multiple_choice" ? "checkbox" : "radio"}
@@ -584,6 +578,9 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
           value={opt.label}
           onChange={(e) => onUpdateOption(opt.id, e.target.value)}
         />
+        <button className="btn btn-sm xform-option-move-btn" title="拖曳排序" {...attributes} {...listeners}>
+          <i className="bi bi-arrows-move" />
+        </button>
         <button className="btn btn-sm xform-delete-icon-btn" onClick={() => onRemoveOption(opt.id)}>
           <i className="bi bi-trash" />
         </button>

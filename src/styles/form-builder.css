@@ -147,6 +147,11 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 0.85rem;
+  cursor: grab;
+}
+
+.xform-field-header:active {
+  cursor: grabbing;
 }
 
 /* Drag handle grip icon */
@@ -480,22 +485,26 @@
   gap: 0.5rem;
 }
 
-.xform-option-drag-handle {
+.xform-option-move-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   cursor: grab;
-  color: #bcc3d4;
-  font-size: 1rem;
-  padding: 0.1rem 0;
+  color: #4a5da8;
+  border: 1px solid #c0c7db !important;
+  background: transparent !important;
+  padding: 0.15rem 0.35rem;
+  font-size: 0.85rem;
   flex-shrink: 0;
-  transition: color 0.15s;
+  transition: color 0.15s, border-color 0.15s;
 }
 
-.xform-option-drag-handle:hover {
-  color: #6b7590;
+.xform-option-move-btn:hover {
+  color: #3a4d98;
+  border-color: #8e9cc4 !important;
 }
 
-.xform-option-drag-handle:active {
+.xform-option-move-btn:active {
   cursor: grabbing;
 }
 
@@ -660,8 +669,8 @@
   flex-wrap: wrap;
   margin-top: 0.3rem;
   margin-bottom: 0.5rem;
-  /* Align with option text input: drag handle (~1rem) + gap(0.5rem) + num(18px) + gap(0.5rem) */
-  padding-left: calc(1rem + 0.5rem + 18px + 0.5rem);
+  /* Align with option text input: num(18px) + gap(0.5rem) */
+  padding-left: calc(18px + 0.5rem);
 }
 
 .xform-tag {
