@@ -237,8 +237,8 @@ export default function GroupCard({
               <div className="xform-group-empty">此分頁尚無欄位</div>
             )}
 
-            {/* Page jump / submit selector */}
-            {allGroups.length > 1 && (
+            {/* Page jump / submit selector – only when page has items */}
+            {allGroups.length > 1 && items.length > 0 && (
               <div className="xform-page-jump-section">
                 <label className="xform-form-label mb-0">完成此頁後</label>
                 <select
