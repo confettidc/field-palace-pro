@@ -45,7 +45,7 @@ const DEFAULT_SETTINGS: FormSettings = {
 const createField = (type: FieldType, groupId?: string): FormField => {
   const isSpecial = type === "subscribe_invite" || type === "terms_conditions";
   const num = isSpecial ? 0 : fieldCounter++;
-  const defaultLabel = isSpecial ? "特別欄" : `未命名欄位 ${num}`;
+  const defaultLabel = isSpecial ? "特別欄位" : `未命名欄位 ${num}`;
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
   return {
     id: crypto.randomUUID(),
@@ -530,6 +530,7 @@ export default function Index() {
                       onAddField={addField}
                       onAddContentBlock={addContentBlock}
                       onCancel={() => setShowPanel(false)}
+                      existingFieldTypes={items.filter(isFormField).map(f => f.type)}
                     />
                   </div>
                 )}
@@ -582,6 +583,7 @@ export default function Index() {
               onAddField={addField}
               onAddContentBlock={addContentBlock}
               onCancel={() => setShowPanel(false)}
+              existingFieldTypes={items.filter(isFormField).map(f => f.type)}
             />
           </div>
         )}
