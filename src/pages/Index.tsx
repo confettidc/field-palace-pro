@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, DEFAULT_RATING_MATRIX_CONFIG, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, DEFAULT_RATING_MATRIX_CONFIG, DEFAULT_SUBSCRIBE_CONFIG, DEFAULT_TERMS_CONFIG, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import GroupCard from "@/components/GroupCard";
@@ -43,8 +43,9 @@ const DEFAULT_SETTINGS: FormSettings = {
 };
 
 const createField = (type: FieldType, groupId?: string): FormField => {
-  const num = fieldCounter++;
-  const defaultLabel = `未命名欄位 ${num}`;
+  const isSpecial = type === "subscribe_invite" || type === "terms_conditions";
+  const num = isSpecial ? 0 : fieldCounter++;
+  const defaultLabel = isSpecial ? "特別欄" : `未命名欄位 ${num}`;
   const needsOptions = ["single_choice", "multiple_choice", "dropdown"].includes(type);
   return {
     id: crypto.randomUUID(),
@@ -63,6 +64,8 @@ const createField = (type: FieldType, groupId?: string): FormField => {
       ...DEFAULT_RATING_MATRIX_CONFIG,
       rows: [{ id: crypto.randomUUID(), label: "項目 1", enabled: true }],
     } : undefined,
+    subscribeConfig: type === "subscribe_invite" ? { ...DEFAULT_SUBSCRIBE_CONFIG } : undefined,
+    termsConfig: type === "terms_conditions" ? { ...DEFAULT_TERMS_CONFIG } : undefined,
   };
 };
 
@@ -212,6 +215,14 @@ export default function Index() {
   }, [firstGroupId, formSettings.profileFields]);
 
   const addField = (type: FieldType) => {
+    // Singleton check for subscribe_invite and terms_conditions
+    if (type === "subscribe_invite" || type === "terms_conditions") {
+      const exists = items.some(i => isFormField(i) && i.type === type);
+      if (exists) {
+        toast.error(type === "subscribe_invite" ? "邀請訂閱欄位只能新增一個" : "條款及細則欄位只能新增一個");
+        return;
+      }
+    }
     const f = createField(type, activeGroupId);
     setItems((prev) => [...prev, f]);
     setExpandedId(f.id);
@@ -351,7 +362,7 @@ export default function Index() {
 
   const handleSave = () => {
     const fields = items.filter(isFormField);
-    const empty = fields.filter((f) => !f.label.trim() && !f.profileKey);
+    const empty = fields.filter((f) => !f.label.trim() && !f.profileKey && f.type !== "subscribe_invite" && f.type !== "terms_conditions");
     if (empty.length) {
       toast.error("有欄位尚未填寫題目名稱");
       return;

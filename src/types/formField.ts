@@ -98,6 +98,17 @@ export const DEFAULT_SUBSCRIBE_CONFIG: SubscribeConfig = {
   defaultChecked: false,
 };
 
+/* ===== Terms & Conditions ===== */
+export interface TermsConfig {
+  termsText: string;
+  termsWindowContent: string;
+}
+
+export const DEFAULT_TERMS_CONFIG: TermsConfig = {
+  termsText: '本人同意此網站或參與此活動的<u>條款及細則</u>',
+  termsWindowContent: '【夢想科技】 平台的使用受以下條款和條件約束。使用者必須遵守相關法律規定並尊重他人的權利。禁止發布非法、侵權、虛假或誤導性的內容。平台保留隨時修改服務、終止賬戶或限制訪問的權利。使用者應對其賬戶安全負責，並承擔因使用平台而產生的所有風險。透過使用本平台，使用者同意受這些條款的約束。所有權利、條款和條件可以在平台的官方網站上查閱詳細信息。',
+};
+
 /* ===== Rating Matrix ===== */
 export interface RatingMatrixRow {
   id: string;
@@ -135,6 +146,7 @@ export interface FormField {
   phoneConfig?: PhoneConfig;
   ratingMatrixConfig?: RatingMatrixConfig;
   subscribeConfig?: SubscribeConfig;
+  termsConfig?: TermsConfig;
   groupId?: string;
   profileKey?: ProfileFieldKey;
 }
