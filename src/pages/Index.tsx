@@ -511,7 +511,7 @@ export default function Index() {
             ))}
 
             {ungroupedItems.length > 0 && (
-              <div>
+              <SortableContext items={ungroupedItems.map(i => i.id)} strategy={verticalListSortingStrategy}>
                 {ungroupedItems.map((item) =>
                   isContentBlock(item) ? (
                     <ContentBlockCard
@@ -534,7 +534,7 @@ export default function Index() {
                     />
                   )
                 )}
-              </div>
+              </SortableContext>
             )}
           </SortableContext>
         </DndContext>
