@@ -491,10 +491,12 @@
   justify-content: center;
   cursor: grab;
   color: #4a5da8;
-  border: 1px solid #c0c7db !important;
   background: transparent !important;
-  padding: 0.15rem 0.35rem;
-  font-size: 0.85rem;
+  border: 1px solid #c0c7db !important;
+  border-radius: 0.35rem;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+  font-size: inherit;
   flex-shrink: 0;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -502,6 +504,7 @@
 .xform-option-move-btn:hover {
   color: #3a4d98;
   border-color: #8e9cc4 !important;
+  background: #f0f2f8 !important;
 }
 
 .xform-option-move-btn:active {

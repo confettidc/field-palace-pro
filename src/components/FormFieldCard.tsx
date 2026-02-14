@@ -578,10 +578,10 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
           value={opt.label}
           onChange={(e) => onUpdateOption(opt.id, e.target.value)}
         />
-        <button className="btn btn-sm xform-option-move-btn" title="拖曳排序" {...attributes} {...listeners}>
+        <button className="btn btn-sm xform-option-action-btn xform-option-move-btn" title="拖曳排序" {...attributes} {...listeners}>
           <i className="bi bi-arrows-move" />
         </button>
-        <button className="btn btn-sm xform-delete-icon-btn" onClick={() => onRemoveOption(opt.id)}>
+        <button className="btn btn-sm xform-option-action-btn xform-delete-icon-btn" onClick={() => onRemoveOption(opt.id)}>
           <i className="bi bi-trash" />
         </button>
       </div>

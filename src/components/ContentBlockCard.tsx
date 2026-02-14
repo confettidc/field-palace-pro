@@ -50,12 +50,8 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
       style={style}
       className={`xform-field-card ${!block.enabled ? "xform-field-dimmed" : ""}`}
     >
-      <div className="xform-field-header">
-        <div className="xform-drag-handle" {...attributes} {...listeners}>
-          <i className="bi bi-grip-vertical" />
-        </div>
-
-        <div className="xform-field-header-main" onClick={onToggleExpand}>
+      <div className="xform-field-header xform-field-header-draggable" style={{ cursor: "grab" }} {...attributes} {...listeners}>
+        <div className="xform-field-header-main" onClick={(e) => { e.stopPropagation(); onToggleExpand(); }} onPointerDown={(e) => e.stopPropagation()}>
           <span className="xform-field-label-text">{displayLabel}</span>
 
           <span className="xform-field-type-badge xform-badge-content">
@@ -64,7 +60,7 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
           </span>
         </div>
 
-        <div className="xform-field-header-right">
+        <div className="xform-field-header-right" onClick={(e) => e.stopPropagation()} onPointerDown={(e) => e.stopPropagation()}>
           <span className="xform-toggle-label">啟用</span>
           <div className="form-check form-switch xform-switch-green mb-0">
             <input
@@ -82,7 +78,8 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
 
           <i
             className={`bi ${expanded ? "bi-chevron-up" : "bi-chevron-down"} xform-expand-icon`}
-            onClick={onToggleExpand}
+            onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+            onPointerDown={(e) => e.stopPropagation()}
             style={{ cursor: "pointer" }}
           />
         </div>
