@@ -49,7 +49,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [ratingTab, setRatingTab] = useState<"items" | "levels">("items");
-  const [showRatingAdvanced, setShowRatingAdvanced] = useState(false);
+  
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
@@ -513,21 +513,6 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                             updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
                           }}
                         />
-                        <div className="xform-rating-row-toggle">
-                          <span className="xform-toggle-label" style={{ fontSize: "0.75rem" }}>允許評分</span>
-                          <div className="form-check form-switch xform-switch-green mb-0">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              role="switch"
-                              checked={row.enabled}
-                              onChange={(e) => {
-                                const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, enabled: e.target.checked } : r);
-                                updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
-                              }}
-                            />
-                          </div>
-                        </div>
                         <button
                           className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
                           onClick={() => {
@@ -596,7 +581,17 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
 
               {/* Preview area */}
               <div className="xform-rating-preview-area">
-                <label className="xform-form-label">預覽</label>
+                <div className="xform-rating-preview-header">
+                  <label className="xform-form-label mb-0">預覽</label>
+                  <select
+                    className="form-select form-select-sm xform-rating-mode-select"
+                    value={ratingConfig.allowMultipleRatings ? "multiple" : "single"}
+                    onChange={(e) => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: e.target.value === "multiple" } })}
+                  >
+                    <option value="single">只允許選取單一等級</option>
+                    <option value="multiple">允許選取多項等級</option>
+                  </select>
+                </div>
                 <div className="xform-rating-preview">
                   <table className="xform-rating-table">
                     <thead>
@@ -608,7 +603,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                       </tr>
                     </thead>
                     <tbody>
-                      {ratingConfig.rows.filter(r => r.enabled).map((row) => (
+                      {ratingConfig.rows.map((row) => (
                         <tr key={row.id}>
                           <td className="xform-rating-td-label">{row.label}</td>
                           {ratingConfig.ratingLevels.map((_, i) => (
@@ -621,32 +616,6 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                     </tbody>
                   </table>
                 </div>
-              </div>
-
-              {/* 進階設定 */}
-              <div className="xform-rating-advanced-section">
-                <div
-                  className={`xform-advanced-toggle-inline ${ratingConfig.allowMultipleRatings ? 'has-active' : ''}`}
-                  onClick={() => setShowRatingAdvanced(!showRatingAdvanced)}
-                >
-                  <i className="bi bi-gear" />
-                  <span>{ratingConfig.allowMultipleRatings ? '進階設定 (已選用)' : '進階設定'}</span>
-                  <i className={`bi ${showRatingAdvanced ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ fontSize: "0.65rem" }} />
-                </div>
-                {showRatingAdvanced && (
-                  <div className="xform-choice-advanced-body">
-                    <div className="xform-choice-toolbar">
-                      <button
-                        type="button"
-                        className={`xform-choice-toggle ${ratingConfig.allowMultipleRatings ? "active" : ""}`}
-                        onClick={() => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: !ratingConfig.allowMultipleRatings } })}
-                      >
-                        <i className="bi bi-check2-square" />
-                        允許選取多項等級
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           )}
