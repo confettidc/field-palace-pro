@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
+import { FormField, FieldType, ContentBlock, ContentBlockStyle, FormItem, FormGroup, FormSettings, isContentBlock, isFormField, DEFAULT_DATE_CONFIG, DEFAULT_PHONE_CONFIG, DEFAULT_RATING_MATRIX_CONFIG, ProfileFieldKey, PROFILE_FIELDS } from "@/types/formField";
 import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import GroupCard from "@/components/GroupCard";
@@ -56,6 +56,10 @@ const createField = (type: FieldType, groupId?: string): FormField => {
       : undefined,
     dateConfig: type === "date" ? { ...DEFAULT_DATE_CONFIG } : undefined,
     phoneConfig: type === "phone" ? { ...DEFAULT_PHONE_CONFIG } : undefined,
+    ratingMatrixConfig: type === "rating_matrix" ? {
+      ...DEFAULT_RATING_MATRIX_CONFIG,
+      rows: [{ id: crypto.randomUUID(), label: "項目 1", enabled: true }],
+    } : undefined,
   };
 };
 
