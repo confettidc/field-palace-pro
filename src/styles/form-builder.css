@@ -1519,6 +1519,23 @@
   color: #8892a4;
 }
 
+.xform-date-combo-settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+
+.xform-date-combo-settings-row .xform-date-year-range-inline {
+  margin-top: 0;
+}
+
+.xform-date-combo-settings-row .xform-date-na-option {
+  margin-bottom: 0;
+  margin-left: auto;
+}
+
 .xform-date-na-option {
   margin-bottom: 0.75rem;
 }
