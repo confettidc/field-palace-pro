@@ -57,11 +57,13 @@ export const DEFAULT_DATE_CONFIG: DateConfig = {
 export interface PhoneConfig {
   acceptAll: boolean;
   allowedCodes: string[];
+  requireVerification: boolean;
 }
 
 export const DEFAULT_PHONE_CONFIG: PhoneConfig = {
   acceptAll: true,
   allowedCodes: [],
+  requireVerification: false,
 };
 
 export const COMMON_COUNTRY_CODES = [
