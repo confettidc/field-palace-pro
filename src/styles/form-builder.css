@@ -1523,12 +1523,35 @@
   margin-bottom: 0.75rem;
 }
 
+/* Display mode row */
+.xform-date-display-mode-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.xform-date-display-mode-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #5a6580;
+  margin-top: 0.35rem;
+  white-space: nowrap;
+}
+
+.xform-date-display-select {
+  width: 120px;
+  font-size: 0.85rem !important;
+}
+
 .xform-date-preview-box {
   background: #f6f7fb;
   border: 1px solid #e2e6ef;
   border-radius: 0.5rem;
   padding: 0.75rem;
-  margin-top: 0.5rem;
+  flex: 1;
+  min-width: 200px;
 }
 
 .xform-date-preview-row {
@@ -1547,6 +1570,19 @@
   font-size: 0.88rem;
   color: #5a6580;
   margin-right: 0.5rem;
+}
+
+/* Calendar preview */
+.xform-date-calendar-input {
+  flex: 1;
+  min-width: 120px;
+  background: #fff !important;
+  cursor: default;
+}
+
+.xform-date-calendar-icon {
+  font-size: 1.1rem;
+  color: #5a6580;
 }
 
 /* ===== Group Card ===== */

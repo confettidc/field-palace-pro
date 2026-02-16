@@ -36,7 +36,10 @@ export interface ChoiceAdvancedConfig {
   showDefaultSelection: boolean;
 }
 
+export type DateDisplayMode = "calendar" | "combo";
+
 export interface DateConfig {
+  displayMode: DateDisplayMode;
   includeYear: boolean;
   includeMonth: boolean;
   includeDay: boolean;
@@ -46,6 +49,7 @@ export interface DateConfig {
 }
 
 export const DEFAULT_DATE_CONFIG: DateConfig = {
+  displayMode: "calendar",
   includeYear: true,
   includeMonth: true,
   includeDay: true,
