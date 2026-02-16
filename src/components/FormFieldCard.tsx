@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES, RatingMatrixConfig, DEFAULT_RATING_MATRIX_CONFIG, RatingMatrixRow, SubscribeConfig, DEFAULT_SUBSCRIBE_CONFIG, TermsConfig, DEFAULT_TERMS_CONFIG } from "@/types/formField";
+import { FormField, FieldType, FIELD_TYPE_META, FieldOption, DateConfig, DEFAULT_DATE_CONFIG, ChoiceAdvancedConfig, PhoneConfig, DEFAULT_PHONE_CONFIG, COMMON_COUNTRY_CODES, RatingMatrixConfig, DEFAULT_RATING_MATRIX_CONFIG, RatingMatrixRow, SubscribeConfig, DEFAULT_SUBSCRIBE_CONFIG, TermsConfig, DEFAULT_TERMS_CONFIG, FileUploadConfig, DEFAULT_FILE_UPLOAD_CONFIG } from "@/types/formField";
 import RichTextEditor from "./RichTextEditor";
 import DeleteConfirmModal from "./DeleteConfirmModal";
 import { useSortable } from "@dnd-kit/sortable";
@@ -119,10 +119,11 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const isDate = field.type === "date";
   const isPhone = field.type === "phone";
   const isRatingMatrix = field.type === "rating_matrix";
+  const isFileUpload = field.type === "file_upload";
   const isSubscribe = field.type === "subscribe_invite";
   const isTerms = field.type === "terms_conditions";
   const isSpecialField = isSubscribe || isTerms;
-  const showHintSection = !hasOptions && !isDate && !isPhone && !isRatingMatrix && field.type !== "file_upload" && !isSpecialField;
+  const showHintSection = !hasOptions && !isDate && !isPhone && !isRatingMatrix && !isFileUpload && !isSpecialField;
   const showTitleField = !isSpecialField;
   const showDescSection = !isSpecialField;
   const dateConfig = field.dateConfig || DEFAULT_DATE_CONFIG;
@@ -132,6 +133,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
   const displayLabel = field.label || field.defaultLabel;
   const subscribeConfig = field.subscribeConfig || DEFAULT_SUBSCRIBE_CONFIG;
   const termsConfig = field.termsConfig || DEFAULT_TERMS_CONFIG;
+  const fileUploadConfig = field.fileUploadConfig || DEFAULT_FILE_UPLOAD_CONFIG;
 
   const toggleChoiceConfig = (key: keyof ChoiceAdvancedConfig) => {
     const current = field.choiceConfig || DEFAULT_CHOICE_CONFIG;
@@ -537,6 +539,62 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                     </button>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {isFileUpload && (
+            <div className="xform-form-group">
+              <label className="xform-form-label">允許上傳的檔案類型</label>
+              <div className="xform-file-upload-config">
+                <label className="xform-file-upload-row">
+                  <input
+                    type="checkbox"
+                    checked={fileUploadConfig.image.enabled}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, image: { ...fileUploadConfig.image, enabled: e.target.checked } } })}
+                  />
+                  <span className="xform-file-upload-label">圖像 (JPG/JPEG、GIF、PNG)，不能大於</span>
+                  <input
+                    type="number"
+                    className="form-control form-control-sm xform-file-size-input"
+                    value={fileUploadConfig.image.maxSizeMB}
+                    min={1}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, image: { ...fileUploadConfig.image, maxSizeMB: parseInt(e.target.value) || 1 } } })}
+                  />
+                  <span className="xform-file-upload-unit">MB</span>
+                </label>
+                <label className="xform-file-upload-row">
+                  <input
+                    type="checkbox"
+                    checked={fileUploadConfig.document.enabled}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, document: { ...fileUploadConfig.document, enabled: e.target.checked } } })}
+                  />
+                  <span className="xform-file-upload-label">文件 (PDF)，限制不能大於</span>
+                  <input
+                    type="number"
+                    className="form-control form-control-sm xform-file-size-input"
+                    value={fileUploadConfig.document.maxSizeMB}
+                    min={1}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, document: { ...fileUploadConfig.document, maxSizeMB: parseInt(e.target.value) || 1 } } })}
+                  />
+                  <span className="xform-file-upload-unit">MB</span>
+                </label>
+                <label className="xform-file-upload-row">
+                  <input
+                    type="checkbox"
+                    checked={fileUploadConfig.video.enabled}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, video: { ...fileUploadConfig.video, enabled: e.target.checked } } })}
+                  />
+                  <span className="xform-file-upload-label">影片 (MP4、MOV)，不能大於</span>
+                  <input
+                    type="number"
+                    className="form-control form-control-sm xform-file-size-input"
+                    value={fileUploadConfig.video.maxSizeMB}
+                    min={1}
+                    onChange={(e) => updateField({ fileUploadConfig: { ...fileUploadConfig, video: { ...fileUploadConfig.video, maxSizeMB: parseInt(e.target.value) || 1 } } })}
+                  />
+                  <span className="xform-file-upload-unit">MB</span>
+                </label>
               </div>
             </div>
           )}
