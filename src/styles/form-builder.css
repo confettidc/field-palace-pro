@@ -259,6 +259,71 @@
   flex-shrink: 0;
 }
 
+/* ===== Phone Verify Badge ===== */
+.xform-verify-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid #d0d5e2;
+  border-radius: 999px;
+  padding: 0.2rem 0.55rem;
+  background: #fff;
+  margin-right: 0.25rem;
+}
+
+.xform-verify-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #c0c7db;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.xform-verify-circle.active {
+  border-color: #4a5da8;
+  background: #4a5da8;
+}
+
+.xform-verify-circle.active::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.xform-verify-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #5a6580;
+  white-space: nowrap;
+}
+
+.xform-verify-divider {
+  width: 1px;
+  height: 16px;
+  background: #d0d5e2;
+  flex-shrink: 0;
+}
+
+.xform-verify-gear {
+  font-size: 0.85rem;
+  color: #8892a4;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.xform-verify-gear:hover {
+  color: #4a5da8;
+}
+
 .xform-toggle-label {
   font-size: 0.8rem;
   color: #8892a4;

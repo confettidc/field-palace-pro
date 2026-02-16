@@ -203,6 +203,18 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
         </div>
 
         <div className="xform-field-header-right">
+          {isPhone && (
+            <div className="xform-verify-badge">
+              <span
+                className={`xform-verify-circle ${phoneConfig.requireVerification ? "active" : ""}`}
+                onClick={() => updateField({ phoneConfig: { ...phoneConfig, requireVerification: !phoneConfig.requireVerification } })}
+              />
+              <span className="xform-verify-text">需認證</span>
+              <span className="xform-verify-divider" />
+              <i className="bi bi-gear xform-verify-gear" title="認證設定" />
+            </div>
+          )}
+
           <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
             <input
