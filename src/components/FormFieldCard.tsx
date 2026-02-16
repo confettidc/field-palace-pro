@@ -23,7 +23,7 @@ const iconMap: Record<FieldType, string> = {
   terms_conditions: "bi-file-earmark-text",
 };
 
-type HintMode = "none" | "placeholder" | "default_value";
+type HintMode = "none" | "placeholder";
 
 const DEFAULT_CHOICE_CONFIG: ChoiceAdvancedConfig = {
   allowOther: false,
@@ -44,7 +44,7 @@ interface Props {
 export default function FormFieldCard({ field, expanded, questionNumber, onToggleExpand, onUpdate, onDelete }: Props) {
   const [showDesc, setShowDesc] = useState(!!field.description);
   const [hintMode, setHintMode] = useState<HintMode>(
-    field.defaultValue ? "default_value" : field.placeholder ? "placeholder" : "none"
+    field.placeholder ? "placeholder" : "none"
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -63,6 +63,26 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
     const newIdx = options.findIndex(o => o.id === over.id);
     if (oldIdx === -1 || newIdx === -1) return;
     onUpdate({ ...field, options: arrayMove(options, oldIdx, newIdx) });
+  }, [field, onUpdate]);
+
+  const handleRatingRowDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const rc = field.ratingMatrixConfig || DEFAULT_RATING_MATRIX_CONFIG;
+    const oldIdx = rc.rows.findIndex(r => r.id === active.id);
+    const newIdx = rc.rows.findIndex(r => r.id === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    onUpdate({ ...field, ratingMatrixConfig: { ...rc, rows: arrayMove(rc.rows, oldIdx, newIdx) } });
+  }, [field, onUpdate]);
+
+  const handleRatingLevelDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const rc = field.ratingMatrixConfig || DEFAULT_RATING_MATRIX_CONFIG;
+    const oldIdx = rc.ratingLevels.findIndex((_, i) => `level-${i}` === active.id);
+    const newIdx = rc.ratingLevels.findIndex((_, i) => `level-${i}` === over.id);
+    if (oldIdx === -1 || newIdx === -1) return;
+    onUpdate({ ...field, ratingMatrixConfig: { ...rc, ratingLevels: arrayMove(rc.ratingLevels, oldIdx, newIdx) } });
   }, [field, onUpdate]);
 
   const style = {
@@ -146,8 +166,6 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
       updateField({ placeholder: "", defaultValue: "" });
     } else if (mode === "placeholder") {
       updateField({ defaultValue: "" });
-    } else {
-      updateField({ placeholder: "" });
     }
   };
 
@@ -344,19 +362,12 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                   >
                     不使用
                   </button>
-                  <button
+                   <button
                     type="button"
                     className={`xform-hint-btn ${hintMode === "placeholder" ? "active" : ""}`}
                     onClick={() => handleHintModeChange("placeholder")}
                   >
                     提示文字
-                  </button>
-                  <button
-                    type="button"
-                    className={`xform-hint-btn ${hintMode === "default_value" ? "active" : ""}`}
-                    onClick={() => handleHintModeChange("default_value")}
-                  >
-                    預設值
                   </button>
                 </div>
               </div>
@@ -377,26 +388,6 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                     placeholder="例如：請輸入..."
                     rows={1}
                   />
-                </div>
-              )}
-              {hintMode === "default_value" && (
-                <div className="xform-textarea-wrap mt-2">
-                  <textarea
-                    className="form-control form-control-sm xform-auto-resize"
-                    value={field.defaultValue || ""}
-                    onChange={(e) => {
-                      updateField({ defaultValue: e.target.value });
-                      e.target.style.height = 'auto';
-                      e.target.style.height = e.target.scrollHeight + 'px';
-                    }}
-                    onFocus={(e) => {
-                      e.target.style.height = 'auto';
-                      e.target.style.height = e.target.scrollHeight + 'px';
-                    }}
-                    placeholder="例如：預設內容"
-                    rows={1}
-                  />
-                  
                 </div>
               )}
             </div>
@@ -573,59 +564,24 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               {/* Tab content: 評分項目 */}
               {ratingTab === "items" && (
                 <div className="xform-rating-tab-content">
-                  {ratingConfig.rows.map((row, i) => (
-                    <div key={row.id} className="xform-rating-row-item">
-                      <div className="xform-option-row">
-                        <span className="xform-option-num">{i + 1}.</span>
-                        <input
-                          type="text"
-                          className="form-control form-control-sm flex-grow-1"
-                          value={row.label}
-                          onChange={(e) => {
-                            const newRows = ratingConfig.rows.map(r => r.id === row.id ? { ...r, label: e.target.value } : r);
+                  <DndContext sensors={optionSensors} collisionDetection={closestCenter} onDragEnd={handleRatingRowDragEnd}>
+                    <SortableContext items={ratingConfig.rows.map(r => r.id)} strategy={verticalListSortingStrategy}>
+                      {ratingConfig.rows.map((row, i) => (
+                        <SortableRatingRow key={row.id} row={row} index={i}
+                          onUpdateRow={(id, label) => {
+                            const newRows = ratingConfig.rows.map(r => r.id === id ? { ...r, label } : r);
                             updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
                           }}
-                        />
-                        <button
-                          className="btn btn-sm xform-option-action-btn xform-option-drag-btn"
-                          title="拖曳排序"
-                          onMouseDown={(e) => {
-                            e.preventDefault();
-                            const startY = e.clientY;
-                            const startIndex = i;
-                            const onMove = (ev: MouseEvent) => {
-                              const diff = ev.clientY - startY;
-                              const rowHeight = 38;
-                              const offset = Math.round(diff / rowHeight);
-                              const newIndex = Math.max(0, Math.min(ratingConfig.rows.length - 1, startIndex + offset));
-                              if (newIndex !== startIndex) {
-                                const newRows = [...ratingConfig.rows];
-                                const [moved] = newRows.splice(startIndex, 1);
-                                newRows.splice(newIndex, 0, moved);
-                                updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
-                              }
-                            };
-                            const onUp = () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
-                            document.addEventListener("mousemove", onMove);
-                            document.addEventListener("mouseup", onUp);
-                          }}
-                        >
-                          <i className="bi bi-arrows-move" />
-                        </button>
-                        <button
-                          className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
-                          onClick={() => {
+                          onDeleteRow={(id) => {
                             if (ratingConfig.rows.length <= 1) return;
-                            const newRows = ratingConfig.rows.filter(r => r.id !== row.id);
+                            const newRows = ratingConfig.rows.filter(r => r.id !== id);
                             updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
                           }}
-                          disabled={ratingConfig.rows.length <= 1}
-                        >
-                          <i className="bi bi-trash" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                          disableDelete={ratingConfig.rows.length <= 1}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                   <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
                     let maxNum = 0;
                     for (const r of ratingConfig.rows) {
@@ -643,58 +599,25 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               {/* Tab content: 評分等級 */}
               {ratingTab === "levels" && (
                 <div className="xform-rating-tab-content">
-                  {ratingConfig.ratingLevels.map((level, i) => (
-                    <div key={i} className="xform-rating-level-row">
-                      <span className="xform-option-num">{i + 1}.</span>
-                      <input
-                        type="text"
-                        className="form-control form-control-sm flex-grow-1"
-                        value={level}
-                        onChange={(e) => {
-                          const newLevels = [...ratingConfig.ratingLevels];
-                          newLevels[i] = e.target.value;
-                          updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                        }}
-                      />
-                      <button
-                        className="btn btn-sm xform-option-action-btn xform-option-drag-btn"
-                        title="拖曳排序"
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          const startY = e.clientY;
-                          const startIndex = i;
-                          const onMove = (ev: MouseEvent) => {
-                            const diff = ev.clientY - startY;
-                            const rowHeight = 38;
-                            const offset = Math.round(diff / rowHeight);
-                            const newIndex = Math.max(0, Math.min(ratingConfig.ratingLevels.length - 1, startIndex + offset));
-                            if (newIndex !== startIndex) {
-                              const newLevels = [...ratingConfig.ratingLevels];
-                              const [moved] = newLevels.splice(startIndex, 1);
-                              newLevels.splice(newIndex, 0, moved);
-                              updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                            }
-                          };
-                          const onUp = () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
-                          document.addEventListener("mousemove", onMove);
-                          document.addEventListener("mouseup", onUp);
-                        }}
-                      >
-                        <i className="bi bi-arrows-move" />
-                      </button>
-                      <button
-                        className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
-                        onClick={() => {
-                          if (ratingConfig.ratingLevels.length <= 2) return;
-                          const newLevels = ratingConfig.ratingLevels.filter((_, idx) => idx !== i);
-                          updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
-                        }}
-                        disabled={ratingConfig.ratingLevels.length <= 2}
-                      >
-                        <i className="bi bi-trash" />
-                      </button>
-                    </div>
-                  ))}
+                  <DndContext sensors={optionSensors} collisionDetection={closestCenter} onDragEnd={handleRatingLevelDragEnd}>
+                    <SortableContext items={ratingConfig.ratingLevels.map((_, i) => `level-${i}`)} strategy={verticalListSortingStrategy}>
+                      {ratingConfig.ratingLevels.map((level, i) => (
+                        <SortableRatingLevel key={`level-${i}`} id={`level-${i}`} level={level} index={i}
+                          onUpdateLevel={(idx, val) => {
+                            const newLevels = [...ratingConfig.ratingLevels];
+                            newLevels[idx] = val;
+                            updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
+                          }}
+                          onDeleteLevel={(idx) => {
+                            if (ratingConfig.ratingLevels.length <= 2) return;
+                            const newLevels = ratingConfig.ratingLevels.filter((_, j) => j !== idx);
+                            updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
+                          }}
+                          disableDelete={ratingConfig.ratingLevels.length <= 2}
+                        />
+                      ))}
+                    </SortableContext>
+                  </DndContext>
                   <button className="btn btn-sm xform-add-option-btn mt-1" onClick={() => {
                     const newLevels = [...ratingConfig.ratingLevels, `等級 ${ratingConfig.ratingLevels.length + 1}`];
                     updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
@@ -717,7 +640,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                       onChange={(e) => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: e.target.checked } })}
                     />
                     <label className="form-check-label small" htmlFor={`rating-unique-${field.id}`}>
-                      特別限制 : 同一等級不能選多於一次
+                      特別限制 : 在此題目裡，同一等級只能選一次
                     </label>
                   </div>
                 </div>
@@ -896,6 +819,58 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
           </span>
         </div>
       )}
+    </div>
+  );
+}
+
+/* ===== Sortable Rating Row ===== */
+function SortableRatingRow({ row, index, onUpdateRow, onDeleteRow, disableDelete }: {
+  row: RatingMatrixRow; index: number;
+  onUpdateRow: (id: string, label: string) => void;
+  onDeleteRow: (id: string) => void;
+  disableDelete: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style} className="xform-rating-row-item">
+      <div className="xform-option-row">
+        <span className="xform-option-num">{index + 1}.</span>
+        <input type="text" className="form-control form-control-sm flex-grow-1" value={row.label}
+          onChange={(e) => onUpdateRow(row.id, e.target.value)} />
+        <button className="btn btn-sm xform-option-action-btn xform-option-move-btn" title="拖曳排序" {...attributes} {...listeners}>
+          <i className="bi bi-arrows-move" />
+        </button>
+        <button className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
+          onClick={() => onDeleteRow(row.id)} disabled={disableDelete}>
+          <i className="bi bi-trash" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ===== Sortable Rating Level ===== */
+function SortableRatingLevel({ id, level, index, onUpdateLevel, onDeleteLevel, disableDelete }: {
+  id: string; level: string; index: number;
+  onUpdateLevel: (idx: number, val: string) => void;
+  onDeleteLevel: (idx: number) => void;
+  disableDelete: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
+  return (
+    <div ref={setNodeRef} style={style} className="xform-rating-level-row">
+      <span className="xform-option-num">{index + 1}.</span>
+      <input type="text" className="form-control form-control-sm flex-grow-1" value={level}
+        onChange={(e) => onUpdateLevel(index, e.target.value)} />
+      <button className="btn btn-sm xform-option-action-btn xform-option-move-btn" title="拖曳排序" {...attributes} {...listeners}>
+        <i className="bi bi-arrows-move" />
+      </button>
+      <button className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
+        onClick={() => onDeleteLevel(index)} disabled={disableDelete}>
+        <i className="bi bi-trash" />
+      </button>
     </div>
   );
 }
