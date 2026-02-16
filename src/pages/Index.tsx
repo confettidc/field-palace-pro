@@ -4,7 +4,7 @@ import FormFieldCard from "@/components/FormFieldCard";
 import ContentBlockCard from "@/components/ContentBlockCard";
 import GroupCard from "@/components/GroupCard";
 import AddFieldPanel from "@/components/AddFieldPanel";
-import FormPreviewModal from "@/components/FormPreviewModal";
+
 import FormSettingsPanel from "@/components/FormSettingsPanel";
 import "@/styles/form-builder.css";
 import { toast } from "sonner";
@@ -122,7 +122,7 @@ export default function Index() {
   const [groups, setGroups] = useState<FormGroup[]>([]);
   const [showPanel, setShowPanel] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
+  
   const [hideDisabled, setHideDisabled] = useState(false);
   const [isDraggingGroup, setIsDraggingGroup] = useState(false);
   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set());
@@ -360,16 +360,6 @@ export default function Index() {
     }
   };
 
-  const handleSave = () => {
-    const fields = items.filter(isFormField);
-    const empty = fields.filter((f) => !f.label.trim() && !f.profileKey && f.type !== "subscribe_invite" && f.type !== "terms_conditions");
-    if (empty.length) {
-      toast.error("有欄位尚未填寫題目名稱");
-      return;
-    }
-    console.log("Saved items:", items, "Groups:", groups, "Settings:", formSettings);
-    toast.success(`已儲存 ${items.length} 個項目`);
-  };
 
   const handleShowPanel = () => {
     setExpandedId(null);
@@ -439,15 +429,6 @@ export default function Index() {
           <div>
             <h1 className="xform-header-title">表單欄位設定</h1>
             <p className="xform-header-desc">新增與編輯表單欄位，拖曳調整順序</p>
-          </div>
-          <div className="xform-header-actions">
-            <button className="btn btn-outline-secondary xform-preview-btn" onClick={() => setShowPreview(true)} disabled={items.length === 0}>
-              <i className="bi bi-eye me-1" />
-              預覽
-            </button>
-            <button className="btn btn-primary xform-save-btn" onClick={handleSave} disabled={items.length === 0}>
-              儲存
-            </button>
           </div>
         </div>
 
@@ -602,14 +583,6 @@ export default function Index() {
         {/* Form settings now in filter bar gear icon */}
       </div>
 
-      <FormPreviewModal
-        open={showPreview}
-        onClose={() => setShowPreview(false)}
-        items={items}
-        groups={groups}
-        settings={formSettings}
-        questionNumberMap={questionNumberMap}
-      />
     </div>
   );
 }
