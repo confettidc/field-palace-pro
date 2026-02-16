@@ -656,14 +656,18 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               <div className="xform-rating-preview-area">
                 <div className="xform-rating-preview-header">
                   <label className="xform-form-label mb-0">預覽</label>
-                  <select
-                    className="form-select form-select-sm xform-rating-mode-select"
-                    value={ratingConfig.allowMultipleRatings ? "multiple" : "single"}
-                    onChange={(e) => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: e.target.value === "multiple" } })}
-                  >
-                    <option value="single">只允許選取單一等級</option>
-                    <option value="multiple">允許選取多項等級</option>
-                  </select>
+                  <div className="form-check ms-auto">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`rating-unique-${field.id}`}
+                      checked={ratingConfig.allowMultipleRatings}
+                      onChange={(e) => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: e.target.checked } })}
+                    />
+                    <label className="form-check-label small" htmlFor={`rating-unique-${field.id}`}>
+                      特別限制 : 不同項目所選等級均不能相同
+                    </label>
+                  </div>
                 </div>
                 <div className="xform-rating-preview">
                   <table className="xform-rating-table">
@@ -681,7 +685,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                           <td className="xform-rating-td-label">{row.label}</td>
                           {ratingConfig.ratingLevels.map((_, i) => (
                             <td key={i} className="xform-rating-td-radio">
-                              <input type={ratingConfig.allowMultipleRatings ? "checkbox" : "radio"} disabled name={`preview-${row.id}`} />
+                              <input type="radio" disabled name={`preview-${row.id}`} />
                             </td>
                           ))}
                         </tr>
