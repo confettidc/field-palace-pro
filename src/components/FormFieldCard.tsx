@@ -52,7 +52,7 @@ function DatePickerPreview() {
           <i className="bi bi-calendar3 xform-date-calendar-icon" />
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className="w-auto p-0 bg-white border shadow-md" align="start" style={{ zIndex: 9999 }}>
         <Calendar
           mode="single"
           selected={date}
@@ -459,43 +459,45 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               {/* Combo mode settings */}
               {dateConfig.displayMode === "combo" && (
                 <>
-                  <div className="xform-date-checks" style={{ marginTop: 8, marginBottom: 8 }}>
-                    <label className="xform-date-check-label">
-                      <input type="checkbox" checked={dateConfig.includeYear}
-                        onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeYear: e.target.checked } })} />
-                      <span>需輸入年份</span>
-                    </label>
-                    <label className="xform-date-check-label">
-                      <input type="checkbox" checked={dateConfig.includeMonth}
-                        onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeMonth: e.target.checked } })} />
-                      <span>需輸入月份</span>
-                    </label>
-                    <label className="xform-date-check-label">
-                      <input type="checkbox" checked={dateConfig.includeDay}
-                        onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeDay: e.target.checked } })} />
-                      <span>需輸入日子</span>
-                    </label>
+                  <div className="xform-date-combo-row" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, marginBottom: 8, flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div className="xform-date-checks" style={{ margin: 0 }}>
+                      <label className="xform-date-check-label">
+                        <input type="checkbox" checked={dateConfig.includeYear}
+                          onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeYear: e.target.checked } })} />
+                        <span>需輸入年份</span>
+                      </label>
+                      <label className="xform-date-check-label">
+                        <input type="checkbox" checked={dateConfig.includeMonth}
+                          onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeMonth: e.target.checked } })} />
+                        <span>需輸入月份</span>
+                      </label>
+                      <label className="xform-date-check-label">
+                        <input type="checkbox" checked={dateConfig.includeDay}
+                          onChange={(e) => updateField({ dateConfig: { ...dateConfig, includeDay: e.target.checked } })} />
+                        <span>需輸入日子</span>
+                      </label>
+                    </div>
+                    {dateConfig.includeYear && (() => {
+                      const yearOptions: number[] = [];
+                      for (let y = 1950; y <= new Date().getFullYear(); y++) yearOptions.push(y);
+                      return (
+                        <div className="xform-date-year-range-inline" style={{ marginLeft: 'auto' }}>
+                          <span className="xform-date-range-label">年份範圍</span>
+                          <select className="form-control form-control-sm xform-year-input"
+                            value={dateConfig.yearStart}
+                            onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) } })}>
+                            {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                          </select>
+                          <span className="xform-date-range-sep">～</span>
+                          <select className="form-control form-control-sm xform-year-input"
+                            value={dateConfig.yearEnd}
+                            onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) } })}>
+                            {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
+                          </select>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  {dateConfig.includeYear && (() => {
-                    const yearOptions: number[] = [];
-                    for (let y = 1950; y <= new Date().getFullYear(); y++) yearOptions.push(y);
-                    return (
-                      <div className="xform-date-year-range-inline" style={{ marginBottom: 8 }}>
-                        <span className="xform-date-range-label">年份範圍</span>
-                        <select className="form-control form-control-sm xform-year-input"
-                          value={dateConfig.yearStart}
-                          onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearStart: parseInt(e.target.value) } })}>
-                          {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                        <span className="xform-date-range-sep">～</span>
-                        <select className="form-control form-control-sm xform-year-input"
-                          value={dateConfig.yearEnd}
-                          onChange={(e) => updateField({ dateConfig: { ...dateConfig, yearEnd: parseInt(e.target.value) } })}>
-                          {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                      </div>
-                    );
-                  })()}
                 </>
               )}
 
