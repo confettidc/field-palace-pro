@@ -1591,15 +1591,23 @@
 
 /* Calendar preview */
 .xform-date-calendar-input {
-  flex: 1;
-  min-width: 120px;
+  width: 150px !important;
+  flex: none;
   background: #fff !important;
-  cursor: default;
+  cursor: pointer;
 }
 
 .xform-date-calendar-icon {
   font-size: 1.1rem;
   color: #5a6580;
+  cursor: pointer;
+}
+
+/* Preview header with NA option */
+.xform-date-preview-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
 }
 
 /* ===== Group Card ===== */
