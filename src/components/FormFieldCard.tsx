@@ -200,9 +200,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
             <i className={`bi ${iconMap[field.type]}`} />
             {FIELD_TYPE_META[field.type].label}
           </span>
-        </div>
 
-        <div className="xform-field-header-right">
           {isPhone && (
             <div className="xform-verify-badge">
               <span
@@ -214,6 +212,9 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
               <i className="bi bi-gear xform-verify-gear" title="認證設定" />
             </div>
           )}
+        </div>
+
+        <div className="xform-field-header-right">
 
           <span className="xform-toggle-label">必填</span>
           <div className="form-check form-switch mb-0">
