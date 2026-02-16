@@ -587,6 +587,32 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                           }}
                         />
                         <button
+                          className="btn btn-sm xform-option-action-btn xform-option-drag-btn"
+                          title="拖曳排序"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            const startY = e.clientY;
+                            const startIndex = i;
+                            const onMove = (ev: MouseEvent) => {
+                              const diff = ev.clientY - startY;
+                              const rowHeight = 38;
+                              const offset = Math.round(diff / rowHeight);
+                              const newIndex = Math.max(0, Math.min(ratingConfig.rows.length - 1, startIndex + offset));
+                              if (newIndex !== startIndex) {
+                                const newRows = [...ratingConfig.rows];
+                                const [moved] = newRows.splice(startIndex, 1);
+                                newRows.splice(newIndex, 0, moved);
+                                updateField({ ratingMatrixConfig: { ...ratingConfig, rows: newRows } });
+                              }
+                            };
+                            const onUp = () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
+                            document.addEventListener("mousemove", onMove);
+                            document.addEventListener("mouseup", onUp);
+                          }}
+                        >
+                          <i className="bi bi-arrows-move" />
+                        </button>
+                        <button
                           className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
                           onClick={() => {
                             if (ratingConfig.rows.length <= 1) return;
@@ -631,6 +657,32 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                         }}
                       />
                       <button
+                        className="btn btn-sm xform-option-action-btn xform-option-drag-btn"
+                        title="拖曳排序"
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          const startY = e.clientY;
+                          const startIndex = i;
+                          const onMove = (ev: MouseEvent) => {
+                            const diff = ev.clientY - startY;
+                            const rowHeight = 38;
+                            const offset = Math.round(diff / rowHeight);
+                            const newIndex = Math.max(0, Math.min(ratingConfig.ratingLevels.length - 1, startIndex + offset));
+                            if (newIndex !== startIndex) {
+                              const newLevels = [...ratingConfig.ratingLevels];
+                              const [moved] = newLevels.splice(startIndex, 1);
+                              newLevels.splice(newIndex, 0, moved);
+                              updateField({ ratingMatrixConfig: { ...ratingConfig, ratingLevels: newLevels } });
+                            }
+                          };
+                          const onUp = () => { document.removeEventListener("mousemove", onMove); document.removeEventListener("mouseup", onUp); };
+                          document.addEventListener("mousemove", onMove);
+                          document.addEventListener("mouseup", onUp);
+                        }}
+                      >
+                        <i className="bi bi-arrows-move" />
+                      </button>
+                      <button
                         className="btn btn-sm xform-option-action-btn xform-delete-icon-btn"
                         onClick={() => {
                           if (ratingConfig.ratingLevels.length <= 2) return;
@@ -665,7 +717,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
                       onChange={(e) => updateField({ ratingMatrixConfig: { ...ratingConfig, allowMultipleRatings: e.target.checked } })}
                     />
                     <label className="form-check-label small" htmlFor={`rating-unique-${field.id}`}>
-                      特別限制 : 不同項目所選等級均不能相同
+                      特別限制 : 同一等級不能選多於一次
                     </label>
                   </div>
                 </div>
