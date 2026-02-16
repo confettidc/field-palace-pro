@@ -85,6 +85,24 @@ export const COMMON_COUNTRY_CODES = [
   { code: "91", label: "印度 +91" },
 ];
 
+/* ===== File Upload ===== */
+export interface FileUploadCategory {
+  enabled: boolean;
+  maxSizeMB: number;
+}
+
+export interface FileUploadConfig {
+  image: FileUploadCategory;   // JPG/JPEG, GIF, PNG
+  document: FileUploadCategory; // PDF
+  video: FileUploadCategory;   // MP4, MOV
+}
+
+export const DEFAULT_FILE_UPLOAD_CONFIG: FileUploadConfig = {
+  image: { enabled: true, maxSizeMB: 5 },
+  document: { enabled: false, maxSizeMB: 2 },
+  video: { enabled: false, maxSizeMB: 200 },
+};
+
 /* ===== Subscribe Invite ===== */
 export interface SubscribeConfig {
   showTitle: boolean;
@@ -147,6 +165,7 @@ export interface FormField {
   ratingMatrixConfig?: RatingMatrixConfig;
   subscribeConfig?: SubscribeConfig;
   termsConfig?: TermsConfig;
+  fileUploadConfig?: FileUploadConfig;
   groupId?: string;
   profileKey?: ProfileFieldKey;
 }
