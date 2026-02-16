@@ -202,7 +202,7 @@ export default function FormFieldCard({ field, expanded, questionNumber, onToggl
           </span>
 
           {isPhone && (
-            <div className="xform-verify-badge">
+            <div className="xform-verify-badge" onClick={(e) => e.stopPropagation()}>
               <span
                 className={`xform-verify-circle ${phoneConfig.requireVerification ? "active" : ""}`}
                 onClick={() => updateField({ phoneConfig: { ...phoneConfig, requireVerification: !phoneConfig.requireVerification } })}
