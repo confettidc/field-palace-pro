@@ -265,7 +265,7 @@
   align-items: center;
   gap: 0.4rem;
   border: 1px solid #d0d5e2;
-  border-radius: 999px;
+  border-radius: 0.35rem;
   padding: 0.2rem 0.55rem;
   background: #fff;
   margin-right: 0.25rem;
@@ -304,6 +304,8 @@
   font-weight: 500;
   color: #5a6580;
   white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
 }
 
 .xform-verify-divider {
