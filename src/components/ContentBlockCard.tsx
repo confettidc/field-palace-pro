@@ -98,12 +98,12 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
           {isDivider ? (
             <div className="xform-form-group">
               <label className="xform-form-label">線條樣式</label>
-              <div className="xform-divider-styles">
+              <div className="xform-divider-styles" style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
                 {DIVIDER_STYLES.map((ds) => (
                   <button
                     key={ds.value}
                     className={`xform-divider-style-btn ${(block.dividerStyle || "solid") === ds.value ? "active" : ""}`}
-                    style={{ width: "25%" }}
+                    style={{ flex: "0 0 auto", width: "calc(25% - 6px)" }}
                     onClick={() => onUpdate({ ...block, dividerStyle: ds.value })}
                   >
                     <hr className={`xform-divider-preview xform-divider-${ds.value}`} />
