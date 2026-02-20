@@ -103,6 +103,7 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
                   <button
                     key={ds.value}
                     className={`xform-divider-style-btn ${(block.dividerStyle || "solid") === ds.value ? "active" : ""}`}
+                    style={{ width: "25%" }}
                     onClick={() => onUpdate({ ...block, dividerStyle: ds.value })}
                   >
                     <hr className={`xform-divider-preview xform-divider-${ds.value}`} />
@@ -113,19 +114,17 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
             </div>
           ) : isSpacer ? (
             <div className="xform-form-group">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <label className="xform-form-label" style={{ marginBottom: 0, whiteSpace: "nowrap" }}>間距大小</label>
-                <select
-                  className="form-select form-select-sm"
-                  style={{ width: "100px" }}
-                  value={block.spacerSize || "10px"}
-                  onChange={(e) => onUpdate({ ...block, spacerSize: e.target.value as SpacerSize })}
-                >
-                  {SPACER_SIZES.map((ss) => (
-                    <option key={ss.value} value={ss.value}>{ss.label}</option>
-                  ))}
-                </select>
-              </div>
+              <label className="xform-form-label">間距大小</label>
+              <select
+                className="form-select form-select-sm"
+                style={{ width: "100px" }}
+                value={block.spacerSize || "10px"}
+                onChange={(e) => onUpdate({ ...block, spacerSize: e.target.value as SpacerSize })}
+              >
+                {SPACER_SIZES.map((ss) => (
+                  <option key={ss.value} value={ss.value}>{ss.label}</option>
+                ))}
+              </select>
             </div>
           ) : (
             <div className="xform-form-group">
