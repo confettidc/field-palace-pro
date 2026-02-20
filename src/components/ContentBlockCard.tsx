@@ -7,9 +7,6 @@ import { CSS } from "@dnd-kit/utilities";
 
 const DIVIDER_STYLES: { value: DividerLineStyle; label: string }[] = [
   { value: "solid", label: "實線" },
-  { value: "dashed", label: "虛線" },
-  { value: "dotted", label: "點線" },
-  { value: "double", label: "雙線" },
 ];
 
 const SPACER_SIZES: { value: SpacerSize; label: string }[] = [
@@ -101,18 +98,7 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
           {isDivider ? (
             <div className="xform-form-group">
               <label className="xform-form-label">線條樣式</label>
-              <div className="xform-divider-styles">
-                {DIVIDER_STYLES.map((ds) => (
-                  <button
-                    key={ds.value}
-                    className={`xform-divider-style-btn ${(block.dividerStyle || "solid") === ds.value ? "active" : ""}`}
-                    onClick={() => onUpdate({ ...block, dividerStyle: ds.value })}
-                  >
-                    <hr className={`xform-divider-preview xform-divider-${ds.value}`} />
-                    <span>{ds.label}</span>
-                  </button>
-                ))}
-              </div>
+              <hr className="xform-divider-preview xform-divider-solid" style={{ margin: "4px 0" }} />
             </div>
           ) : isSpacer ? (
             <div className="xform-form-group">
