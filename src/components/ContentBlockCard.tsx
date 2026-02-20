@@ -12,10 +12,11 @@ const DIVIDER_STYLES: { value: DividerLineStyle; label: string }[] = [
   { value: "double", label: "雙線" },
 ];
 
-const SPACER_SIZES: { value: SpacerSize; label: string; height: string }[] = [
-  { value: "small", label: "小", height: "16px" },
-  { value: "medium", label: "中", height: "32px" },
-  { value: "large", label: "大", height: "64px" },
+const SPACER_SIZES: { value: SpacerSize; label: string }[] = [
+  { value: "10px", label: "10px" },
+  { value: "20px", label: "20px" },
+  { value: "30px", label: "30px" },
+  { value: "40px", label: "40px" },
 ];
 
 interface Props {
@@ -115,18 +116,18 @@ export default function ContentBlockCard({ block, expanded, onToggleExpand, onUp
             </div>
           ) : isSpacer ? (
             <div className="xform-form-group">
-              <label className="xform-form-label">間距大小</label>
-              <div className="xform-divider-styles">
-                {SPACER_SIZES.map((ss) => (
-                  <button
-                    key={ss.value}
-                    className={`xform-divider-style-btn ${(block.spacerSize || "medium") === ss.value ? "active" : ""}`}
-                    onClick={() => onUpdate({ ...block, spacerSize: ss.value })}
-                  >
-                    <div className="xform-spacer-preview" style={{ height: ss.height }} />
-                    <span>{ss.label}</span>
-                  </button>
-                ))}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <label className="xform-form-label" style={{ marginBottom: 0, whiteSpace: "nowrap" }}>間距大小</label>
+                <select
+                  className="form-select form-select-sm"
+                  style={{ width: "100px" }}
+                  value={block.spacerSize || "10px"}
+                  onChange={(e) => onUpdate({ ...block, spacerSize: e.target.value as SpacerSize })}
+                >
+                  {SPACER_SIZES.map((ss) => (
+                    <option key={ss.value} value={ss.value}>{ss.label}</option>
+                  ))}
+                </select>
               </div>
             </div>
           ) : (
