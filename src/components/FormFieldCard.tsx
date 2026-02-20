@@ -942,23 +942,7 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
         </button>
       </div>
 
-      {/* Score row */}
-      {choiceConfig.showScore && (
-        <div className="xform-option-sub-row" style={{ paddingLeft: inputPrefixWidth }}>
-          <span className="xform-sub-row-label">獲得分數</span>
-          <select
-            className="form-select form-select-sm xform-score-select"
-            value={opt.score ?? 0}
-            onChange={(e) => onUpdateScore(opt.id, parseInt(e.target.value))}
-          >
-            {Array.from({ length: 11 }, (_, i) => (
-              <option key={i} value={i}>{i}</option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {/* Tags row */}
+      {/* Tags row — shown first */}
       {choiceConfig.showTags && (
         <div className="xform-option-sub-row" style={{ paddingLeft: inputPrefixWidth }}>
           <span className="xform-sub-row-label">加入標籤</span>
@@ -986,6 +970,22 @@ function SortableOptionRow({ opt, index, field, choiceConfig, onUpdateOption, on
               />
             </span>
           </div>
+        </div>
+      )}
+
+      {/* Score row — shown below tags */}
+      {choiceConfig.showScore && (
+        <div className="xform-option-sub-row" style={{ paddingLeft: inputPrefixWidth }}>
+          <span className="xform-sub-row-label">獲得分數</span>
+          <select
+            className="form-select form-select-sm xform-score-select"
+            value={opt.score ?? 0}
+            onChange={(e) => onUpdateScore(opt.id, parseInt(e.target.value))}
+          >
+            {Array.from({ length: 11 }, (_, i) => (
+              <option key={i} value={i}>{i}</option>
+            ))}
+          </select>
         </div>
       )}
     </div>
