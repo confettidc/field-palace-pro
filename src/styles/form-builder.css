@@ -741,6 +741,34 @@
   padding-left: calc(18px + 0.5rem);
 }
 
+/* Sub-row used for score and tags (aligned to input start) */
+.xform-option-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.25rem;
+}
+
+.xform-sub-row-label {
+  font-size: 0.78rem;
+  color: #5b6abf;
+  white-space: nowrap;
+  min-width: 52px;
+}
+
+.xform-score-select {
+  width: 80px !important;
+  font-size: 0.82rem;
+}
+
+.xform-option-tags-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
 .xform-tag {
   display: inline-flex;
   align-items: center;

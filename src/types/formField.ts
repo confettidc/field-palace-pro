@@ -27,6 +27,7 @@ export interface FieldOption {
   label: string;
   tags?: string[];
   isDefault?: boolean;
+  score?: number;
 }
 
 export interface ChoiceAdvancedConfig {
@@ -34,6 +35,7 @@ export interface ChoiceAdvancedConfig {
   otherLabel: string;
   showTags: boolean;
   showDefaultSelection: boolean;
+  showScore: boolean;
 }
 
 export type DateDisplayMode = "calendar" | "combo";
