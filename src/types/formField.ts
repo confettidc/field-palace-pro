@@ -218,7 +218,7 @@ export interface FormSettings {
 
 export type DividerLineStyle = "solid" | "dashed" | "dotted" | "double";
 
-export type SpacerSize = "small" | "medium" | "large";
+export type SpacerSize = "10px" | "20px" | "30px" | "40px";
 
 export interface ContentBlock {
   id: string;
